@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pelajaran 4 — Jaman Hakim-Hakim</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0e;
+    --gold: #c9953c;
+    --gold-dim: #7a5a22;
+    --gold-pale: rgba(201,149,60,0.12);
+    --red: #a03030;
+    --red-light: #d05050;
+    --green: #2a6040;
+    --green-light: #4a9060;
+    --text: #f0ece4;
+    --text-2: #a09890;
+    --text-3: #504840;
+    --border: rgba(255,255,255,0.07);
+    --card: rgba(255,255,255,0.04);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE ENGINE
+  ═══════════════════════════════════════ */
+  #stage {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5vw 8vw;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ═══════════════════════════════════════
+     PROGRESS BAR
+  ═══════════════════════════════════════ */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* ═══════════════════════════════════════
+     NAV CONTROLS
+  ═══════════════════════════════════════ */
+  #nav {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(8,10,14,0.9);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.6rem 1.2rem;
+    z-index: 100;
+  }
+
+  #nav button {
+    width: 2.8rem; height: 2.8rem;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  #nav button:hover { background: var(--gold-pale); border-color: var(--gold-dim); color: var(--gold); }
+  #nav button:active { transform: scale(0.92); }
+  #nav button:disabled { opacity: 0.2; cursor: default; }
+
+  #slide-counter {
+    font-size: 0.8rem;
+    color: var(--text-2);
+    min-width: 4rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+
+  /* Keyboard hint */
+  #keyhint {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    font-size: 0.7rem;
+    color: var(--text-3);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* Segment label */
+  .seg-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    font-weight: 500;
+    margin-bottom: 1.2rem;
+  }
+
+  /* ═══════════════════════════════════════
+     TYPOGRAPHY SCALE
+  ═══════════════════════════════════════ */
+  .t-hero {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .t-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4.5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .t-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+
+  .t-body {
+    font-size: clamp(1rem, 1.8vw, 1.5rem);
+    line-height: 1.7;
+    color: var(--text-2);
+    max-width: 70ch;
+  }
+
+  .t-key {
+    font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .t-accent { color: var(--gold); }
+  .t-red { color: var(--red-light); }
+  .t-green { color: var(--green-light); }
+
+  /* ═══════════════════════════════════════
+     LAYOUT HELPERS
+  ═══════════════════════════════════════ */
+  .col { display:flex; flex-direction:column; gap:1rem; }
+  .col.center { align-items:center; text-align:center; }
+  .row { display:flex; gap:2rem; align-items:flex-start; }
+  .spacer { flex:1; }
+
+  .divider {
+    width: 4rem; height: 2px;
+    background: linear-gradient(90deg, var(--gold-dim), transparent);
+    margin: 1.5rem 0;
+  }
+
+  .divider.center { margin: 1.5rem auto; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); }
+
+  /* ═══════════════════════════════════════
+     SCRIPTURE BLOCK
+  ═══════════════════════════════════════ */
+  .verse {
+    border-left: 3px solid var(--gold-dim);
+    padding: 1rem 1.5rem;
+    background: var(--gold-pale);
+    border-radius: 0 8px 8px 0;
+    max-width: 80ch;
+  }
+
+  .verse .ref {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .verse .text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.7rem);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════════════
+     KEY POINT PILL
+  ═══════════════════════════════════════ */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--gold-pale);
+    border: 1px solid var(--gold-dim);
+    border-radius: 100px;
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gold);
+  }
+
+  /* ═══════════════════════════════════════
+     BULLET POINTS
+  ═══════════════════════════════════════ */
+  .points { display:flex; flex-direction:column; gap:1rem; }
+
+  .point-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .point-dot {
+    width: 0.5rem; height: 0.5rem;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.6em;
+  }
+
+  .point-text {
+    font-size: clamp(1rem, 1.9vw, 1.6rem);
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════════════
+     GRID CARDS
+  ═══════════════════════════════════════ */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold-dim);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-title { font-weight: 600; margin-bottom: 0.3rem; font-size: 1.1rem; }
+  .card-desc { font-size: 0.9rem; color: var(--text-2); line-height: 1.4; }
+
+  /* ═══════════════════════════════════════
+     HAKIM CARD (for judge slides)
+  ═══════════════════════════════════════ */
+  .hakim-card {
+    width: 100%;
+    max-width: 900px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .hakim-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--gold-dim);
+    line-height: 1;
+    opacity: 0.5;
+  }
+
+  .hakim-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .hakim-meaning {
+    font-style: italic;
+    color: var(--text-2);
+    font-size: 1rem;
+    margin-top: 0.2rem;
+  }
+
+  .hakim-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+
+  .meta-tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-2);
+  }
+
+  .meta-tag.danger { border-color: var(--red); color: var(--red-light); background: rgba(160,48,48,0.1); }
+  .meta-tag.good { border-color: var(--green); color: var(--green-light); background: rgba(42,96,64,0.1); }
+
+  .hakim-lesson {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+
+  .hakim-lesson strong { color: var(--gold); font-weight: 500; }
+
+  /* ═══════════════════════════════════════
+     CYCLE VISUAL
+  ═══════════════════════════════════════ */
+  .cycle-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 950px;
+    width: 100%;
+  }
+
+  .cycle-node {
+    flex: 1;
+    text-align: center;
+    padding: 1rem 0.5rem;
+  }
+
+  .cycle-icon {
+    width: 3.5rem; height: 3.5rem;
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin: 0 auto 0.6rem;
+  }
+
+  .cycle-label { font-size: 0.9rem; font-weight: 600; }
+  .cycle-sub { font-size: 0.75rem; color: var(--text-2); margin-top: 0.2rem; }
+
+  .cycle-arrow {
+    font-size: 1.5rem;
+    color: var(--text-3);
+    flex-shrink: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  /* ═══════════════════════════════════════
+     ESCALATION BARS
+  ═══════════════════════════════════════ */
+  .esk { display:flex; flex-direction:column; gap:0.8rem; width:100%; max-width:700px; }
+
+  .esk-row { display:flex; align-items:center; gap:1rem; }
+
+  .esk-label { width: 12rem; font-size:0.9rem; color:var(--text-2); text-align:right; flex-shrink:0; }
+
+  .esk-track {
+    flex:1; height:1.6rem;
+    background: rgba(255,255,255,0.04);
+    border-radius:4px; overflow:hidden;
+  }
+
+  .esk-fill {
+    height:100%; border-radius:4px;
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE: HERO
+  ═══════════════════════════════════════ */
+  .slide-hero {
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,149,60,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 80%, rgba(160,48,48,0.04) 0%, transparent 60%);
+  }
+
+  /* ═══════════════════════════════════════
+     BIG QUOTE
+  ═══════════════════════════════════════ */
+  .big-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4.5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--gold);
+    max-width: 20ch;
+  }
+
+  /* ═══════════════════════════════════════
+     DARK CARD
+  ═══════════════════════════════════════ */
+  .dark-card {
+    background: rgba(160,48,48,0.08);
+    border: 1px solid rgba(160,48,48,0.25);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    max-width: 80ch;
+  }
+
+  .dark-card .dc-title { font-weight: 600; color: var(--red-light); margin-bottom: 0.5rem; }
+  .dark-card p { font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--text-2); line-height: 1.6; }
+
+  /* ═══════════════════════════════════════
+     FINAL SLIDE LAMP
+  ═══════════════════════════════════════ */
+  .lamp-glow {
+    font-size: 4rem;
+    text-shadow: 0 0 40px rgba(201,149,60,0.6);
+    margin-bottom: 1.5rem;
+    animation: lamp-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes lamp-pulse {
+    0%, 100% { text-shadow: 0 0 40px rgba(201,149,60,0.6); }
+    50% { text-shadow: 0 0 80px rgba(201,149,60,0.9), 0 0 120px rgba(201,149,60,0.4); }
+  }
+
+  /* ═══════════════════════════════════════
+     SLIDE-IN ANIMATION
+  ═══════════════════════════════════════ */
+  .slide.active .col > *, .slide.active .hakim-card, .slide.active .verse,
+  .slide.active .cycle-row, .slide.active .esk, .slide.active .grid-3,
+  .slide.active .grid-2, .slide.active .dark-card, .slide.active .points {
+    animation: fade-up 0.5s ease both;
+  }
+
+  .slide.active .col > *:nth-child(1) { animation-delay: 0.05s; }
+  .slide.active .col > *:nth-child(2) { animation-delay: 0.12s; }
+  .slide.active .col > *:nth-child(3) { animation-delay: 0.19s; }
+  .slide.active .col > *:nth-child(4) { animation-delay: 0.26s; }
+  .slide.active .col > *:nth-child(5) { animation-delay: 0.33s; }
+
+  @keyframes fade-up {
+    from { opacity:0; transform: translateY(16px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="stage">
+
+  <!-- ══════════════════ SLIDE 1: HERO ══════════════════ -->
+  <div class="slide slide-hero active" data-label="Judul">
+    <div class="col center">
+      <div class="seg-tag">Pelita Perjanjian yang Tak Terpadamkan · Pelajaran 4</div>
+      <div class="t-hero">Jaman Hakim-Hakim</div>
+      <div class="divider center"></div>
+      <div class="t-sub">340 tahun kegelapan — dan pelita yang tidak pernah padam</div>
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+        <div class="pill">📖 Hakim-hakim 1–21</div>
+        <div class="pill">📖 Matius 1:5</div>
+        <div class="pill">📖 1 Samuel 3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 2: INTRO ══════════════════ -->
+  <div class="slide" data-label="Intro">
+    <div class="col" style="max-width:900px; width:100%;">
+      <div class="seg-tag">Segment 01 · Intro</div>
+      <div class="t-title">Salmon → Boas</div>
+      <div class="divider"></div>
+      <div class="verse">
+        <div class="ref">Matius 1:5</div>
+        <div class="text">Salmon memperanakkan Boas dari Rahab…</div>
+      </div>
+      <div class="points" style="margin-top:0.5rem;">
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Rahab hidup di jaman Israel <strong>masuk</strong> ke Kanaan</div>
+        </div>
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Boas hidup <span class="t-accent">~300 tahun</span> setelahnya — bukan ayah-anak langsung</div>
+        </div>
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Generasi di antaranya <span class="t-accent">dicabut dari silsilah Yesus</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 3: MENGAPA DICABUT ══════════════════ -->
+  <div class="slide" data-label="Mengapa Dicabut">
+    <div class="col center" style="max-width:800px;">
+      <div class="seg-tag">Segment 02 · Mengapa Dicabut</div>
+      <div class="t-title">Penilaian Teologis</div>
+      <div class="divider center"></div>
+      <div class="t-key" style="text-align:center;">Generasi yang <span class="t-accent">meninggalkan perjanjian</span><br>dihapus dari catatan penebusan</div>
+      <div style="margin-top:1.5rem;" class="t-body" style="text-align:center;">Yang tersisa dalam silsilah:</div>
+      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center; margin-top:0.5rem;">
+        <div class="pill">Rahab</div>
+        <div class="pill">Salmon</div>
+        <div class="pill">Boas</div>
+        <div class="pill">Rut</div>
+        <div class="pill">Obed</div>
+      </div>
+      <div class="t-sub" style="margin-top:1.5rem;">— orang-orang yang di tengah kegelapan <br>tetap memilih iman —</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 4: PELITA ══════════════════ -->
+  <div class="slide" data-label="Pelita">
+    <div class="col center" style="max-width:750px;">
+      <div class="seg-tag">Segment 03 · Pelita yang Hampir Padam</div>
+      <div class="big-quote">"Nyaris" adalah kata kuncinya</div>
+      <div class="divider center"></div>
+      <div class="t-key" style="text-align:center; color: var(--text-2);">Karena sumpah perjanjian Allah<br>tidak bisa dibiarkan tak digenapi</div>
+      <div style="margin-top:2rem;" class="t-sub"><em>qin'ah</em> — kecemburuan kasih Allah</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 5: KRONOLOGI ══════════════════ -->
+  <div class="slide" data-label="Kronologi">
+    <div class="col" style="max-width:850px; width:100%;">
+      <div class="seg-tag">Segment 04 · Kronologi</div>
+      <div class="t-title">1390 SM — 1050 SM</div>
+      <div class="divider"></div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-num">1390</div>
+          <div class="card-title">Dimulai</div>
+          <div class="card-desc">Tulang-tulang Yusuf dikuburkan di Sikhem — Yosua 24:32</div>
+        </div>
+        <div class="card">
+          <div class="card-num">1050</div>
+          <div class="card-title">Berakhir</div>
+          <div class="card-desc">Saul naik takhta sebagai raja pertama — Kisah 13:21</div>
+        </div>
+      </div>
+      <div class="t-body" style="margin-top:0.5rem;">Eli & Samuel termasuk dalam periode ini (1 Samuel 4:18 · 1 Samuel 12:11)</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 6: STRUKTUR ══════════════════ -->
+  <div class="slide" data-label="Struktur">
+    <div class="col center" style="max-width:900px; width:100%;">
+      <div class="seg-tag">Segment 05 · Struktur Kitab</div>
+      <div class="t-title">3 Bagian Kitab Hakim-Hakim</div>
+      <div class="divider center"></div>
+      <div class="grid-3" style="margin-top:0.5rem;">
+        <div class="card" style="text-align:center;">
+          <div class="card-num">1–2</div>
+          <div class="card-title">Rangkuman</div>
+          <div class="card-desc">Karakteristik zaman — mengapa Israel jatuh</div>
+        </div>
+        <div class="card" style="text-align:center; border-color: var(--gold-dim);">
+          <div class="card-num" style="color:var(--gold);">3–16</div>
+          <div class="card-title">Kisah 12 Hakim</div>
+          <div class="card-desc">7 siklus dosa dan penyelamatan</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-num">17–21</div>
+          <div class="card-title">Penegasan</div>
+          <div class="card-desc">Bukti kebobrokan total dari dalam</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 7: KARAKTERISTIK ══════════════════ -->
+  <div class="slide" data-label="Karakteristik">
+    <div class="col" style="max-width:850px; width:100%;">
+      <div class="seg-tag">Segment 06 · Karakteristik Zaman</div>
+      <div class="t-title">Mengapa Israel Jatuh?</div>
+      <div class="divider"></div>
+      <div class="points">
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Tidak memusnahkan orang Kanaan sepenuhnya <span class="t-body">(Hkm 1:19-36)</span></div>
+        </div>
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Semua orang beriman mati <span class="t-body">(Hkm 2:8-10)</span></div>
+        </div>
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text"><span class="t-accent">Generasi baru tidak mengenal Allah</span> — dikelilingi penyembah berhala</div>
+        </div>
+      </div>
+      <div class="verse" style="margin-top:1rem;">
+        <div class="ref">Hakim-hakim 2:10</div>
+        <div class="text">…bangkitlah angkatan yang lain, yang tidak mengenal TUHAN ataupun perbuatan yang dilakukan-Nya.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 8: SIKLUS ══════════════════ -->
+  <div class="slide" data-label="Siklus">
+    <div class="col center">
+      <div class="seg-tag">Segment 07 · Siklus yang Berulang · 7×</div>
+      <div class="t-title" style="margin-bottom:1.5rem;">Pola Hakim-Hakim</div>
+      <div class="cycle-row">
+        <div class="cycle-node">
+          <div class="cycle-icon" style="background:rgba(160,48,48,0.2); border-color:var(--red-light);">✕</div>
+          <div class="cycle-label" style="color:var(--red-light);">Berdosa</div>
+          <div class="cycle-sub">menyembah berhala</div>
+        </div>
+        <div class="cycle-arrow">→</div>
+        <div class="cycle-node">
+          <div class="cycle-icon" style="background:rgba(160,48,48,0.3); border-color:var(--red-light);">⚠</div>
+          <div class="cycle-label" style="color:var(--red-light);">Dihukum</div>
+          <div class="cycle-sub">ditindas bangsa lain</div>
+        </div>
+        <div class="cycle-arrow">→</div>
+        <div class="cycle-node">
+          <div class="cycle-icon" style="background:rgba(42,80,160,0.2); border-color:#6a8abf;">🙏</div>
+          <div class="cycle-label" style="color:#6a8abf;">Bertobat</div>
+          <div class="cycle-sub">berseru kepada Allah</div>
+        </div>
+        <div class="cycle-arrow">→</div>
+        <div class="cycle-node">
+          <div class="cycle-icon" style="background:rgba(42,96,64,0.2); border-color:var(--green-light);">⚔</div>
+          <div class="cycle-label" style="color:var(--green-light);">Diselamatkan</div>
+          <div class="cycle-sub">Allah kirim hakim</div>
+        </div>
+        <div class="cycle-arrow">→</div>
+        <div class="cycle-node">
+          <div class="cycle-icon" style="background:rgba(201,149,60,0.1); border-color:var(--gold-dim);">😴</div>
+          <div class="cycle-label" style="color:var(--gold);">Lupa lagi</div>
+          <div class="cycle-sub">damai → lalai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE 9–20: 12 HAKIM ══════════════════ -->
+
+  <!-- HAKIM 1: OTNIEL -->
+  <div class="slide" data-label="Otniel">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 1 dari 12</div>
+      <div class="hakim-card">
+        <div class="hakim-num">01</div>
+        <div>
+          <div class="hakim-name">Otniel</div>
+          <div class="hakim-meaning">"Allah adalah kekuatanku" · Suku Yehuda</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Aram-Mesopotamia 8 thn</div>
+            <div class="meta-tag good">Damai: 40 thn</div>
+            <div class="meta-tag">Hkm 3:7–11</div>
+          </div>
+          <div class="hakim-lesson">
+            Keponakan & menantu Kaleb. Menang karena <strong>Roh TUHAN menghinggapi dia</strong> — bukan karena kekuatannya.<br><br>
+            <em style="font-size:0.9em; color: var(--text-3);">Zakharia 4:6 — "Bukan dengan keperkasaan… melainkan dengan roh-Ku."</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAKIM 2: EHUD -->
+  <div class="slide" data-label="Ehud">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 2 dari 12</div>
+      <div class="hakim-card">
+        <div class="hakim-num">02</div>
+        <div>
+          <div class="hakim-name">Ehud</div>
+          <div class="hakim-meaning">"Gabungan yang kuat" · Suku Benyamin</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Moab/Eglon 18 thn</div>
+            <div class="meta-tag good">Damai: 80 thn</div>
+            <div class="meta-tag">Hkm 3:15–30</div>
+          </div>
+          <div class="hakim-lesson">
+            <strong>Kidal</strong> — dari suku yang artinya "anak tangan kanan." Ironis. Allah memilih yang dipandang remeh.<br><br>
+            <em style="font-size:0.9em; color: var(--text-3);">1 Kor 1:27 — "Apa yang lemah bagi dunia, dipilih Allah untuk memalukan apa yang kuat."</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAKIM 3: SAMGAR -->
+  <div class="slide" data-label="Samgar">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 3 dari 12</div>
+      <div class="hakim-card">
+        <div class="hakim-num">03</div>
+        <div>
+          <div class="hakim-name">Samgar</div>
+          <div class="hakim-meaning">"Allah yang memberikan" · Bersamaan dengan Ehud</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Filistin · 600 orang</div>
+            <div class="meta-tag">Senjata: tongkat penghalau lembu</div>
+            <div class="meta-tag">Hkm 3:31</div>
+          </div>
+          <div class="hakim-lesson">
+            Hanya penggembala biasa. Tongkat kayu 2,5 meter — mengalahkan 600 orang.<br><br>
+            <strong>Kunci kemenangan bukan siapa kita.</strong> Hasil kemenangan ada di tangan Tuhan.<br><br>
+            <em style="font-size:0.9em; color: var(--text-3);">1 Sam 17:47 — "Di tangan Tuhanlah pertempuran."</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAKIM 4: DEBORA -->
+  <div class="slide" data-label="Debora">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 4 dari 12</div>
+      <div class="hakim-card">
+        <div class="hakim-num">04</div>
+        <div>
+          <div class="hakim-name">Debora</div>
+          <div class="hakim-meaning">"Lebah madu" · Hakim perempuan</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Kanaan/Yabin 20 thn</div>
+            <div class="meta-tag good">Damai: 40 thn</div>
+            <div class="meta-tag">Hkm 4–5</div>
+          </div>
+          <div class="hakim-lesson">
+            Semua laki-laki diam. Barak mau maju hanya kalau Debora ikut.<br>
+            Dipanggil <strong>"ibu bagi Israel"</strong> — bukan gelar, tapi karena melindungi ketika tidak ada yang mau maju.<br><br>
+            <em style="font-size:0.9em; color: var(--text-3);">Hkm 5:7 — "…sampai engkau bangkit, Debora, bangkit sebagai ibu di Israel."</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSITION: 4 hakim berlalu -->
+  <div class="slide" data-label="Transisi">
+    <div class="col center" style="max-width:700px;">
+      <div class="seg-tag">Refleksi · 4 Hakim Pertama</div>
+      <div class="t-key" style="text-align:center; line-height:1.7;">
+        4 kali pelita nyaris padam.<br>
+        4 kali Allah menyalakannya kembali.
+      </div>
+      <div class="divider center"></div>
+      <div class="t-sub" style="text-align:center;">Ini bukan kemajuan.<br>Ini <span style="color:var(--red-light);">kemunduran yang berulang.</span><br>Dan dari sini — kegelapan makin dalam.</div>
+    </div>
+  </div>
+
+  <!-- HAKIM 5: GIDEON -->
+  <div class="slide" data-label="Gideon">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 5 dari 12</div>
+      <div class="hakim-card">
+        <div class="hakim-num">05</div>
+        <div>
+          <div class="hakim-name">Gideon</div>
+          <div class="hakim-meaning">"Penebang pohon / Pahlawan" · Suku Manasye</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Midian 7 thn</div>
+            <div class="meta-tag good">Damai: 40 thn</div>
+            <div class="meta-tag">300 pasukan</div>
+            <div class="meta-tag">Hkm 6–8</div>
+          </div>
+          <div class="hakim-lesson">
+            Mengirik gandum sambil <strong>bersembunyi</strong>. Berkali-kali menguji Allah. Merasa paling kecil.<br>
+            Allah memanggilnya: <strong style="color:var(--gold);">"Pahlawan yang gagah berani."</strong><br><br>
+            Dengan 300 pasukan — menghancurkan seluruh Midian. Mustahil tanpa Allah.<br><br>
+            <em style="font-size:0.9em; color: var(--red-light);">Setelah mati → Israel langsung berbalik ke Baal. Abimelekh membunuh 70 saudaranya.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAKIM 6 & 7: TOLA & YAIR -->
+  <div class="slide" data-label="Tola & Yair">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 6 & 7 dari 12</div>
+      <div class="grid-2" style="max-width:800px;">
+        <div class="card">
+          <div class="card-num" style="font-size:3rem;">06</div>
+          <div class="card-title" style="font-size:1.5rem; font-family:'Cormorant Garamond',serif;">Tola</div>
+          <div class="card-desc" style="font-style:italic; margin-bottom:0.8rem;">"Ulat" · Suku Isakhar · 23 thn</div>
+          <div style="font-size:0.9rem; color:var(--text-2); line-height:1.5;">Bertugas jauh dari sukunya (Efraim). <strong style="color:var(--text);">Setia sampai mati</strong> di tempat Allah taruh dia.</div>
+        </div>
+        <div class="card">
+          <div class="card-num" style="font-size:3rem;">07</div>
+          <div class="card-title" style="font-size:1.5rem; font-family:'Cormorant Garamond',serif;">Yair</div>
+          <div class="card-desc" style="font-style:italic; margin-bottom:0.8rem;">"Yang memberi terang" · 22 thn</div>
+          <div style="font-size:0.9rem; color:var(--text-2); line-height:1.5;"><strong style="color:var(--text);">Masa damai</strong> — tidak ada penindasan. Ketika firman ada di hati, firman itu mencegah dosa.</div>
+        </div>
+      </div>
+      <div class="verse" style="margin-top:1rem;">
+        <div class="ref">Mazmur 119:130</div>
+        <div class="text">Bila tersingkap, firman-firman-Mu memberi terang, memberi pengertian kepada orang-orang bodoh.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAKIM 8: YEFTA -->
+  <div class="slide" data-label="Yefta">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 8 dari 12 · PUNCAK KEJAHATAN</div>
+      <div class="hakim-card" style="border-color: var(--red);">
+        <div class="hakim-num" style="color:var(--red);">08</div>
+        <div>
+          <div class="hakim-name">Yefta</div>
+          <div class="hakim-meaning">"Allah membuka" · Anak tak diakui, dibuang keluarga</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Amon + Filistin 18 thn</div>
+            <div class="meta-tag danger">TIDAK ADA "aman"</div>
+            <div class="meta-tag">Hkm 10–12</div>
+          </div>
+          <div class="hakim-lesson">
+            Sebelum Yefta — Israel menyembah <strong style="color:var(--red-light);">semua berhala sekaligus</strong>: Baal, Asytoret, allah Aram, Sidon, Moab, Amon, Filistin.<br><br>
+            Allah memilih yang dibuang untuk menyelamatkan yang membuangnya.<br><br>
+            <em style="font-size:0.9em; color: var(--red-light);">Tidak ada catatan "aman" = tidak ada pertobatan sejati. Mulai dari sini, kegelapan makin dalam.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAKIM 9–11: EBZAN, ELON, ABDON -->
+  <div class="slide" data-label="Ebzan, Elon, Abdon">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 9, 10, 11 dari 12</div>
+      <div class="t-title" style="margin-bottom:1.5rem; color:var(--text-2);">Tiga Hakim Tanpa Catatan Besar</div>
+      <div class="grid-3">
+        <div class="card" style="opacity:0.7;">
+          <div class="card-num">09</div>
+          <div class="card-title">Ebzan</div>
+          <div class="card-desc">Betlehem · 7 thn<br>Tidak ada "aman"</div>
+        </div>
+        <div class="card" style="opacity:0.6;">
+          <div class="card-num">10</div>
+          <div class="card-title">Elon</div>
+          <div class="card-desc">Zebulon · 10 thn<br>Hanya 2 ayat dicatat</div>
+        </div>
+        <div class="card" style="opacity:0.5;">
+          <div class="card-num">11</div>
+          <div class="card-title">Abdon</div>
+          <div class="card-desc">Piraton · 8 thn<br>Tidak ada "aman"</div>
+        </div>
+      </div>
+      <div class="t-body" style="margin-top:1.5rem; text-align:center; color:var(--text-3);">Tidak ada Roh Tuhan turun secara dramatis.<br>Tidak ada pertobatan. <span style="color:var(--red-light);">Pelita makin redup.</span></div>
+    </div>
+  </div>
+
+  <!-- HAKIM 12: SIMSON -->
+  <div class="slide" data-label="Simson">
+    <div class="col center">
+      <div class="seg-tag">Segment 08 · Hakim 12 dari 12</div>
+      <div class="hakim-card" style="border-color:var(--red);">
+        <div class="hakim-num" style="color:var(--red);">12</div>
+        <div>
+          <div class="hakim-name">Simson</div>
+          <div class="hakim-meaning">"Matahari kecil" · Hkm 13–16 (4 pasal!)</div>
+          <div class="hakim-meta">
+            <div class="meta-tag danger">Musuh: Filistin 20 thn</div>
+            <div class="meta-tag danger">TIDAK ADA "aman"</div>
+            <div class="meta-tag good">Ibrani 11 — Hall of Faith</div>
+          </div>
+          <div class="hakim-lesson">
+            <strong style="color:var(--red-light);">Paling kuat fisik — paling lemah rohani.</strong><br>
+            Hidupnya penuh bencana moral. Tapi namanya tercatat di Hall of Faith.<br><br>
+            <strong style="color:var(--gold);">Allah tidak menilai kekuatan manusia — Ia menilai iman, sekecil apa pun.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE: ESKALASI ══════════════════ -->
+  <div class="slide" data-label="Eskalasi">
+    <div class="col" style="max-width:800px; width:100%;">
+      <div class="seg-tag">Segment 09 · Pola Eskalasi</div>
+      <div class="t-title">Semakin Lama, <span class="t-red">Semakin Gelap</span></div>
+      <div class="divider"></div>
+      <div class="t-body" style="margin-bottom:0.8rem;">Kualitas dosa — makin meningkat:</div>
+      <div class="esk">
+        <div class="esk-row">
+          <div class="esk-label">Otniel: 1 berhala</div>
+          <div class="esk-track"><div class="esk-fill" style="width:15%;background:var(--red);"></div></div>
+        </div>
+        <div class="esk-row">
+          <div class="esk-label">Debora: 1–2 berhala</div>
+          <div class="esk-track"><div class="esk-fill" style="width:35%;background:var(--red);"></div></div>
+        </div>
+        <div class="esk-row">
+          <div class="esk-label">Gideon: Baal-Berit</div>
+          <div class="esk-track"><div class="esk-fill" style="width:55%;background:var(--red-light);"></div></div>
+        </div>
+        <div class="esk-row">
+          <div class="esk-label">Yefta: SEMUA berhala</div>
+          <div class="esk-track"><div class="esk-fill" style="width:100%;background:linear-gradient(90deg,var(--red),#e04040);"></div></div>
+        </div>
+      </div>
+      <div class="t-body" style="margin-top:1rem; color:var(--red-light);">Setelah Yefta — tidak ada lagi catatan "aman." Pertobatan yang hanya didasari penderitaan: <strong>bohong.</strong></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE: KEBOBROKAN ══════════════════ -->
+  <div class="slide" data-label="Pasal 17–21">
+    <div class="col" style="max-width:850px; width:100%;">
+      <div class="seg-tag">Segment 10 · Penegasan Kebobrokan — Pasal 17–21</div>
+      <div class="t-title">Bukan Musuh dari Luar —<br><span class="t-red">Kebusukan dari Dalam</span></div>
+      <div class="divider"></div>
+      <div style="display:flex; flex-direction:column; gap:0.7rem;">
+        <div class="dark-card">
+          <div class="dc-title">Pasal 17–18: Mikha & Imamnya</div>
+          <p>Imam yang bisa <strong>dibeli</strong>. Berhala yang bisa <strong>dirampas</strong>. Semua bisa ditukar.</p>
+        </div>
+        <div class="dark-card">
+          <div class="dc-title">Pasal 19: Lewi & Gundiknya</div>
+          <p>Hamba Tuhan menyerahkan gundiknya untuk diperkosa. Kisah paling gelap dalam seluruh Hakim-hakim.</p>
+        </div>
+        <div class="dark-card">
+          <div class="dc-title">Pasal 20–21: Perang Saudara</div>
+          <p>Israel saling membunuh. Benyamin hampir musnah. <strong>Hancur dari dalam.</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE: APLIKASI ══════════════════ -->
+  <div class="slide" data-label="Aplikasi">
+    <div class="col center" style="max-width:750px;">
+      <div class="seg-tag">Segment 11 · Aplikasi</div>
+      <div class="t-title">Kanaan = <span class="t-accent">Hati Kita</span></div>
+      <div class="divider center"></div>
+      <div class="points">
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Suku-suku asli Kanaan = <span class="t-accent">dosa yang menguasai hati kita</span></div>
+        </div>
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Israel masuk & menaklukkan = <span class="t-accent">firman masuk & menaklukkan manusia lama</span></div>
+        </div>
+        <div class="point-item">
+          <div class="point-dot"></div>
+          <div class="point-text">Tobat kumat, tobat kumat — sampai tidak bisa bertobat lagi</div>
+        </div>
+      </div>
+      <div class="verse" style="margin-top:1rem;">
+        <div class="ref">Kolose 3:5</div>
+        <div class="text">Matikanlah segala sesuatu yang duniawi pada dirimu: percabulan, kenajisan, hawa nafsu, nafsu jahat, dan keserakahan — yang sama dengan penyembahan berhala.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE: PENUTUP ══════════════════ -->
+  <div class="slide" data-label="Penutup">
+    <div class="col center" style="max-width:700px;">
+      <div class="seg-tag">Segment 12 · Penutup · 1 Samuel 3:3</div>
+      <div class="lamp-glow">🕯</div>
+      <div class="big-quote">Lampu rumah Allah<br>belum lagi padam.</div>
+      <div class="divider center"></div>
+      <div class="t-key" style="text-align:center; color:var(--text-2);">340 tahun kegelapan · 7 siklus kemurtadan · 12 hakim<br>— dan pelita <span class="t-accent">masih menyala.</span></div>
+      <div class="t-sub" style="margin-top:1.5rem; text-align:center;">Bukan karena Israel layak.<br>Karena <em>qin'ah</em> — kecemburuan kasih Allah tidak bisa dibiarkan gagal.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SLIDE: FINAL ══════════════════ -->
+  <div class="slide" data-label="Akhir">
+    <div class="col center" style="max-width:700px;">
+      <div class="seg-tag">1 Samuel 3:19</div>
+      <div class="verse" style="text-align:center; border-left:none; border:1px solid var(--gold-dim); border-radius:12px;">
+        <div class="ref" style="text-align:center; font-size:1rem;">1 Samuel 3:19</div>
+        <div class="text" style="font-size:clamp(1.2rem,2.5vw,2rem);">Dan Samuel makin besar dan TUHAN menyertai dia dan tidak ada satu pun dari firman-Nya itu yang dibiarkan-Nya gugur.</div>
+      </div>
+      <div class="divider center" style="margin:2rem auto;"></div>
+      <div class="t-sub" style="text-align:center;">Supaya di hari ini pun, orang-orang dapat berkata:</div>
+      <div class="big-quote" style="margin-top:1rem; font-size:clamp(1.5rem,3.5vw,2.8rem);">Pelita Tuhan<br>sungguh tak terpadamkan.</div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- NAVIGATION -->
+<div id="nav">
+  <button id="btn-prev" title="Sebelumnya (←)">←</button>
+  <span id="slide-counter">1 / 1</span>
+  <button id="btn-next" title="Berikutnya (→)">→</button>
+  <div style="width:1px; height:1.4rem; background:var(--border); margin:0 0.2rem;"></div>
+  <button id="btn-font-down" title="Perkecil font (−)">A−</button>
+  <button id="btn-font-up" title="Perbesar font (+)">A+</button>
+</div>
+
+<div id="keyhint">
+  ← → navigasi<br>
+  + − ukuran font
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('slide-counter');
+  const progressBar = document.getElementById('progress-bar');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  let current = 0;
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, slides.length - 1));
+    slides[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === slides.length - 1;
+    // Update URL hash for easy sharing
+    const label = slides[current].getAttribute('data-label');
+    if (label) document.title = `${label} · Pelajaran 4`;
+  }
+
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen();
+    }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(slides.length - 1);
+  });
+
+  // Touch/swipe support
+  let touchX = null;
+  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) { dx < 0 ? goTo(current + 1) : goTo(current - 1); }
+    touchX = null;
+  });
+
+  goTo(0);
+
+  // ── FONT SIZE CONTROL ──
+  let fontScale = 1.0;
+  const FONT_STEP = 0.1;
+  const FONT_MIN = 0.7;
+  const FONT_MAX = 1.8;
+
+  function applyFont() {
+    document.documentElement.style.fontSize = (fontScale * 16) + 'px';
+  }
+
+  function fontUp() {
+    if (fontScale < FONT_MAX) { fontScale = Math.round((fontScale + FONT_STEP) * 10) / 10; applyFont(); }
+  }
+
+  function fontDown() {
+    if (fontScale > FONT_MIN) { fontScale = Math.round((fontScale - FONT_STEP) * 10) / 10; applyFont(); }
+  }
+
+  document.getElementById('btn-font-up').addEventListener('click', fontUp);
+  document.getElementById('btn-font-down').addEventListener('click', fontDown);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === '+' || e.key === '=' || e.key === 'PageUp')   { e.preventDefault(); fontUp(); }
+    if (e.key === '-' || e.key === '_' || e.key === 'PageDown') { e.preventDefault(); fontDown(); }
+  });
+</script>
+</body>
+</html>
