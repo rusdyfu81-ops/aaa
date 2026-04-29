@@ -3,42 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pelajaran 4 — Jaman Hakim-Hakim</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Pelajaran 5 — Sudut Pandang terhadap Allah</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #080a0e;
+    --bg: #0a0c10;
+    --card: #141820;
+    --border: #252a38;
     --gold: #c9953c;
-    --gold-dim: #7a5a22;
-    --gold-pale: rgba(201,149,60,0.12);
-    --red: #a03030;
-    --red-light: #d05050;
-    --green: #2a6040;
-    --green-light: #4a9060;
-    --text: #f0ece4;
-    --text-2: #a09890;
-    --text-3: #504840;
-    --border: rgba(255,255,255,0.07);
-    --card: rgba(255,255,255,0.04);
+    --gold-dim: #a07828;
+    --red: #c45c5c;
+    --green: #5a9b6a;
+    --text: #f0ede8;
+    --muted: #8a8278;
+    --display: 'Cormorant Garamond', Georgia, serif;
+    --body: 'IBM Plex Sans', sans-serif;
   }
 
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html, body {
-    width: 100%; height: 100%;
+    height: 100%;
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--body);
     overflow: hidden;
   }
 
-  /* ═══════════════════════════════════════
-     SLIDE ENGINE
-  ═══════════════════════════════════════ */
-  #stage {
+  #deck {
     width: 100vw;
     height: 100vh;
     position: relative;
+    font-size: 16px; /* controlled by JS */
   }
 
   .slide {
@@ -51,1071 +47,575 @@
     padding: 5vw 8vw;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.4s ease;
+    text-align: center;
+    overflow-y: auto;
   }
+  .slide.active { opacity: 1; pointer-events: all; }
+  .slide.left { align-items: flex-start; text-align: left; }
 
-  .slide.active {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  /* ═══════════════════════════════════════
-     PROGRESS BAR
-  ═══════════════════════════════════════ */
-  #progress-bar {
+  /* NAV DOTS */
+  #dots {
     position: fixed;
-    top: 0; left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
-    transition: width 0.4s ease;
-    z-index: 100;
-  }
-
-  /* ═══════════════════════════════════════
-     NAV CONTROLS
-  ═══════════════════════════════════════ */
-  #nav {
-    position: fixed;
-    bottom: 2rem;
+    bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: rgba(8,10,14,0.9);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 0.6rem 1.2rem;
+    gap: 0.35rem;
     z-index: 100;
-  }
-
-  #nav button {
-    width: 2.8rem; height: 2.8rem;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  #nav button:hover { background: var(--gold-pale); border-color: var(--gold-dim); color: var(--gold); }
-  #nav button:active { transform: scale(0.92); }
-  #nav button:disabled { opacity: 0.2; cursor: default; }
-
-  #slide-counter {
-    font-size: 0.8rem;
-    color: var(--text-2);
-    min-width: 4rem;
-    text-align: center;
-    letter-spacing: 0.1em;
-  }
-
-  /* Keyboard hint */
-  #keyhint {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    font-size: 0.7rem;
-    color: var(--text-3);
-    text-align: right;
-    line-height: 1.8;
-  }
-
-  /* Segment label */
-  .seg-tag {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold-dim);
-    font-weight: 500;
-    margin-bottom: 1.2rem;
-  }
-
-  /* ═══════════════════════════════════════
-     TYPOGRAPHY SCALE
-  ═══════════════════════════════════════ */
-  .t-hero {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3rem, 7vw, 6rem);
-    font-weight: 700;
-    line-height: 1.1;
-    text-align: center;
-  }
-
-  .t-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 4.5vw, 3.8rem);
-    font-weight: 700;
-    line-height: 1.15;
-  }
-
-  .t-sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.2rem, 2.5vw, 2rem);
-    color: var(--text-2);
-    line-height: 1.4;
-  }
-
-  .t-body {
-    font-size: clamp(1rem, 1.8vw, 1.5rem);
-    line-height: 1.7;
-    color: var(--text-2);
-    max-width: 70ch;
-  }
-
-  .t-key {
-    font-size: clamp(1.2rem, 2.2vw, 1.9rem);
-    font-weight: 500;
-    line-height: 1.5;
-  }
-
-  .t-accent { color: var(--gold); }
-  .t-red { color: var(--red-light); }
-  .t-green { color: var(--green-light); }
-
-  /* ═══════════════════════════════════════
-     LAYOUT HELPERS
-  ═══════════════════════════════════════ */
-  .col { display:flex; flex-direction:column; gap:1rem; }
-  .col.center { align-items:center; text-align:center; }
-  .row { display:flex; gap:2rem; align-items:flex-start; }
-  .spacer { flex:1; }
-
-  .divider {
-    width: 4rem; height: 2px;
-    background: linear-gradient(90deg, var(--gold-dim), transparent);
-    margin: 1.5rem 0;
-  }
-
-  .divider.center { margin: 1.5rem auto; background: linear-gradient(90deg, transparent, var(--gold-dim), transparent); }
-
-  /* ═══════════════════════════════════════
-     SCRIPTURE BLOCK
-  ═══════════════════════════════════════ */
-  .verse {
-    border-left: 3px solid var(--gold-dim);
-    padding: 1rem 1.5rem;
-    background: var(--gold-pale);
-    border-radius: 0 8px 8px 0;
-    max-width: 80ch;
-  }
-
-  .verse .ref {
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 0.5rem;
-  }
-
-  .verse .text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.1rem, 2vw, 1.7rem);
-    color: var(--text);
-    line-height: 1.5;
-  }
-
-  /* ═══════════════════════════════════════
-     KEY POINT PILL
-  ═══════════════════════════════════════ */
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: var(--gold-pale);
-    border: 1px solid var(--gold-dim);
-    border-radius: 100px;
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--gold);
-  }
-
-  /* ═══════════════════════════════════════
-     BULLET POINTS
-  ═══════════════════════════════════════ */
-  .points { display:flex; flex-direction:column; gap:1rem; }
-
-  .point-item {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .point-dot {
-    width: 0.5rem; height: 0.5rem;
-    background: var(--gold);
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 0.6em;
-  }
-
-  .point-text {
-    font-size: clamp(1rem, 1.9vw, 1.6rem);
-    line-height: 1.5;
-  }
-
-  /* ═══════════════════════════════════════
-     GRID CARDS
-  ═══════════════════════════════════════ */
-  .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    width: 100%;
-    max-width: 900px;
-  }
-
-  .grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    width: 100%;
-    max-width: 800px;
-  }
-
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-
-  .card-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--gold-dim);
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-
-  .card-title { font-weight: 600; margin-bottom: 0.3rem; font-size: 1.1rem; }
-  .card-desc { font-size: 0.9rem; color: var(--text-2); line-height: 1.4; }
-
-  /* ═══════════════════════════════════════
-     HAKIM CARD (for judge slides)
-  ═══════════════════════════════════════ */
-  .hakim-card {
-    width: 100%;
-    max-width: 900px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem 2.5rem;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-
-  .hakim-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 5rem;
-    font-weight: 700;
-    color: var(--gold-dim);
-    line-height: 1;
-    opacity: 0.5;
-  }
-
-  .hakim-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .hakim-meaning {
-    font-style: italic;
-    color: var(--text-2);
-    font-size: 1rem;
-    margin-top: 0.2rem;
-  }
-
-  .hakim-meta {
-    display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.8rem;
+    justify-content: center;
+    max-width: 80vw;
   }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+  .dot.active { background: var(--gold); }
 
-  .meta-tag {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.6rem;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--text-2);
+  /* NAV ARROWS */
+  .nav-btn {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    width: 2.4rem; height: 2.4rem; border-radius: 50%; cursor: pointer;
+    font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 100;
   }
+  .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+  #btn-prev { left: 1.2rem; }
+  #btn-next { right: 1.2rem; }
 
-  .meta-tag.danger { border-color: var(--red); color: var(--red-light); background: rgba(160,48,48,0.1); }
-  .meta-tag.good { border-color: var(--green); color: var(--green-light); background: rgba(42,96,64,0.1); }
+  /* SLIDE NUM */
+  #slide-num { position: fixed; top: 1.4rem; right: 1.8rem; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; z-index: 100; }
 
-  .hakim-lesson {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-    font-size: clamp(0.9rem, 1.6vw, 1.3rem);
-    color: var(--text-2);
-    line-height: 1.6;
+  /* FONT CONTROLS */
+  #font-controls {
+    position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 0.35rem; z-index: 100;
+    background: rgba(10,12,16,0.9); border: 1px solid var(--border);
+    border-radius: 2rem; padding: 0.28rem 0.7rem; backdrop-filter: blur(8px);
   }
-
-  .hakim-lesson strong { color: var(--gold); font-weight: 500; }
-
-  /* ═══════════════════════════════════════
-     CYCLE VISUAL
-  ═══════════════════════════════════════ */
-  .cycle-row {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    max-width: 950px;
-    width: 100%;
+  .fc-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 0.82rem; font-weight: 700; width: 1.8rem; height: 1.8rem;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; letter-spacing: -0.02em;
   }
+  .fc-btn:hover { color: var(--gold); background: rgba(201,149,60,0.12); }
+  #fc-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; min-width: 2.4rem; text-align: center; }
 
-  .cycle-node {
-    flex: 1;
-    text-align: center;
-    padding: 1rem 0.5rem;
-  }
+  /* TYPOGRAPHY */
+  .eyebrow { font-size: 0.68em; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.1rem; opacity: 0.8; }
+  h1 { font-family: var(--display); font-size: clamp(1.8em, 5vw, 3.8em); font-weight: 700; line-height: 1.1; color: var(--text); margin-bottom: 0.9rem; }
+  h2 { font-family: var(--display); font-size: clamp(1.3em, 3.5vw, 2.5em); font-weight: 700; line-height: 1.2; color: var(--text); margin-bottom: 0.7rem; }
+  .sub { font-family: var(--display); font-style: italic; font-size: clamp(0.85em, 1.8vw, 1.2em); color: var(--muted); max-width: 700px; line-height: 1.5; }
+  .ref { font-size: 0.68em; letter-spacing: 0.13em; color: var(--muted); border: 1px solid var(--border); padding: 0.28rem 0.9rem; border-radius: 3px; margin-top: 1.2rem; display: inline-block; }
 
-  .cycle-icon {
-    width: 3.5rem; height: 3.5rem;
-    border-radius: 50%;
-    border: 2px solid;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem;
-    margin: 0 auto 0.6rem;
-  }
+  /* SCRIPTURE */
+  .scripture { background: var(--card); border-left: 3px solid var(--gold-dim); padding: 0.9rem 1.2rem; border-radius: 0 6px 6px 0; max-width: 700px; text-align: left; margin: 0.7rem auto; width: 100%; }
+  .scripture .s-ref { font-size: 0.67em; font-weight: 600; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 0.35rem; }
+  .scripture .s-text { font-family: var(--display); font-style: italic; font-size: clamp(0.82em, 1.5vw, 1.05em); color: #c8c4bc; line-height: 1.6; }
 
-  .cycle-label { font-size: 0.9rem; font-weight: 600; }
-  .cycle-sub { font-size: 0.75rem; color: var(--text-2); margin-top: 0.2rem; }
+  /* STATEMENT */
+  .statement { font-family: var(--display); font-size: clamp(1.2em, 3vw, 2.2em); font-weight: 700; line-height: 1.3; color: var(--gold); max-width: 800px; }
 
-  .cycle-arrow {
-    font-size: 1.5rem;
-    color: var(--text-3);
-    flex-shrink: 0;
-    padding-bottom: 1.5rem;
-  }
+  /* 4 CARDS */
+  .cards-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; width: 100%; max-width: 860px; margin-top: 0.7rem; }
+  .sp-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; }
+  .sp-card.bad { border-top: 3px solid var(--red); }
+  .sp-card.good { border-top: 3px solid var(--green); }
+  .sp-icon { font-size: 1.7em; }
+  .sp-name { font-weight: 700; font-size: 0.82em; }
+  .sp-label { font-size: 0.7em; font-style: italic; line-height: 1.3; }
+  .sp-card.bad .sp-label { color: var(--red); }
+  .sp-card.good .sp-label { color: var(--green); }
+  .sp-verdict { font-size: 0.63em; font-weight: 700; padding: 0.18rem 0.5rem; border-radius: 3px; letter-spacing: 0.04em; margin-top: 0.15rem; }
+  .sp-card.bad .sp-verdict { background: rgba(196,92,92,0.15); color: var(--red); }
+  .sp-card.good .sp-verdict { background: rgba(90,155,106,0.15); color: var(--green); }
 
-  /* ═══════════════════════════════════════
-     ESCALATION BARS
-  ═══════════════════════════════════════ */
-  .esk { display:flex; flex-direction:column; gap:0.8rem; width:100%; max-width:700px; }
+  /* CHAR HEADER */
+  .char-header { display: flex; align-items: center; gap: 1.1rem; margin-bottom: 1rem; }
+  .char-icon { font-size: 2.8em; flex-shrink: 0; }
+  .char-title { text-align: left; }
+  .char-title .eyebrow { margin-bottom: 0.25rem; }
 
-  .esk-row { display:flex; align-items:center; gap:1rem; }
+  /* POINTS */
+  .points { list-style: none; max-width: 700px; text-align: left; width: 100%; margin: 0 auto; }
+  .points li { padding: 0.55rem 0; border-bottom: 1px solid var(--border); font-size: clamp(0.82em, 1.5vw, 1.05em); display: flex; align-items: baseline; gap: 0.55rem; line-height: 1.4; }
+  .points li:last-child { border-bottom: none; }
+  .points li .icon { color: var(--gold); flex-shrink: 0; font-size: 0.82em; }
+  .points li .bad-icon { color: var(--red); flex-shrink: 0; font-size: 0.82em; }
+  .points li .good-icon { color: var(--green); flex-shrink: 0; font-size: 0.82em; }
 
-  .esk-label { width: 12rem; font-size:0.9rem; color:var(--text-2); text-align:right; flex-shrink:0; }
+  /* TIMELINE */
+  .timeline { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; max-width: 720px; width: 100%; margin: 0.7rem auto; }
+  .t-phase { flex: 1; padding: 0.8rem 0.5rem; text-align: center; border-right: 1px solid var(--border); background: var(--card); }
+  .t-phase:last-child { border-right: none; }
+  .t-years { font-family: var(--display); font-size: 1.15em; font-weight: 700; color: var(--gold); }
+  .t-label { font-size: 0.7em; color: var(--muted); margin-top: 0.25rem; line-height: 1.4; }
 
-  .esk-track {
-    flex:1; height:1.6rem;
-    background: rgba(255,255,255,0.04);
-    border-radius:4px; overflow:hidden;
-  }
+  /* COMPARE 2 */
+  .compare-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; max-width: 720px; width: 100%; margin: 0.7rem auto; text-align: left; }
+  .cmp { background: var(--card); border-radius: 8px; padding: 0.9rem 1.1rem; }
+  .cmp .cmp-name { font-weight: 700; font-size: 0.9em; margin-bottom: 0.5rem; }
+  .cmp .cmp-name.bad { color: var(--red); }
+  .cmp .cmp-name.good { color: var(--green); }
+  .cmp p { font-size: 0.78em; color: var(--muted); padding: 0.18rem 0; line-height: 1.4; }
+  .cmp p.ok { color: var(--green); }
+  .cmp p.no { color: var(--red); }
 
-  .esk-fill {
-    height:100%; border-radius:4px;
-  }
+  /* KEY CARD */
+  .key-card { background: var(--card); border: 2px solid var(--gold-dim); border-radius: 12px; padding: 1.3rem; max-width: 580px; text-align: center; margin: 0.5rem 0; }
+  .key-icon { font-size: 1.9em; margin-bottom: 0.45rem; }
+  .key-title { font-family: var(--display); font-size: clamp(0.95em, 2vw, 1.4em); font-weight: 700; color: var(--gold); line-height: 1.3; }
 
-  /* ═══════════════════════════════════════
-     SLIDE: HERO
-  ═══════════════════════════════════════ */
-  .slide-hero {
-    background:
-      radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,149,60,0.05) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 40% at 20% 80%, rgba(160,48,48,0.04) 0%, transparent 60%);
-  }
+  /* SNAKE CARDS */
+  .snake-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1.2rem; max-width: 700px; width: 100%; margin: 0.4rem auto; text-align: left; }
+  .snake-label { font-size: 0.68em; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 0.35rem; }
+  .snake-label.phase1 { color: var(--gold); }
+  .snake-label.phase2 { color: var(--red); }
+  .snake-text { font-size: 0.82em; color: var(--muted); line-height: 1.45; }
 
-  /* ═══════════════════════════════════════
-     BIG QUOTE
-  ═══════════════════════════════════════ */
-  .big-quote {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.8rem, 4.5vw, 4rem);
-    font-weight: 700;
-    line-height: 1.2;
-    text-align: center;
-    color: var(--gold);
-    max-width: 20ch;
-  }
+  /* NEHEMIA */
+  .neh-block { background: rgba(90,155,106,0.07); border: 1px solid rgba(90,155,106,0.25); border-radius: 8px; padding: 0.9rem 1.3rem; max-width: 680px; width: 100%; margin: 0.5rem auto; text-align: center; }
+  .neh-block .neh-icon { font-size: 1.7em; margin-bottom: 0.3rem; }
+  .neh-block p { font-size: 0.82em; line-height: 1.5; }
+  .neh-block strong { color: var(--green); }
 
-  /* ═══════════════════════════════════════
-     DARK CARD
-  ═══════════════════════════════════════ */
-  .dark-card {
-    background: rgba(160,48,48,0.08);
-    border: 1px solid rgba(160,48,48,0.25);
-    border-radius: 12px;
-    padding: 1.5rem 2rem;
-    max-width: 80ch;
-  }
+  /* DIVIDER */
+  .divider { width: 3rem; height: 2px; background: var(--gold-dim); margin: 1rem auto; }
 
-  .dark-card .dc-title { font-weight: 600; color: var(--red-light); margin-bottom: 0.5rem; }
-  .dark-card p { font-size: clamp(0.9rem, 1.5vw, 1.2rem); color: var(--text-2); line-height: 1.6; }
+  /* LAMP */
+  .lamp { font-size: 2.3em; opacity: 0.4; margin-bottom: 0.7rem; }
 
-  /* ═══════════════════════════════════════
-     FINAL SLIDE LAMP
-  ═══════════════════════════════════════ */
-  .lamp-glow {
-    font-size: 4rem;
-    text-shadow: 0 0 40px rgba(201,149,60,0.6);
-    margin-bottom: 1.5rem;
-    animation: lamp-pulse 3s ease-in-out infinite;
-  }
+  /* PROGRESS */
+  #progress { position: fixed; bottom: 0; left: 0; height: 2px; background: var(--gold); transition: width 0.4s ease; z-index: 200; }
 
-  @keyframes lamp-pulse {
-    0%, 100% { text-shadow: 0 0 40px rgba(201,149,60,0.6); }
-    50% { text-shadow: 0 0 80px rgba(201,149,60,0.9), 0 0 120px rgba(201,149,60,0.4); }
-  }
+  .slide::before { content: ''; position: absolute; top: -20%; right: -10%; width: 50vw; height: 50vw; border-radius: 50%; background: radial-gradient(circle, rgba(201,149,60,0.03) 0%, transparent 70%); pointer-events: none; }
 
-  /* ═══════════════════════════════════════
-     SLIDE-IN ANIMATION
-  ═══════════════════════════════════════ */
-  .slide.active .col > *, .slide.active .hakim-card, .slide.active .verse,
-  .slide.active .cycle-row, .slide.active .esk, .slide.active .grid-3,
-  .slide.active .grid-2, .slide.active .dark-card, .slide.active .points {
-    animation: fade-up 0.5s ease both;
-  }
-
-  .slide.active .col > *:nth-child(1) { animation-delay: 0.05s; }
-  .slide.active .col > *:nth-child(2) { animation-delay: 0.12s; }
-  .slide.active .col > *:nth-child(3) { animation-delay: 0.19s; }
-  .slide.active .col > *:nth-child(4) { animation-delay: 0.26s; }
-  .slide.active .col > *:nth-child(5) { animation-delay: 0.33s; }
-
-  @keyframes fade-up {
-    from { opacity:0; transform: translateY(16px); }
-    to   { opacity:1; transform: translateY(0); }
+  @media (max-width: 768px) {
+    .cards-4 { grid-template-columns: repeat(2, 1fr); }
+    .compare-2 { grid-template-columns: 1fr; }
+    #btn-prev, #btn-next { display: none; }
+    .timeline { flex-direction: column; }
+    .t-phase { border-right: none; border-bottom: 1px solid var(--border); }
+    .t-phase:last-child { border-bottom: none; }
   }
 </style>
 </head>
 <body>
 
-<div id="progress-bar"></div>
+<div id="deck">
 
-<div id="stage">
+  <!-- S1: JUDUL -->
+  <div class="slide active" id="s1">
+    <div class="eyebrow">Pelita Perjanjian · Pelajaran 5</div>
+    <h1>Sudut Pandang<br>terhadap Allah</h1>
+    <div class="divider"></div>
+    <p class="sub">Empat tokoh, satu Tabut, empat motivasi yang sangat berbeda</p>
+    <span class="ref">1 Sam 3–14 · 2 Sam 6 · 1 Taw 15 · Hos 6:6</span>
+  </div>
 
-  <!-- ══════════════════ SLIDE 1: HERO ══════════════════ -->
-  <div class="slide slide-hero active" data-label="Judul">
-    <div class="col center">
-      <div class="seg-tag">Pelita Perjanjian yang Tak Terpadamkan · Pelajaran 4</div>
-      <div class="t-hero">Jaman Hakim-Hakim</div>
-      <div class="divider center"></div>
-      <div class="t-sub">340 tahun kegelapan — dan pelita yang tidak pernah padam</div>
-      <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
-        <div class="pill">📖 Hakim-hakim 1–21</div>
-        <div class="pill">📖 Matius 1:5</div>
-        <div class="pill">📖 1 Samuel 3</div>
+  <!-- S2: REVIEW -->
+  <div class="slide left" id="s2">
+    <div class="eyebrow">Segment 01 — Review</div>
+    <h2>Bekal Israel Masuk Kanaan</h2>
+    <p class="sub" style="margin-bottom:1rem">340 tahun gelap — tapi tidak kehilangan segalanya</p>
+    <ul class="points">
+      <li><span class="icon">📖</span> Kitab Suci &amp; Hukum Taurat</li>
+      <li><span class="icon">🏛️</span> Imam Besar &amp; orang Lewi</li>
+      <li><span class="icon">⛺</span> Kemah Suci dengan Tabut Perjanjian</li>
+    </ul>
+    <div class="scripture" style="margin-top:0.9rem">
+      <div class="s-ref">Keluaran 25:17, 22</div>
+      <div class="s-text">Buatlah tutup pendamaian dari emas murni… Di sanalah Aku akan bertemu dengan engkau dan… Aku akan berbicara dengan engkau.</div>
+    </div>
+    <p style="font-size:0.75em;color:var(--muted);font-style:italic;margin-top:0.55rem;max-width:700px">Ritual percikan darah di tutup pendamaian → sarana pemulihan hubungan dengan Allah yang kudus (Kel 25:10)</p>
+  </div>
+
+  <!-- S3: PERTANYAAN INTI -->
+  <div class="slide" id="s3">
+    <div class="eyebrow">Segment 02 — Pertanyaan Inti</div>
+    <p class="statement">Kalau semuanya masih ada,<br>lalu kenapa mereka tetap berontak?</p>
+    <div class="divider"></div>
+    <p class="sub">Jawabannya ada pada <strong style="color:var(--gold)">sudut pandang</strong> —<br>bagaimana kita memandang dan memperlakukan hadirat Allah</p>
+    <p style="font-size:0.78em;color:var(--muted);margin-top:0.9rem;max-width:600px;font-style:italic">Kebebasan beragama ada. Kitab Suci bisa diakses. Pendeta sangat banyak. Tapi apakah itu cukup?</p>
+  </div>
+
+  <!-- S4: OVERVIEW 4 TOKOH -->
+  <div class="slide" id="s4">
+    <div class="eyebrow">Segment 03 — Gambaran Besar</div>
+    <h2 style="margin-bottom:0.35rem">Empat Sudut Pandang, Satu Tabut</h2>
+    <p class="sub" style="font-size:0.82em;margin-bottom:0.9rem">Semua percaya Tabut berkuasa — motivasinya yang berbeda</p>
+    <div class="cards-4">
+      <div class="sp-card bad">
+        <div class="sp-icon">🏺</div>
+        <div class="sp-name">Imam Eli</div>
+        <div class="sp-label">Tabut = jimat</div>
+        <div class="sp-verdict">✗ Tidak berkenan</div>
+      </div>
+      <div class="sp-card bad">
+        <div class="sp-icon">👑</div>
+        <div class="sp-name">Raja Saul</div>
+        <div class="sp-label">Allah = alat krisis</div>
+        <div class="sp-verdict">✗ Tidak berkenan</div>
+      </div>
+      <div class="sp-card bad">
+        <div class="sp-icon">✋</div>
+        <div class="sp-name">Uza</div>
+        <div class="sp-label">Merasa berhak mengontrol</div>
+        <div class="sp-verdict">✗ Tidak berkenan</div>
+      </div>
+      <div class="sp-card good">
+        <div class="sp-icon">🔥</div>
+        <div class="sp-name">Raja Daud</div>
+        <div class="sp-label">Hati membara + taat firman</div>
+        <div class="sp-verdict">✓ Berkenan</div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════ SLIDE 2: INTRO ══════════════════ -->
-  <div class="slide" data-label="Intro">
-    <div class="col" style="max-width:900px; width:100%;">
-      <div class="seg-tag">Segment 01 · Intro</div>
-      <div class="t-title">Salmon → Boas</div>
-      <div class="divider"></div>
-      <div class="verse">
-        <div class="ref">Matius 1:5</div>
-        <div class="text">Salmon memperanakkan Boas dari Rahab…</div>
+  <!-- S5: ELI — PERISTIWA -->
+  <div class="slide left" id="s5">
+    <div class="eyebrow">Segment 04 — Sudut Pandang 1</div>
+    <div class="char-header">
+      <div class="char-icon">🏺</div>
+      <div class="char-title">
+        <h2 style="font-size:clamp(1.2em,2.5vw,1.9em)">Imam Eli</h2>
+        <p style="color:var(--red);font-style:italic;font-size:0.87em">Menyambut Allah secara Mistis</p>
       </div>
-      <div class="points" style="margin-top:0.5rem;">
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Rahab hidup di jaman Israel <strong>masuk</strong> ke Kanaan</div>
-        </div>
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Boas hidup <span class="t-accent">~300 tahun</span> setelahnya — bukan ayah-anak langsung</div>
-        </div>
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Generasi di antaranya <span class="t-accent">dicabut dari silsilah Yesus</span></div>
-        </div>
-      </div>
+    </div>
+    <div class="scripture">
+      <div class="s-ref">1 Samuel 4:3 — Perang Afek (1102 SM)</div>
+      <div class="s-text">"Marilah kita mengambil tabut perjanjian TUHAN, supaya Ia datang ke tengah-tengah kita."</div>
+    </div>
+    <ul class="points" style="margin-top:0.7rem">
+      <li><span class="bad-icon">✗</span> Tidak berdoa, tidak menanyakan kehendak Allah — langsung mengambil Tabut</li>
+      <li><span class="bad-icon">✗</span> Tabut = jimat: mengingat Yordan &amp; Yerikho, hendak mengulanginya secara mekanis</li>
+      <li><span class="bad-icon">✗</span> Hasil: 30.000 gugur, Tabut dirampas, Hofni &amp; Pinehas tewas, Eli mati</li>
+    </ul>
+    <div class="scripture" style="margin-top:0.6rem">
+      <div class="s-ref">Maleakhi 2:6–7 — Tanggung jawab imam yang tidak dijalankan</div>
+      <div class="s-text">Bibir seorang imam memelihara pengetahuan… sebab dialah utusan TUHAN semesta alam. Di jaman Eli: firman TUHAN jarang (1 Sam 3:1).</div>
     </div>
   </div>
 
-  <!-- ══════════════════ SLIDE 3: MENGAPA DICABUT ══════════════════ -->
-  <div class="slide" data-label="Mengapa Dicabut">
-    <div class="col center" style="max-width:800px;">
-      <div class="seg-tag">Segment 02 · Mengapa Dicabut</div>
-      <div class="t-title">Penilaian Teologis</div>
-      <div class="divider center"></div>
-      <div class="t-key" style="text-align:center;">Generasi yang <span class="t-accent">meninggalkan perjanjian</span><br>dihapus dari catatan penebusan</div>
-      <div style="margin-top:1.5rem;" class="t-body" style="text-align:center;">Yang tersisa dalam silsilah:</div>
-      <div style="display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center; margin-top:0.5rem;">
-        <div class="pill">Rahab</div>
-        <div class="pill">Salmon</div>
-        <div class="pill">Boas</div>
-        <div class="pill">Rut</div>
-        <div class="pill">Obed</div>
-      </div>
-      <div class="t-sub" style="margin-top:1.5rem;">— orang-orang yang di tengah kegelapan <br>tetap memilih iman —</div>
+  <!-- S6: ELI — IKABOD -->
+  <div class="slide" id="s6">
+    <div class="eyebrow">Imam Eli · Akibat</div>
+    <p class="statement" style="color:var(--red);font-size:clamp(1.7em,4vw,2.8em)">Ikabod</p>
+    <p class="sub" style="margin:0.6rem 0 1rem">"Kemuliaan sudah pergi dari Israel"</p>
+    <div class="scripture">
+      <div class="s-ref">1 Samuel 3:1</div>
+      <div class="s-text">Pada masa itu firman TUHAN jarang; penglihatan-penglihatan pun tidak sering.</div>
+    </div>
+    <div class="divider"></div>
+    <p style="color:var(--muted);font-style:italic;font-size:0.82em;max-width:620px">Bahaya iman mistis: <strong style="color:var(--text)">sarana berubah menjadi sesembahan</strong></p>
+  </div>
+
+  <!-- S7: ULAR TEMBAGA — BARU -->
+  <div class="slide" id="s7">
+    <div class="eyebrow">Imam Eli · Ilustrasi — Bahaya Iman Mistis</div>
+    <h2 style="margin-bottom:0.7rem">Ular Tembaga → Nehustan</h2>
+    <div class="snake-card">
+      <div class="snake-label phase1">Awalnya: Sarana Allah · Bilangan 21:6,8</div>
+      <div class="snake-text">TUHAN mengirim ular tedung karena dosa bersungut-sungut. Lalu Allah memerintahkan ular tembaga di tiang — siapa memandangnya akan hidup. <strong style="color:var(--text)">Pelajaran: jangan mencobai Tuhan, jangan bersungut-sungut.</strong></div>
+    </div>
+    <div class="snake-card" style="border-color:rgba(196,92,92,0.3);">
+      <div class="snake-label phase2">Berubah menjadi: Sesembahan · 2 Raja-raja 18:4</div>
+      <div class="snake-text">Ratusan tahun kemudian, raja Hizkia harus menghancurkannya — orang Israel sudah menyembahnya seperti berhala. Namanya: <strong style="color:var(--red)">Nehustan</strong>. Yang diambil bukan pelajarannya — yang diambil adalah tongkatnya.</div>
+    </div>
+    <div class="scripture" style="margin-top:0.6rem">
+      <div class="s-ref">1 Korintus 10:9–11</div>
+      <div class="s-text">Semuanya ini telah menimpa mereka sebagai contoh dan dituliskan untuk menjadi peringatan bagi kita.</div>
     </div>
   </div>
 
-  <!-- ══════════════════ SLIDE 4: PELITA ══════════════════ -->
-  <div class="slide" data-label="Pelita">
-    <div class="col center" style="max-width:750px;">
-      <div class="seg-tag">Segment 03 · Pelita yang Hampir Padam</div>
-      <div class="big-quote">"Nyaris" adalah kata kuncinya</div>
-      <div class="divider center"></div>
-      <div class="t-key" style="text-align:center; color: var(--text-2);">Karena sumpah perjanjian Allah<br>tidak bisa dibiarkan tak digenapi</div>
-      <div style="margin-top:2rem;" class="t-sub"><em>qin'ah</em> — kecemburuan kasih Allah</div>
+  <!-- S8: KRONOLOGI TABUT -->
+  <div class="slide" id="s8">
+    <div class="eyebrow">Segment 05 — Kronologi</div>
+    <h2 style="margin-bottom:0.4rem">Tabut: ~100 Tahun Diabaikan</h2>
+    <div class="timeline">
+      <div class="t-phase">
+        <div class="t-years">7 bln</div>
+        <div class="t-label">Di tangan<br><strong>Filistin</strong></div>
+      </div>
+      <div class="t-phase">
+        <div class="t-years">52 thn</div>
+        <div class="t-label">Rumah<br><strong>Abinadab</strong></div>
+      </div>
+      <div class="t-phase">
+        <div class="t-years">40 thn</div>
+        <div class="t-label">Masa<br><strong>Raja Saul</strong><br><span style="color:var(--red);font-size:0.85em">diabaikan</span></div>
+      </div>
+      <div class="t-phase">
+        <div class="t-years">7 thn</div>
+        <div class="t-label">Daud raja<br><strong>Yehuda saja</strong></div>
+      </div>
+    </div>
+    <p class="statement" style="font-size:clamp(0.9em,1.7vw,1.3em);margin-top:0.5rem">Hampir 100 tahun Tabut di luar tempat yang seharusnya</p>
+    <p style="font-size:0.72em;color:var(--muted);margin-top:0.35rem;font-style:italic">Selama itu, imam besar tidak bisa masuk Tempat Maha Kudus untuk pengampunan dosa — karena Tabutnya tidak ada.</p>
+  </div>
+
+  <!-- S9: SAUL -->
+  <div class="slide left" id="s9">
+    <div class="eyebrow">Segment 06 — Sudut Pandang 2</div>
+    <div class="char-header">
+      <div class="char-icon">👑</div>
+      <div class="char-title">
+        <h2 style="font-size:clamp(1.2em,2.5vw,1.9em)">Raja Saul</h2>
+        <p style="color:var(--red);font-style:italic;font-size:0.87em">Iman tanpa Perhatian pada Kehendak Allah</p>
+      </div>
+    </div>
+    <ul class="points">
+      <li><span class="bad-icon">✗</span> 40 tahun berkuasa — tidak pernah berpikir mencari Tabut</li>
+      <li><span class="icon">→</span> Saat terdesak (1 Sam 14:18): <em>"Bawa Tabut ke sini!"</em></li>
+      <li><span class="icon">→</span> Saat situasi membaik (1 Sam 14:19): <em style="color:var(--red)">"Biarlah, tidak perlu lagi."</em></li>
+      <li><span class="bad-icon">✗</span> Imam besar tidak bisa masuk Tempat Maha Kudus 40 tahun — kondisi tanpa hukum terus berlanjut</li>
+    </ul>
+    <p style="margin-top:0.75rem;color:var(--muted);font-style:italic;font-size:0.78em;max-width:640px">Allah dipanggil saat krisis, dilupakan saat damai. <strong style="color:var(--text)">Allah sebagai alat, bukan Tuhan.</strong></p>
+  </div>
+
+  <!-- S10: UZA -->
+  <div class="slide left" id="s10">
+    <div class="eyebrow">Segment 07 — Sudut Pandang 3</div>
+    <div class="char-header">
+      <div class="char-icon">✋</div>
+      <div class="char-title">
+        <h2 style="font-size:clamp(1.2em,2.5vw,1.9em)">Uza</h2>
+        <p style="color:var(--red);font-style:italic;font-size:0.87em">Menganggap Tabut sebagai Kuasa untuk Diri Sendiri</p>
+      </div>
+    </div>
+    <ul class="points">
+      <li><span class="bad-icon">✗</span> 100 tahun keluarga serumah dengan Tabut → <em>"tidak ada yang lebih tahu dari kami"</em> — humanisme tinggi</li>
+      <li><span class="bad-icon">✗</span> Memakai kereta (cara Filistin) — bukan cara firman Allah</li>
+      <li><span class="bad-icon">✗</span> <em>Achaz</em> (menggenggam/memiliki) — bukan rasa takut, tapi kepemilikan &amp; kontrol</li>
+      <li><span class="icon">⚡</span> Peres Uza = "memecahkan kesombongan" — Allah membunuhnya di sana</li>
+    </ul>
+    <div class="scripture" style="margin-top:0.6rem">
+      <div class="s-ref">Bilangan 4:5,15</div>
+      <div class="s-text">Tabut harus diangkat dengan kayu pengusung di bahu orang Lewi — bukan dengan kereta.</div>
+    </div>
+    <p style="font-size:0.75em;color:var(--muted);font-style:italic;margin-top:0.45rem;max-width:640px">Periksa diri setiap hari: apakah kita merasa berhak mengontrol Allah karena sudah lama mengenal-Nya?</p>
+  </div>
+
+  <!-- S11: DAUD — GAGAL PERTAMA -->
+  <div class="slide left" id="s11">
+    <div class="eyebrow">Segment 08 — Sudut Pandang 4</div>
+    <div class="char-header">
+      <div class="char-icon">🔥</div>
+      <div class="char-title">
+        <h2 style="font-size:clamp(1.2em,2.5vw,1.9em)">Raja Daud — Percobaan Pertama</h2>
+        <p style="color:var(--gold);font-style:italic;font-size:0.87em">Gagal → Berhenti → Kembali ke Firman</p>
+      </div>
+    </div>
+    <ul class="points">
+      <li><span class="icon">→</span> Agenda pertama jadi raja seluruh Israel: <strong>memindahkan Tabut</strong> — bukan membangun istana</li>
+      <li><span class="bad-icon">!</span> Gagal pertama: pakai cara kereta → Peres Uza → Daud terkejut &amp; takut</li>
+      <li><span class="icon">⏸</span> Tabut disimpan sementara di rumah <strong>Obed-Edom selama 3 bulan</strong></li>
+      <li><span class="good-icon">✓</span> Kembali ke firman — mencari tahu cara yang benar</li>
+    </ul>
+    <div class="scripture" style="margin-top:0.6rem">
+      <div class="s-ref">1 Tawarikh 15:13</div>
+      <div class="s-text">"Sebab oleh karena pada pertama kali kamu tidak hadir, maka TUHAN… menyambar di tengah-tengah kita, sebab kita tidak meminta petunjuk-Nya seperti seharusnya."</div>
     </div>
   </div>
 
-  <!-- ══════════════════ SLIDE 5: KRONOLOGI ══════════════════ -->
-  <div class="slide" data-label="Kronologi">
-    <div class="col" style="max-width:850px; width:100%;">
-      <div class="seg-tag">Segment 04 · Kronologi</div>
-      <div class="t-title">1390 SM — 1050 SM</div>
-      <div class="divider"></div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-num">1390</div>
-          <div class="card-title">Dimulai</div>
-          <div class="card-desc">Tulang-tulang Yusuf dikuburkan di Sikhem — Yosua 24:32</div>
-        </div>
-        <div class="card">
-          <div class="card-num">1050</div>
-          <div class="card-title">Berakhir</div>
-          <div class="card-desc">Saul naik takhta sebagai raja pertama — Kisah 13:21</div>
-        </div>
+  <!-- S12: DAUD — BERHASIL -->
+  <div class="slide left" id="s12">
+    <div class="eyebrow">Raja Daud · Percobaan Kedua</div>
+    <div class="char-header">
+      <div class="char-icon">🎉</div>
+      <div class="char-title">
+        <h2 style="font-size:clamp(1.2em,2.5vw,1.9em)">Tabut Kembali ke Yerusalem</h2>
+        <p style="color:var(--green);font-style:italic;font-size:0.87em">Cara yang benar + hati yang benar</p>
       </div>
-      <div class="t-body" style="margin-top:0.5rem;">Eli & Samuel termasuk dalam periode ini (1 Samuel 4:18 · 1 Samuel 12:11)</div>
+    </div>
+    <ul class="points">
+      <li><span class="good-icon">✓</span> Tabut diangkat di bahu orang Lewi — sesuai petunjuk firman (1 Taw 15:15)</li>
+      <li><span class="good-icon">✓</span> Menari dengan sekuat tenaga (<em>karar</em> — terus-menerus, penuh semangat)</li>
+      <li><span class="good-icon">✓</span> Tidak peduli pendapat Mikhal — yang penting kehendak dan hadirat Allah</li>
+    </ul>
+    <div class="scripture" style="margin-top:0.6rem">
+      <div class="s-ref">2 Samuel 6:14–15</div>
+      <div class="s-text">Daud menari-nari di hadapan TUHAN dengan sekuat tenaga; ia berbaju efod dari kain lenan… dengan diiringi sorak dan bunyi sangkakala.</div>
     </div>
   </div>
 
-  <!-- ══════════════════ SLIDE 6: STRUKTUR ══════════════════ -->
-  <div class="slide" data-label="Struktur">
-    <div class="col center" style="max-width:900px; width:100%;">
-      <div class="seg-tag">Segment 05 · Struktur Kitab</div>
-      <div class="t-title">3 Bagian Kitab Hakim-Hakim</div>
-      <div class="divider center"></div>
-      <div class="grid-3" style="margin-top:0.5rem;">
-        <div class="card" style="text-align:center;">
-          <div class="card-num">1–2</div>
-          <div class="card-title">Rangkuman</div>
-          <div class="card-desc">Karakteristik zaman — mengapa Israel jatuh</div>
-        </div>
-        <div class="card" style="text-align:center; border-color: var(--gold-dim);">
-          <div class="card-num" style="color:var(--gold);">3–16</div>
-          <div class="card-title">Kisah 12 Hakim</div>
-          <div class="card-desc">7 siklus dosa dan penyelamatan</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div class="card-num">17–21</div>
-          <div class="card-title">Penegasan</div>
-          <div class="card-desc">Bukti kebobrokan total dari dalam</div>
-        </div>
+  <!-- S13: PERBANDINGAN -->
+  <div class="slide" id="s13">
+    <div class="eyebrow">Segment 09 — Kesimpulan</div>
+    <h2 style="margin-bottom:0.7rem">Semua Percaya — Motivasi yang Beda</h2>
+    <div class="compare-2">
+      <div class="cmp">
+        <div class="cmp-name bad">Eli / Saul / Uza</div>
+        <p class="no">✗ Tabut = jimat / alat / milik sendiri</p>
+        <p class="no">✗ Cara sendiri &gt; cara firman</p>
+        <p class="no">✗ Motivasi: kepentingan diri</p>
+        <p class="no">✗ Hubungan: ritualistis / transaksional</p>
       </div>
+      <div class="cmp">
+        <div class="cmp-name good">Daud</div>
+        <p class="ok">✓ Tabut = hadirat Allah yang hidup</p>
+        <p class="ok">✓ Gagal → berhenti → kembali ke firman</p>
+        <p class="ok">✓ Motivasi: kasih pada Allah</p>
+        <p class="ok">✓ Hubungan: pengenalan yang bertumbuh</p>
+      </div>
+    </div>
+    <p class="statement" style="font-size:clamp(0.85em,1.5vw,1.15em);margin-top:0.5rem">Ada yang Allah berkenan, ada yang tidak — karena motivasinya.</p>
+  </div>
+
+  <!-- S14: KUNCI -->
+  <div class="slide" id="s14">
+    <div class="eyebrow">Segment 10 — Kunci</div>
+    <h2 style="margin-bottom:0.7rem">Ada Kitab di Samping Tabut</h2>
+    <div class="key-card">
+      <div class="key-icon">📖</div>
+      <div class="key-title">Tabut + Firman = Hubungan yang Hidup</div>
+    </div>
+    <div class="scripture" style="margin-top:0.7rem">
+      <div class="s-ref">Ulangan 31:26</div>
+      <div class="s-text">"Ambillah kitab Taurat ini dan letakkanlah di samping tabut perjanjian TUHAN, Allahmu, supaya menjadi saksi di situ terhadap engkau."</div>
+    </div>
+    <p style="font-size:0.75em;color:var(--muted);font-style:italic;margin-top:0.55rem;max-width:660px">Eli punya Tabut tapi tidak mengajarkan firman. Saul tidak peduli kehendak firman. Uza tidak taat petunjuk firman. Hanya Daud yang <strong style="color:var(--text)">kembali ke firman</strong> setelah gagal.</p>
+  </div>
+
+  <!-- S15: NEHEMIA — BARU -->
+  <div class="slide" id="s15">
+    <div class="eyebrow">Segment 10b — Nehemia 8</div>
+    <h2 style="margin-bottom:0.7rem">Ketika Firman Akhirnya Dibacakan</h2>
+    <div class="neh-block">
+      <div class="neh-icon">😢</div>
+      <p>Ratusan tahun kemudian, di jaman Nehemia — firman dibacakan dari pagi sampai tengah hari. Seluruh umat mendengar dengan penuh perhatian.</p>
+      <p style="margin-top:0.4rem"><strong>Mereka semua menangis.</strong></p>
+    </div>
+    <div class="scripture" style="margin-top:0.6rem">
+      <div class="s-ref">Nehemia 8:8–9</div>
+      <div class="s-text">Bagian-bagian dari kitab itu dibacakan dengan jelas, dengan diberi keterangan-keterangan, sehingga pembacaan dimengerti… semua orang itu menangis ketika mendengar kalimat-kalimat Taurat itu.</div>
+    </div>
+    <p style="font-size:0.75em;color:var(--muted);font-style:italic;margin-top:0.5rem;max-width:660px">Bukan mendengar hal baru — tapi <strong style="color:var(--text)">akhirnya mengerti</strong> apa yang selama ini hanya mereka miliki tanpa memahami.</p>
+  </div>
+
+  <!-- S16: APLIKASI -->
+  <div class="slide" id="s16">
+    <div class="eyebrow">Segment 11 — Aplikasi</div>
+    <h2 style="margin-bottom:0.9rem">Kita Hari Ini — Motivasi Apa?</h2>
+    <ul class="points" style="max-width:640px">
+      <li><span class="bad-icon">🏺</span> <strong>Eli</strong> — iman sebagai mistik &amp; ritual tanpa pengenalan?</li>
+      <li><span class="bad-icon">👑</span> <strong>Saul</strong> — pakai Allah saat susah, lupakan saat senang?</li>
+      <li><span class="bad-icon">✋</span> <strong>Uza</strong> — merasa sudah lama kenal, bebas berbuat semaunya?</li>
+      <li><span class="good-icon">🔥</span> <strong>Daud</strong> — mengasihi hadirat Allah, taat firman, mau belajar dari kegagalan?</li>
+    </ul>
+  </div>
+
+  <!-- S17: AYAT PENGENALAN — BARU -->
+  <div class="slide left" id="s17">
+    <div class="eyebrow">Segment 11b — Panggilan Mengenal Allah</div>
+    <h2 style="font-size:clamp(1.1em,2.3vw,1.7em);margin-bottom:0.7rem">Pengenalan — Bukan Sekadar Kepemilikan</h2>
+    <div class="scripture">
+      <div class="s-ref">Yohanes 17:3</div>
+      <div class="s-text">Inilah hidup yang kekal itu, yaitu bahwa mereka mengenal Engkau, satu-satunya Allah yang benar, dan mengenal Yesus Kristus yang telah Engkau utus.</div>
+    </div>
+    <div class="scripture">
+      <div class="s-ref">Hosea 4:6</div>
+      <div class="s-text">Umat-Ku binasa karena tidak mengenal Allah; karena engkaulah yang menolak pengenalan itu maka Aku menolak engkau menjadi imam-Ku.</div>
+    </div>
+    <div class="scripture">
+      <div class="s-ref">Hosea 6:6</div>
+      <div class="s-text">Aku menyukai kasih setia, dan bukan korban sembelihan, dan menyukai pengenalan akan Allah, lebih dari korban-korban bakaran.</div>
     </div>
   </div>
 
-  <!-- ══════════════════ SLIDE 7: KARAKTERISTIK ══════════════════ -->
-  <div class="slide" data-label="Karakteristik">
-    <div class="col" style="max-width:850px; width:100%;">
-      <div class="seg-tag">Segment 06 · Karakteristik Zaman</div>
-      <div class="t-title">Mengapa Israel Jatuh?</div>
-      <div class="divider"></div>
-      <div class="points">
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Tidak memusnahkan orang Kanaan sepenuhnya <span class="t-body">(Hkm 1:19-36)</span></div>
-        </div>
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Semua orang beriman mati <span class="t-body">(Hkm 2:8-10)</span></div>
-        </div>
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text"><span class="t-accent">Generasi baru tidak mengenal Allah</span> — dikelilingi penyembah berhala</div>
-        </div>
-      </div>
-      <div class="verse" style="margin-top:1rem;">
-        <div class="ref">Hakim-hakim 2:10</div>
-        <div class="text">…bangkitlah angkatan yang lain, yang tidak mengenal TUHAN ataupun perbuatan yang dilakukan-Nya.</div>
-      </div>
-    </div>
+  <!-- S18: PENUTUP -->
+  <div class="slide" id="s18">
+    <div class="lamp">🕯️</div>
+    <div class="eyebrow">Segment 12 — Penutup</div>
+    <p class="statement">Pertanyaannya bukan apakah kita memiliki ini semua.</p>
+    <div class="divider"></div>
+    <p class="statement">Pertanyaannya: dengan sudut pandang apa<br>kita menyambutnya?</p>
+    <p class="ref" style="margin-top:1.3rem">Hosea 6:3 · Marilah kita mengenal dan berusaha sungguh-sungguh mengenal TUHAN</p>
+    <p class="ref">2 Petrus 3:18 · Bertumbuhlah dalam kasih karunia dan pengenalan akan Tuhan</p>
   </div>
 
-  <!-- ══════════════════ SLIDE 8: SIKLUS ══════════════════ -->
-  <div class="slide" data-label="Siklus">
-    <div class="col center">
-      <div class="seg-tag">Segment 07 · Siklus yang Berulang · 7×</div>
-      <div class="t-title" style="margin-bottom:1.5rem;">Pola Hakim-Hakim</div>
-      <div class="cycle-row">
-        <div class="cycle-node">
-          <div class="cycle-icon" style="background:rgba(160,48,48,0.2); border-color:var(--red-light);">✕</div>
-          <div class="cycle-label" style="color:var(--red-light);">Berdosa</div>
-          <div class="cycle-sub">menyembah berhala</div>
-        </div>
-        <div class="cycle-arrow">→</div>
-        <div class="cycle-node">
-          <div class="cycle-icon" style="background:rgba(160,48,48,0.3); border-color:var(--red-light);">⚠</div>
-          <div class="cycle-label" style="color:var(--red-light);">Dihukum</div>
-          <div class="cycle-sub">ditindas bangsa lain</div>
-        </div>
-        <div class="cycle-arrow">→</div>
-        <div class="cycle-node">
-          <div class="cycle-icon" style="background:rgba(42,80,160,0.2); border-color:#6a8abf;">🙏</div>
-          <div class="cycle-label" style="color:#6a8abf;">Bertobat</div>
-          <div class="cycle-sub">berseru kepada Allah</div>
-        </div>
-        <div class="cycle-arrow">→</div>
-        <div class="cycle-node">
-          <div class="cycle-icon" style="background:rgba(42,96,64,0.2); border-color:var(--green-light);">⚔</div>
-          <div class="cycle-label" style="color:var(--green-light);">Diselamatkan</div>
-          <div class="cycle-sub">Allah kirim hakim</div>
-        </div>
-        <div class="cycle-arrow">→</div>
-        <div class="cycle-node">
-          <div class="cycle-icon" style="background:rgba(201,149,60,0.1); border-color:var(--gold-dim);">😴</div>
-          <div class="cycle-label" style="color:var(--gold);">Lupa lagi</div>
-          <div class="cycle-sub">damai → lalai</div>
-        </div>
-      </div>
-    </div>
-  </div>
+</div><!-- #deck -->
 
-  <!-- ══════════════════ SLIDE 9–20: 12 HAKIM ══════════════════ -->
+<!-- CONTROLS -->
+<button class="nav-btn" id="btn-prev">&#8592;</button>
+<button class="nav-btn" id="btn-next">&#8594;</button>
+<div id="slide-num">1 / 18</div>
 
-  <!-- HAKIM 1: OTNIEL -->
-  <div class="slide" data-label="Otniel">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 1 dari 12</div>
-      <div class="hakim-card">
-        <div class="hakim-num">01</div>
-        <div>
-          <div class="hakim-name">Otniel</div>
-          <div class="hakim-meaning">"Allah adalah kekuatanku" · Suku Yehuda</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Aram-Mesopotamia 8 thn</div>
-            <div class="meta-tag good">Damai: 40 thn</div>
-            <div class="meta-tag">Hkm 3:7–11</div>
-          </div>
-          <div class="hakim-lesson">
-            Keponakan & menantu Kaleb. Menang karena <strong>Roh TUHAN menghinggapi dia</strong> — bukan karena kekuatannya.<br><br>
-            <em style="font-size:0.9em; color: var(--text-3);">Zakharia 4:6 — "Bukan dengan keperkasaan… melainkan dengan roh-Ku."</em>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HAKIM 2: EHUD -->
-  <div class="slide" data-label="Ehud">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 2 dari 12</div>
-      <div class="hakim-card">
-        <div class="hakim-num">02</div>
-        <div>
-          <div class="hakim-name">Ehud</div>
-          <div class="hakim-meaning">"Gabungan yang kuat" · Suku Benyamin</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Moab/Eglon 18 thn</div>
-            <div class="meta-tag good">Damai: 80 thn</div>
-            <div class="meta-tag">Hkm 3:15–30</div>
-          </div>
-          <div class="hakim-lesson">
-            <strong>Kidal</strong> — dari suku yang artinya "anak tangan kanan." Ironis. Allah memilih yang dipandang remeh.<br><br>
-            <em style="font-size:0.9em; color: var(--text-3);">1 Kor 1:27 — "Apa yang lemah bagi dunia, dipilih Allah untuk memalukan apa yang kuat."</em>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HAKIM 3: SAMGAR -->
-  <div class="slide" data-label="Samgar">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 3 dari 12</div>
-      <div class="hakim-card">
-        <div class="hakim-num">03</div>
-        <div>
-          <div class="hakim-name">Samgar</div>
-          <div class="hakim-meaning">"Allah yang memberikan" · Bersamaan dengan Ehud</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Filistin · 600 orang</div>
-            <div class="meta-tag">Senjata: tongkat penghalau lembu</div>
-            <div class="meta-tag">Hkm 3:31</div>
-          </div>
-          <div class="hakim-lesson">
-            Hanya penggembala biasa. Tongkat kayu 2,5 meter — mengalahkan 600 orang.<br><br>
-            <strong>Kunci kemenangan bukan siapa kita.</strong> Hasil kemenangan ada di tangan Tuhan.<br><br>
-            <em style="font-size:0.9em; color: var(--text-3);">1 Sam 17:47 — "Di tangan Tuhanlah pertempuran."</em>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HAKIM 4: DEBORA -->
-  <div class="slide" data-label="Debora">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 4 dari 12</div>
-      <div class="hakim-card">
-        <div class="hakim-num">04</div>
-        <div>
-          <div class="hakim-name">Debora</div>
-          <div class="hakim-meaning">"Lebah madu" · Hakim perempuan</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Kanaan/Yabin 20 thn</div>
-            <div class="meta-tag good">Damai: 40 thn</div>
-            <div class="meta-tag">Hkm 4–5</div>
-          </div>
-          <div class="hakim-lesson">
-            Semua laki-laki diam. Barak mau maju hanya kalau Debora ikut.<br>
-            Dipanggil <strong>"ibu bagi Israel"</strong> — bukan gelar, tapi karena melindungi ketika tidak ada yang mau maju.<br><br>
-            <em style="font-size:0.9em; color: var(--text-3);">Hkm 5:7 — "…sampai engkau bangkit, Debora, bangkit sebagai ibu di Israel."</em>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TRANSITION: 4 hakim berlalu -->
-  <div class="slide" data-label="Transisi">
-    <div class="col center" style="max-width:700px;">
-      <div class="seg-tag">Refleksi · 4 Hakim Pertama</div>
-      <div class="t-key" style="text-align:center; line-height:1.7;">
-        4 kali pelita nyaris padam.<br>
-        4 kali Allah menyalakannya kembali.
-      </div>
-      <div class="divider center"></div>
-      <div class="t-sub" style="text-align:center;">Ini bukan kemajuan.<br>Ini <span style="color:var(--red-light);">kemunduran yang berulang.</span><br>Dan dari sini — kegelapan makin dalam.</div>
-    </div>
-  </div>
-
-  <!-- HAKIM 5: GIDEON -->
-  <div class="slide" data-label="Gideon">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 5 dari 12</div>
-      <div class="hakim-card">
-        <div class="hakim-num">05</div>
-        <div>
-          <div class="hakim-name">Gideon</div>
-          <div class="hakim-meaning">"Penebang pohon / Pahlawan" · Suku Manasye</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Midian 7 thn</div>
-            <div class="meta-tag good">Damai: 40 thn</div>
-            <div class="meta-tag">300 pasukan</div>
-            <div class="meta-tag">Hkm 6–8</div>
-          </div>
-          <div class="hakim-lesson">
-            Mengirik gandum sambil <strong>bersembunyi</strong>. Berkali-kali menguji Allah. Merasa paling kecil.<br>
-            Allah memanggilnya: <strong style="color:var(--gold);">"Pahlawan yang gagah berani."</strong><br><br>
-            Dengan 300 pasukan — menghancurkan seluruh Midian. Mustahil tanpa Allah.<br><br>
-            <em style="font-size:0.9em; color: var(--red-light);">Setelah mati → Israel langsung berbalik ke Baal. Abimelekh membunuh 70 saudaranya.</em>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HAKIM 6 & 7: TOLA & YAIR -->
-  <div class="slide" data-label="Tola & Yair">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 6 & 7 dari 12</div>
-      <div class="grid-2" style="max-width:800px;">
-        <div class="card">
-          <div class="card-num" style="font-size:3rem;">06</div>
-          <div class="card-title" style="font-size:1.5rem; font-family:'Cormorant Garamond',serif;">Tola</div>
-          <div class="card-desc" style="font-style:italic; margin-bottom:0.8rem;">"Ulat" · Suku Isakhar · 23 thn</div>
-          <div style="font-size:0.9rem; color:var(--text-2); line-height:1.5;">Bertugas jauh dari sukunya (Efraim). <strong style="color:var(--text);">Setia sampai mati</strong> di tempat Allah taruh dia.</div>
-        </div>
-        <div class="card">
-          <div class="card-num" style="font-size:3rem;">07</div>
-          <div class="card-title" style="font-size:1.5rem; font-family:'Cormorant Garamond',serif;">Yair</div>
-          <div class="card-desc" style="font-style:italic; margin-bottom:0.8rem;">"Yang memberi terang" · 22 thn</div>
-          <div style="font-size:0.9rem; color:var(--text-2); line-height:1.5;"><strong style="color:var(--text);">Masa damai</strong> — tidak ada penindasan. Ketika firman ada di hati, firman itu mencegah dosa.</div>
-        </div>
-      </div>
-      <div class="verse" style="margin-top:1rem;">
-        <div class="ref">Mazmur 119:130</div>
-        <div class="text">Bila tersingkap, firman-firman-Mu memberi terang, memberi pengertian kepada orang-orang bodoh.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HAKIM 8: YEFTA -->
-  <div class="slide" data-label="Yefta">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 8 dari 12 · PUNCAK KEJAHATAN</div>
-      <div class="hakim-card" style="border-color: var(--red);">
-        <div class="hakim-num" style="color:var(--red);">08</div>
-        <div>
-          <div class="hakim-name">Yefta</div>
-          <div class="hakim-meaning">"Allah membuka" · Anak tak diakui, dibuang keluarga</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Amon + Filistin 18 thn</div>
-            <div class="meta-tag danger">TIDAK ADA "aman"</div>
-            <div class="meta-tag">Hkm 10–12</div>
-          </div>
-          <div class="hakim-lesson">
-            Sebelum Yefta — Israel menyembah <strong style="color:var(--red-light);">semua berhala sekaligus</strong>: Baal, Asytoret, allah Aram, Sidon, Moab, Amon, Filistin.<br><br>
-            Allah memilih yang dibuang untuk menyelamatkan yang membuangnya.<br><br>
-            <em style="font-size:0.9em; color: var(--red-light);">Tidak ada catatan "aman" = tidak ada pertobatan sejati. Mulai dari sini, kegelapan makin dalam.</em>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HAKIM 9–11: EBZAN, ELON, ABDON -->
-  <div class="slide" data-label="Ebzan, Elon, Abdon">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 9, 10, 11 dari 12</div>
-      <div class="t-title" style="margin-bottom:1.5rem; color:var(--text-2);">Tiga Hakim Tanpa Catatan Besar</div>
-      <div class="grid-3">
-        <div class="card" style="opacity:0.7;">
-          <div class="card-num">09</div>
-          <div class="card-title">Ebzan</div>
-          <div class="card-desc">Betlehem · 7 thn<br>Tidak ada "aman"</div>
-        </div>
-        <div class="card" style="opacity:0.6;">
-          <div class="card-num">10</div>
-          <div class="card-title">Elon</div>
-          <div class="card-desc">Zebulon · 10 thn<br>Hanya 2 ayat dicatat</div>
-        </div>
-        <div class="card" style="opacity:0.5;">
-          <div class="card-num">11</div>
-          <div class="card-title">Abdon</div>
-          <div class="card-desc">Piraton · 8 thn<br>Tidak ada "aman"</div>
-        </div>
-      </div>
-      <div class="t-body" style="margin-top:1.5rem; text-align:center; color:var(--text-3);">Tidak ada Roh Tuhan turun secara dramatis.<br>Tidak ada pertobatan. <span style="color:var(--red-light);">Pelita makin redup.</span></div>
-    </div>
-  </div>
-
-  <!-- HAKIM 12: SIMSON -->
-  <div class="slide" data-label="Simson">
-    <div class="col center">
-      <div class="seg-tag">Segment 08 · Hakim 12 dari 12</div>
-      <div class="hakim-card" style="border-color:var(--red);">
-        <div class="hakim-num" style="color:var(--red);">12</div>
-        <div>
-          <div class="hakim-name">Simson</div>
-          <div class="hakim-meaning">"Matahari kecil" · Hkm 13–16 (4 pasal!)</div>
-          <div class="hakim-meta">
-            <div class="meta-tag danger">Musuh: Filistin 20 thn</div>
-            <div class="meta-tag danger">TIDAK ADA "aman"</div>
-            <div class="meta-tag good">Ibrani 11 — Hall of Faith</div>
-          </div>
-          <div class="hakim-lesson">
-            <strong style="color:var(--red-light);">Paling kuat fisik — paling lemah rohani.</strong><br>
-            Hidupnya penuh bencana moral. Tapi namanya tercatat di Hall of Faith.<br><br>
-            <strong style="color:var(--gold);">Allah tidak menilai kekuatan manusia — Ia menilai iman, sekecil apa pun.</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ SLIDE: ESKALASI ══════════════════ -->
-  <div class="slide" data-label="Eskalasi">
-    <div class="col" style="max-width:800px; width:100%;">
-      <div class="seg-tag">Segment 09 · Pola Eskalasi</div>
-      <div class="t-title">Semakin Lama, <span class="t-red">Semakin Gelap</span></div>
-      <div class="divider"></div>
-      <div class="t-body" style="margin-bottom:0.8rem;">Kualitas dosa — makin meningkat:</div>
-      <div class="esk">
-        <div class="esk-row">
-          <div class="esk-label">Otniel: 1 berhala</div>
-          <div class="esk-track"><div class="esk-fill" style="width:15%;background:var(--red);"></div></div>
-        </div>
-        <div class="esk-row">
-          <div class="esk-label">Debora: 1–2 berhala</div>
-          <div class="esk-track"><div class="esk-fill" style="width:35%;background:var(--red);"></div></div>
-        </div>
-        <div class="esk-row">
-          <div class="esk-label">Gideon: Baal-Berit</div>
-          <div class="esk-track"><div class="esk-fill" style="width:55%;background:var(--red-light);"></div></div>
-        </div>
-        <div class="esk-row">
-          <div class="esk-label">Yefta: SEMUA berhala</div>
-          <div class="esk-track"><div class="esk-fill" style="width:100%;background:linear-gradient(90deg,var(--red),#e04040);"></div></div>
-        </div>
-      </div>
-      <div class="t-body" style="margin-top:1rem; color:var(--red-light);">Setelah Yefta — tidak ada lagi catatan "aman." Pertobatan yang hanya didasari penderitaan: <strong>bohong.</strong></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ SLIDE: KEBOBROKAN ══════════════════ -->
-  <div class="slide" data-label="Pasal 17–21">
-    <div class="col" style="max-width:850px; width:100%;">
-      <div class="seg-tag">Segment 10 · Penegasan Kebobrokan — Pasal 17–21</div>
-      <div class="t-title">Bukan Musuh dari Luar —<br><span class="t-red">Kebusukan dari Dalam</span></div>
-      <div class="divider"></div>
-      <div style="display:flex; flex-direction:column; gap:0.7rem;">
-        <div class="dark-card">
-          <div class="dc-title">Pasal 17–18: Mikha & Imamnya</div>
-          <p>Imam yang bisa <strong>dibeli</strong>. Berhala yang bisa <strong>dirampas</strong>. Semua bisa ditukar.</p>
-        </div>
-        <div class="dark-card">
-          <div class="dc-title">Pasal 19: Lewi & Gundiknya</div>
-          <p>Hamba Tuhan menyerahkan gundiknya untuk diperkosa. Kisah paling gelap dalam seluruh Hakim-hakim.</p>
-        </div>
-        <div class="dark-card">
-          <div class="dc-title">Pasal 20–21: Perang Saudara</div>
-          <p>Israel saling membunuh. Benyamin hampir musnah. <strong>Hancur dari dalam.</strong></p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ SLIDE: APLIKASI ══════════════════ -->
-  <div class="slide" data-label="Aplikasi">
-    <div class="col center" style="max-width:750px;">
-      <div class="seg-tag">Segment 11 · Aplikasi</div>
-      <div class="t-title">Kanaan = <span class="t-accent">Hati Kita</span></div>
-      <div class="divider center"></div>
-      <div class="points">
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Suku-suku asli Kanaan = <span class="t-accent">dosa yang menguasai hati kita</span></div>
-        </div>
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Israel masuk & menaklukkan = <span class="t-accent">firman masuk & menaklukkan manusia lama</span></div>
-        </div>
-        <div class="point-item">
-          <div class="point-dot"></div>
-          <div class="point-text">Tobat kumat, tobat kumat — sampai tidak bisa bertobat lagi</div>
-        </div>
-      </div>
-      <div class="verse" style="margin-top:1rem;">
-        <div class="ref">Kolose 3:5</div>
-        <div class="text">Matikanlah segala sesuatu yang duniawi pada dirimu: percabulan, kenajisan, hawa nafsu, nafsu jahat, dan keserakahan — yang sama dengan penyembahan berhala.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ SLIDE: PENUTUP ══════════════════ -->
-  <div class="slide" data-label="Penutup">
-    <div class="col center" style="max-width:700px;">
-      <div class="seg-tag">Segment 12 · Penutup · 1 Samuel 3:3</div>
-      <div class="lamp-glow">🕯</div>
-      <div class="big-quote">Lampu rumah Allah<br>belum lagi padam.</div>
-      <div class="divider center"></div>
-      <div class="t-key" style="text-align:center; color:var(--text-2);">340 tahun kegelapan · 7 siklus kemurtadan · 12 hakim<br>— dan pelita <span class="t-accent">masih menyala.</span></div>
-      <div class="t-sub" style="margin-top:1.5rem; text-align:center;">Bukan karena Israel layak.<br>Karena <em>qin'ah</em> — kecemburuan kasih Allah tidak bisa dibiarkan gagal.</div>
-    </div>
-  </div>
-
-  <!-- ══════════════════ SLIDE: FINAL ══════════════════ -->
-  <div class="slide" data-label="Akhir">
-    <div class="col center" style="max-width:700px;">
-      <div class="seg-tag">1 Samuel 3:19</div>
-      <div class="verse" style="text-align:center; border-left:none; border:1px solid var(--gold-dim); border-radius:12px;">
-        <div class="ref" style="text-align:center; font-size:1rem;">1 Samuel 3:19</div>
-        <div class="text" style="font-size:clamp(1.2rem,2.5vw,2rem);">Dan Samuel makin besar dan TUHAN menyertai dia dan tidak ada satu pun dari firman-Nya itu yang dibiarkan-Nya gugur.</div>
-      </div>
-      <div class="divider center" style="margin:2rem auto;"></div>
-      <div class="t-sub" style="text-align:center;">Supaya di hari ini pun, orang-orang dapat berkata:</div>
-      <div class="big-quote" style="margin-top:1rem; font-size:clamp(1.5rem,3.5vw,2.8rem);">Pelita Tuhan<br>sungguh tak terpadamkan.</div>
-    </div>
-  </div>
-
-</div><!-- /stage -->
-
-<!-- NAVIGATION -->
-<div id="nav">
-  <button id="btn-prev" title="Sebelumnya (←)">←</button>
-  <span id="slide-counter">1 / 1</span>
-  <button id="btn-next" title="Berikutnya (→)">→</button>
-  <div style="width:1px; height:1.4rem; background:var(--border); margin:0 0.2rem;"></div>
-  <button id="btn-font-down" title="Perkecil font (−)">A−</button>
-  <button id="btn-font-up" title="Perbesar font (+)">A+</button>
+<!-- FONT CONTROLS -->
+<div id="font-controls">
+  <button class="fc-btn" id="fc-minus" title="Perkecil (−)">A−</button>
+  <span id="fc-label">100%</span>
+  <button class="fc-btn" id="fc-plus" title="Perbesar (+)">A+</button>
 </div>
 
-<div id="keyhint">
-  ← → navigasi<br>
-  + − ukuran font
-</div>
+<div id="dots"></div>
+<div id="progress"></div>
 
 <script>
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const counter = document.getElementById('slide-counter');
-  const progressBar = document.getElementById('progress-bar');
-  const btnPrev = document.getElementById('btn-prev');
-  const btnNext = document.getElementById('btn-next');
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
   let current = 0;
 
-  function goTo(n) {
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total) return;
     slides[current].classList.remove('active');
-    current = Math.max(0, Math.min(n, slides.length - 1));
+    dotsEl.children[current].classList.remove('active');
+    current = idx;
     slides[current].classList.add('active');
-    counter.textContent = `${current + 1} / ${slides.length}`;
-    progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
-    btnPrev.disabled = current === 0;
-    btnNext.disabled = current === slides.length - 1;
-    // Update URL hash for easy sharing
-    const label = slides[current].getAttribute('data-label');
-    if (label) document.title = `${label} · Pelajaran 4`;
+    dotsEl.children[current].classList.add('active');
+    document.getElementById('slide-num').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
   }
 
-  btnPrev.addEventListener('click', () => goTo(current - 1));
-  btnNext.addEventListener('click', () => goTo(current + 1));
+  document.getElementById('btn-next').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('btn-prev').addEventListener('click', () => goTo(current - 1));
+
+  // Font size control
+  const deck = document.getElementById('deck');
+  const fcLabel = document.getElementById('fc-label');
+  let scale = 1.0;
+  const STEPS = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.35, 1.5, 1.7, 2.0];
+  let stepIdx = 4; // starts at 1.0
+
+  function applyScale() {
+    scale = STEPS[stepIdx];
+    deck.style.fontSize = (scale * 16) + 'px';
+    fcLabel.textContent = Math.round(scale * 100) + '%';
+  }
+
+  document.getElementById('fc-plus').addEventListener('click', () => {
+    if (stepIdx < STEPS.length - 1) { stepIdx++; applyScale(); }
+  });
+  document.getElementById('fc-minus').addEventListener('click', () => {
+    if (stepIdx > 0) { stepIdx--; applyScale(); }
+  });
 
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
-    if (e.key === 'f' || e.key === 'F') {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-      else document.exitFullscreen();
-    }
-    if (e.key === 'Home') goTo(0);
-    if (e.key === 'End') goTo(slides.length - 1);
+    if ((e.key === '+' || e.key === '=') && !e.ctrlKey) { if (stepIdx < STEPS.length - 1) { stepIdx++; applyScale(); } }
+    if (e.key === '-' && !e.ctrlKey) { if (stepIdx > 0) { stepIdx--; applyScale(); } }
   });
 
-  // Touch/swipe support
-  let touchX = null;
-  document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  // Touch/swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
   document.addEventListener('touchend', e => {
-    if (touchX === null) return;
-    const dx = e.changedTouches[0].clientX - touchX;
+    const dx = e.changedTouches[0].clientX - touchStartX;
     if (Math.abs(dx) > 50) { dx < 0 ? goTo(current + 1) : goTo(current - 1); }
-    touchX = null;
   });
 
-  goTo(0);
-
-  // ── FONT SIZE CONTROL ──
-  let fontScale = 1.0;
-  const FONT_STEP = 0.1;
-  const FONT_MIN = 0.7;
-  const FONT_MAX = 1.8;
-
-  function applyFont() {
-    document.documentElement.style.fontSize = (fontScale * 16) + 'px';
-  }
-
-  function fontUp() {
-    if (fontScale < FONT_MAX) { fontScale = Math.round((fontScale + FONT_STEP) * 10) / 10; applyFont(); }
-  }
-
-  function fontDown() {
-    if (fontScale > FONT_MIN) { fontScale = Math.round((fontScale - FONT_STEP) * 10) / 10; applyFont(); }
-  }
-
-  document.getElementById('btn-font-up').addEventListener('click', fontUp);
-  document.getElementById('btn-font-down').addEventListener('click', fontDown);
-
-  document.addEventListener('keydown', e => {
-    if (e.key === '+' || e.key === '=' || e.key === 'PageUp')   { e.preventDefault(); fontUp(); }
-    if (e.key === '-' || e.key === '_' || e.key === 'PageDown') { e.preventDefault(); fontDown(); }
-  });
+  // Init progress
+  document.getElementById('progress').style.width = (1 / total * 100) + '%';
 </script>
 </body>
 </html>
