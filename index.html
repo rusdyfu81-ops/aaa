@@ -55,7 +55,7 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
   font-size:1.05rem;color:white;font-weight:700;
   display:flex;align-items:center;gap:8px;
 }
-.topbar-cross{color:var(--gold2);font-size:1.05rem}
+.topbar-cross{color:var(--gold2);font-size:1.05rem;width:18px;height:18px;display:flex;flex-shrink:0;overflow:hidden}
 .burger{
   width:44px;height:44px;
   display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;
@@ -258,7 +258,7 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
 .mates-box{background:rgba(255,255,255,0.05);border-radius:8px;padding:10px 12px;margin-bottom:8px}
 .mates-lbl{font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold2);margin-bottom:8px}
 .chip-row{display:flex;flex-wrap:wrap;gap:6px}
-.chip{background:rgba(44,44,46,0.08);color:var(--text);border-radius:100px;padding:5px 12px;font-size:0.82rem;font-weight:600}
+.chip{background:rgba(125,194,66,0.25);color:#d4f7a0;border-radius:100px;padding:5px 12px;font-size:0.82rem;font-weight:600;border:1px solid rgba(125,194,66,0.4)}
 .bus-box{background:rgba(48,168,216,0.1);border:1px solid rgba(48,168,216,0.25);border-radius:8px;padding:10px 12px}
 .bus-lbl{font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#93C5FD;margin-bottom:8px}
 .bus-grid{display:flex;gap:16px}
@@ -581,12 +581,12 @@ svg { overflow:visible; }
 </head>
 <body>
 
-<div class="toast" id="toast">✓ Berhasil! 🙏</div>
+<div class="toast" id="toast">✓ Berhasil!</div>
 
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-title">
-    <span class="topbar-cross" style="color:var(--green-brand);display:flex;align-items:center"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L13.5 9.5L21 11L13.5 12.5L12 20L10.5 12.5L3 11L10.5 9.5L12 2Z" fill="var(--green-brand)"/></svg></span>
+    <span class="topbar-cross" style="color:var(--green-brand)">✦</span>
     GPBSI Family Retreat 2026
   </div>
   <button class="burger" id="burger" onclick="toggleDrawer()" aria-label="Menu">
@@ -601,7 +601,7 @@ svg { overflow:visible; }
 <div class="drawer" id="drawer">
   <div class="drawer-header">
     <div>
-      <div class="drawer-logo" style="display:flex;align-items:center;gap:8px"><span style="color:var(--green-brand);display:flex;width:18px;height:18px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L13.5 9.5L21 11L13.5 12.5L12 20L10.5 12.5L3 11L10.5 9.5L12 2Z" fill="var(--green-brand)"/></svg></span> GPBSI Family Retreat</div>
+      <div class="drawer-logo" style="display:flex;align-items:center;gap:8px"><span style="color:var(--green-brand);display:flex;width:16px;height:16px;flex-shrink:0;overflow:hidden"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L13.5 9.5L21 11L13.5 12.5L12 20L10.5 12.5L3 11L10.5 9.5L12 2Z" fill="var(--green-brand)"/></svg></span> GPBSI Family Retreat</div>
       <div class="drawer-sub">14–16 Mei 2026 · 5G Resort, Cijeruk</div>
     </div>
     <button class="drawer-close" onclick="closeDrawer()" style="display:flex;align-items:center;justify-content:center"><span style="width:16px;height:16px;display:flex;color:rgba(255,255,255,0.7)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.7)" opacity="0.5"/><path d="M8 8L16 16M16 8L8 16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></span></button>
@@ -726,23 +726,23 @@ svg { overflow:visible; }
         </button>
         <div class="accordion-body">
           <div class="acc-row">
-            <div class="acc-cell">👴 Senior<div class="acc-loc">Pdt. Yudie Lengkong</div></div>
+            <div class="acc-cell"><span style="display:inline-flex;width:16px;height:16px;flex-shrink:0;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="6" r="3.5" fill="currentColor"/><path d="M6 21C6 17.7 8.7 15 12 15C15.3 15 18 17.7 18 21H6Z" fill="currentColor"/><path d="M9 14L8 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 18H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span> Senior<div class="acc-loc">Pdt. Yudie Lengkong</div></div>
             <div class="acc-cell">Grand Pancar<div class="acc-loc">Sisi Kanan</div></div>
           </div>
           <div class="acc-row">
-            <div class="acc-cell">🧑‍🤝‍🧑 Umum<div class="acc-loc">Pdt. Youn Doo Hee</div></div>
+            <div class="acc-cell"><span style="display:inline-flex;width:16px;height:16px;flex-shrink:0;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="7" r="3.5" fill="currentColor"/><circle cx="17" cy="8" r="2.8" fill="currentColor" opacity="0.7"/><path d="M1 20C1 16.7 4.6 14 9 14C13.4 14 17 16.7 17 20H1Z" fill="currentColor"/><path d="M17 14C19.8 14 22 16.2 22 19V20H17V20C17 18.1 15.7 16.4 14 15.4C14.9 14.5 15.9 14 17 14Z" fill="currentColor" opacity="0.7"/></svg></span> Umum<div class="acc-loc">Pdt. Youn Doo Hee</div></div>
             <div class="acc-cell">Grand Pancar<div class="acc-loc">Sisi Kiri</div></div>
           </div>
           <div class="acc-row">
-            <div class="acc-cell">🙋 Remaja + SD<div class="acc-loc">Pdt. Allen Widjaja</div></div>
+            <div class="acc-cell"><span style="display:inline-flex;width:16px;height:16px;flex-shrink:0;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5.5" r="3.5" fill="currentColor"/><path d="M7 21C7 17.7 9.2 15 12 15C14.8 15 17 17.7 17 21H7Z" fill="currentColor"/><path d="M12 9L14 13H10L12 9Z" fill="currentColor" opacity="0.6"/></svg></span> Remaja + SD<div class="acc-loc">Pdt. Allen Widjaja</div></div>
             <div class="acc-cell">Ruang Pancar 1<div class="acc-loc">Moderator: Rusdy</div></div>
           </div>
           <div class="acc-row">
-            <div class="acc-cell">🎒 Sunday School<div class="acc-loc">Panitia Anak</div></div>
+            <div class="acc-cell"><span style="display:inline-flex;width:16px;height:16px;flex-shrink:0;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="6" r="3.5" fill="currentColor"/><path d="M7 21C7 17.7 9.2 15 12 15C14.8 15 17 17.7 17 21H7Z" fill="currentColor"/><path d="M9 10L8 14M15 10L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span> Sunday School<div class="acc-loc">Panitia Anak</div></div>
             <div class="acc-cell">Ruang Pancar 3<div class="acc-loc">Acara mandiri</div></div>
           </div>
           <div class="acc-row">
-            <div class="acc-cell">💪 Pemuda<div class="acc-loc">Pdt. JungWon Jung</div></div>
+            <div class="acc-cell"><span style="display:inline-flex;width:16px;height:16px;flex-shrink:0;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="5.5" r="3.5" fill="currentColor"/><path d="M7 21C7 17.7 9.2 15 12 15C14.8 15 17 17.7 17 21H7Z" fill="currentColor"/><path d="M12 9L14 13H10L12 9Z" fill="currentColor" opacity="0.6"/></svg></span> Pemuda<div class="acc-loc">Pdt. JungWon Jung</div></div>
             <div class="acc-cell">Ruang Pancar 4<div class="acc-loc">Moderator: Coni</div></div>
           </div>
         </div>
@@ -827,7 +827,7 @@ svg { overflow:visible; }
           <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Baju ibadah (rapi)</div></div>
           <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Baju tidur</div></div>
           <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Pakaian senam (untuk senam pagi)</div></div>
-          <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Pakaian renang (jika ingin berenang)<div style="font-size:0.75rem;color:var(--red);margin-top:3px">⚠️ Anak-anak wajib dalam pengawasan mandiri orang tua</div></div></div>
+          <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Pakaian renang (jika ingin berenang)<div style="font-size:0.75rem;color:var(--red);margin-top:3px;display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;display:flex;color:var(--red)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L22 20H2L12 3Z" fill="currentColor"/><rect x="11" y="10" width="2" height="5" rx="1" fill="white"/><circle cx="12" cy="17" r="1.2" fill="white"/></svg></span> Anak-anak wajib dalam pengawasan mandiri orang tua</div></div></div>
           <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Sepatu & baju olahraga (peserta basket)</div></div>
           <div class="pack-item" onclick="togglePack(this)"><div class="pack-check"></div><div class="pack-txt">Sandal</div></div>
         </div>
@@ -932,14 +932,14 @@ svg { overflow:visible; }
         </div>
       </div>
       <div style="padding:0 16px 16px">
-        <button class="comp-daftar-btn" style="background:#B91C1C" onclick="openModal('talent')">🎤 Daftar Talent Show</button>
+        <button class="comp-daftar-btn" style="background:#B91C1C" onclick="openModal('talent')"><span style="width:18px;height:18px;display:flex"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="14" cy="8" rx="3.5" ry="5" transform="rotate(30 14 8)" fill="white"/><circle cx="14" cy="8" r="2" fill="white" opacity="0.3"/><path d="M6 18L18 6" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg></span> Daftar Talent Show</button>
       </div>
     </div>
 
     <!-- KONTES FOTO -->
     <div class="card" style="margin-bottom:12px">
       <div class="comp-card">
-        <div class="comp-icon">📸</div>
+        <div class="comp-icon" style="width:40px;height:40px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3L7 6H3C2.4 6 2 6.4 2 7V18C2 18.6 2.4 19 3 19H21C21.6 19 22 18.6 22 18V7C22 6.4 21.6 6 21 6H17L15 3H9Z" fill="currentColor"/><circle cx="12" cy="12.5" r="4" fill="white" opacity="0.25"/><circle cx="12" cy="12.5" r="2.5" fill="white" opacity="0.4"/></svg></div>
         <div style="flex:1">
           <div class="comp-title">Kontes Foto Terbaik</div>
           <span class="comp-when" style="background:rgba(44,44,46,0.08);color:var(--muted)">Sepanjang Retret · Tidak perlu daftar</span>
@@ -948,11 +948,11 @@ svg { overflow:visible; }
             <li>Tag semua akun GPBSI:</li>
           </ul>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
-            <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;color:var(--text)">👉 @gpbsi.jkt</span>
-            <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;color:var(--text)">👉 @gpbsi.mlg</span>
-            <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;color:var(--text)">👉 @gpbsi_bdg</span>
+            <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;color:var(--text)">@gpbsi.jkt</span>
+            <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;color:var(--text)">@gpbsi.mlg</span>
+            <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;color:var(--text)">@gpbsi_bdg</span>
           </div>
-          <div style="font-size:0.8rem;color:var(--muted);margin-top:6px">Foto paling kreatif & inspiratif menang! 🏆</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:6px">Foto paling kreatif & inspiratif menang!</div>
         </div>
       </div>
     </div>
@@ -995,7 +995,7 @@ svg { overflow:visible; }
     <div class="sec-label" style="margin-top:16px;margin-bottom:6px">Denah Area 5G Resort</div>
      <img src="area5g.png" style="width:100%;max-width:900px;display:block;margin:0 auto;border-radius:8px">
 
- <div class="zoom-hint">👆 Ketuk gambar untuk perbesar</div>
+ <div class="zoom-hint" style="display:flex;align-items:center;justify-content:center;gap:5px"><span style="width:14px;height:14px;display:flex;color:var(--muted)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span> Ketuk gambar untuk perbesar</div>
     <div id="map-modal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.9);overflow:auto;padding:60px 8px 20px" onclick="this.style.display='none'">
       <button onclick="document.getElementById('map-modal').style.display='none'" style="position:fixed;top:12px;right:12px;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;width:40px;height:40px;border-radius:50%;cursor:pointer;z-index:301">✕</button>
       <img src="" style="width:100%;max-width:900px;display:block;margin:0 auto;border-radius:8px">
@@ -1055,36 +1055,36 @@ svg { overflow:visible; }
     <div class="sec-sub">Ketuk nama untuk langsung WhatsApp. Nomor HP akan diisi panitia menjelang retret.</div>
     <div class="gold-line"></div>
 
-    <div class="sec-label" style="margin-bottom:8px">🏥 Darurat & Umum</div>
+    <div class="sec-label" style="margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:14px;height:14px;flex-shrink:0;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor"/><rect x="11" y="6" width="2" height="12" rx="1" fill="white"/><rect x="6" y="11" width="12" height="2" rx="1" fill="white"/></svg></span> Darurat & Umum</div>
     <div class="card" style="margin-bottom:14px">
       <a class="kontak-item" href="https://wa.me/6281519181784" target="_blank">
         <div class="kontak-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="10" width="10" height="12" rx="1" fill="white"/><path d="M4 12L12 5L20 12" fill="white" opacity="0.8"/><rect x="10.5" y="2" width="3" height="6" rx="1" fill="white"/><rect x="9" y="4.5" width="6" height="2.5" rx="1" fill="white"/><rect x="10" y="15" width="4" height="7" rx="1" fill="white" opacity="0.5"/></svg></div>
         <div><div class="kontak-role">Info Umum & Ibadah</div><div class="kontak-name">Dk. Herry</div><div class="kontak-phone">0815 1918 1784</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
       <a class="kontak-item" href="#" target="_blank">
         <div class="kontak-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="4" fill="white"/><rect x="11" y="6" width="2" height="12" rx="1" fill="white"/><rect x="6" y="11" width="12" height="2" rx="1" fill="white"/></svg></div>
         <div><div class="kontak-role">Kesehatan & Darurat</div><div class="kontak-name">Pntw. Aniek</div><div class="kontak-phone">— nomor belum diisi —</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
     </div>
 
-    <div class="sec-label" style="margin-bottom:8px">🏨 Logistik Retret</div>
+    <div class="sec-label" style="margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="display:inline-flex;width:14px;height:14px;flex-shrink:0;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="7" width="20" height="14" rx="2" fill="currentColor"/><rect x="2" y="7" width="20" height="5" rx="2" fill="currentColor" opacity="0.7"/><rect x="5" y="14" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="14" y="14" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="9" y="3" width="6" height="4" rx="1" fill="currentColor" opacity="0.8"/></svg></span> Logistik Retret</div>
     <div class="card" style="margin-bottom:14px">
       <a class="kontak-item" href="#" target="_blank">
         <div class="kontak-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L21 8V16L12 21L3 16V8L12 3Z" fill="white"/><path d="M12 3L12 21M3 8L21 8" stroke="white" stroke-width="1.5" opacity="0.4"/><path d="M3 8L12 13L21 8" stroke="white" stroke-width="1.5" opacity="0.6"/></svg></div>
         <div><div class="kontak-role">Lost & Found</div><div class="kontak-name">Theresia</div><div class="kontak-phone">— nomor belum diisi —</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
       <a class="kontak-item" href="#" target="_blank">
         <div class="kontak-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="7" width="20" height="14" rx="2" fill="white"/><rect x="2" y="7" width="20" height="5" rx="2" fill="white" opacity="0.7"/><rect x="5" y="14" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="14" y="14" width="5" height="5" rx="1" fill="white" opacity="0.5"/><rect x="9" y="3" width="6" height="4" rx="1" fill="white" opacity="0.8"/></svg></div>
         <div><div class="kontak-role">Akomodasi & Kamar</div><div class="kontak-name">Inggrid</div><div class="kontak-phone">— nomor belum diisi —</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
       <a class="kontak-item" href="#" target="_blank">
         <div class="kontak-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="13" rx="2.5" fill="white"/><rect x="5" y="7.5" width="6" height="4" rx="1" fill="white" opacity="0.55"/><rect x="13" y="7.5" width="6" height="4" rx="1" fill="white" opacity="0.55"/><rect x="3" y="14" width="18" height="2" rx="1" fill="white" opacity="0.5"/><circle cx="7" cy="19.5" r="2" fill="white"/><circle cx="17" cy="19.5" r="2" fill="white"/><rect x="5" y="17.5" width="14" height="2" rx="1" fill="white" opacity="0.4"/></svg></div>
         <div><div class="kontak-role">Transportasi & Bus</div><div class="kontak-name">Dk. Atief</div><div class="kontak-phone">— nomor belum diisi —</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
     </div>
 
@@ -1093,21 +1093,21 @@ svg { overflow:visible; }
       <a class="kontak-item" href="https://wa.me/6281533440777" target="_blank">
         <div class="kontak-icon" style="background:linear-gradient(135deg,var(--navy),var(--cyan-brand))">🇮🇩</div>
         <div><div class="kontak-role">PIC Jakarta</div><div class="kontak-name">Rusdy</div><div class="kontak-phone">0815 3344 0777</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
       <a class="kontak-item" href="https://wa.me/628112200485" target="_blank">
         <div class="kontak-icon" style="background:linear-gradient(135deg,var(--navy),var(--cyan-brand))">🇮🇩</div>
         <div><div class="kontak-role">CP Bandung</div><div class="kontak-name">Christian Urip</div><div class="kontak-phone">0811 2200 485</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
       <a class="kontak-item" href="https://wa.me/6281233347030" target="_blank">
         <div class="kontak-icon" style="background:linear-gradient(135deg,var(--navy),var(--cyan-brand))">🇮🇩</div>
         <div><div class="kontak-role">CP Malang</div><div class="kontak-name">Ibu Lisa</div><div class="kontak-phone">0812 3334 7030</div></div>
-        <div style="margin-left:auto;font-size:1.3rem">💬</div>
+        <div style="margin-left:auto;width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="currentColor"/></svg></div>
       </a>
     </div>
 
-    <div class="notice notice-blue">💬 <span>Semua tombol di atas akan langsung membuka WhatsApp ke nomor panitia yang bersangkutan.</span></div>
+    <div class="notice notice-blue"><span style="width:16px;height:16px;display:flex;flex-shrink:0;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="currentColor"/><rect x="11" y="11" width="2" height="6" rx="1" fill="white"/><circle cx="12" cy="8" r="1.3" fill="white"/></svg></span> <span>Semua tombol di atas akan langsung membuka WhatsApp ke nomor panitia yang bersangkutan.</span></div>
   </div>
 </div>
 
@@ -1156,7 +1156,7 @@ svg { overflow:visible; }
         <div class="char-count"><span id="tq-count">0</span>/400</div>
       </div>
       <button class="submit-btn" id="tq-btn" onclick="submitTanya()">
-        <span id="tq-btn-text">Kirim Pertanyaan ✉️</span>
+        <span id="tq-btn-text" style="display:flex;align-items:center;gap:8px"><span style="width:18px;height:18px;display:flex"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" fill="white"/></svg></span> Kirim Pertanyaan</span>
       </button>
     </div>
 
@@ -1207,16 +1207,16 @@ svg { overflow:visible; }
       </div>
       <div class="form-group">
         <label class="form-label">Saran atau komentarmu *</label>
-        <textarea class="form-textarea" id="sr-isi" placeholder="Tulis saranmu di sini — semua masukan sangat berarti bagi kami 🙏" maxlength="500" oninput="updateCount('sr-isi','sr-count',500)" style="min-height:110px"></textarea>
+        <textarea class="form-textarea" id="sr-isi" placeholder="Tulis saranmu di sini — semua masukan sangat berarti bagi kami" maxlength="500" oninput="updateCount('sr-isi','sr-count',500)" style="min-height:110px"></textarea>
         <div class="char-count"><span id="sr-count">0</span>/500</div>
       </div>
       <button class="submit-btn" id="sr-btn" onclick="submitSaran()">
-        <span id="sr-btn-text">Kirim Saran 💬</span>
+        <span id="sr-btn-text" style="display:flex;align-items:center;gap:8px"><span style="width:18px;height:18px;display:flex"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" fill="white"/></svg></span> Kirim Saran</span>
       </button>
     </div>
 
     <div class="section-divider"><span>Saran yang masuk</span></div>
-    <div class="notice" style="margin-bottom:12px">🔒 <span>Saran hanya bisa dibaca oleh panitia — tidak ditampilkan ke peserta lain.</span></div>
+    <div class="notice" style="margin-bottom:12px"><span style="width:16px;height:16px;display:flex;flex-shrink:0;color:var(--green-deep)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 11V8C8 5.8 9.8 4 12 4C14.2 4 16 5.8 16 8V11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="16" r="1.5" fill="white" opacity="0.7"/></svg></span> <span>Saran hanya bisa dibaca oleh panitia — tidak ditampilkan ke peserta lain.</span></div>
 
     <div class="q-feed" id="s-feed">
       <!-- Saran akan muncul di sini dari database -->
@@ -1395,7 +1395,7 @@ async function renderRoom(idx) {
     : '<div class="bus-box"><div class="bus-lbl">Info Bus</div><div style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:4px">Data bus akan diupdate menjelang hari H</div></div>';
 
   const lantaiStr = rr.lantai ? ('Lantai ' + rr.lantai) : '-';
-  const gedungIco = rr.gedung && rr.gedung.toLowerCase().includes('cottage') ? '🏡' : '🏢';
+  const gedungIco = rr.gedung && rr.gedung.toLowerCase().includes('cottage') ? 'Cottage' : 'Gedung';
 
   resultBox.innerHTML = '<div class="room-card">'
     + '<div class="room-name">Halo, <strong>' + rr.nama + '</strong>!</div>'
