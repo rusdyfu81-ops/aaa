@@ -1367,56 +1367,49 @@ async function searchRoom() {
   renderRoom(0);
 }
 
-async function renderRoom(i) {
-  const r = window._sr[i];
-  const box = document.getElementById('room-result');
-  box.classList.remove('notfound');
-  box.className = 'room-result show';
+async function renderRoom(idx) {
+  const rr = window._sr[idx];
+  const resultBox = document.getElementById('room-result');
+  resultBox.classList.remove('notfound');
+  resultBox.className = 'room-result show';
 
- // Cari semua penghuni kamar yang sama lalu filter nama sendiri di client
-const { data: sekamar } = await sb
-  .from('peserta')
-  .select('nama')
-  .eq('gedung', r.gedung)
-  .eq('nomor_kamar', r.nomor_kamar);
+  // Cari semua penghuni kamar yang sama lalu filter nama sendiri di client
+  const { data: sekamar } = await sb
+    .from('peserta')
+    .select('nama')
+    .eq('gedung', rr.gedung)
+    .eq('nomor_kamar', rr.nomor_kamar);
 
-const teman = sekamar
-  ? sekamar.filter(t => t.nama.toLowerCase() !== r.nama.toLowerCase())
-  : [];
+  const temanSekamar = sekamar
+    ? sekamar.filter(t => t.nama.toLowerCase() !== rr.nama.toLowerCase())
+    : [];
 
-const matesHtml = teman.length > 0
-  ? teman.map(t => `<span class="chip">${t.nama}</span>`).join('')
-  : '<span style="color:rgba(255,255,255,0.4);font-size:0.82rem">Kamar pribadi</span>';
-
-  const matesHtml = (teman && teman.length > 0)
-    ? teman.map(t => `<span class="chip">${t.nama}</span>`).join('')
+  const temanHtml = temanSekamar.length > 0
+    ? temanSekamar.map(t => '<span class="chip">' + t.nama + '</span>').join('')
     : '<span style="color:rgba(255,255,255,0.4);font-size:0.82rem">Kamar pribadi</span>';
 
-  const busLabel = r.nomor_bus
-    ? `Bus ${r.nomor_bus}`
-    : null;
+  const busStr = rr.nomor_bus ? ('Bus ' + rr.nomor_bus) : null;
 
-  const busHtml = busLabel
-    ? `<div class="bus-box"><div class="bus-lbl">Info Bus</div><div class="bus-grid"><div class="bus-item">${busLabel}</div></div></div>`
-    : `<div class="bus-box"><div class="bus-lbl">Info Bus</div><div style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:4px">Data bus akan diupdate menjelang hari H</div></div>`;
+  const busHtml2 = busStr
+    ? '<div class="bus-box"><div class="bus-lbl">Info Bus</div><div class="bus-grid"><div class="bus-item">' + busStr + '</div></div></div>'
+    : '<div class="bus-box"><div class="bus-lbl">Info Bus</div><div style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:4px">Data bus akan diupdate menjelang hari H</div></div>';
 
-  const lantaiLabel = r.lantai ? `Lantai ${r.lantai}` : '-';
-  const gedungIcon = r.gedung && r.gedung.toLowerCase().includes('cottage') ? '🏡' : '🏢';
+  const lantaiStr = rr.lantai ? ('Lantai ' + rr.lantai) : '-';
+  const gedungIco = rr.gedung && rr.gedung.toLowerCase().includes('cottage') ? '🏡' : '🏢';
 
-  box.innerHTML = `
-    <div class="room-card">
-      <div class="room-name">Halo, <strong>${r.nama}</strong>!</div>
-      <div class="room-grid">
-        <div class="room-cell"><div class="lbl">Gedung</div><div class="val">${gedungIcon} ${r.gedung || '-'}</div></div>
-        <div class="room-cell"><div class="lbl">Kamar</div><div class="val">${r.nomor_kamar || '-'}</div></div>
-        <div class="room-cell"><div class="lbl">Lantai</div><div class="val">${lantaiLabel}</div></div>
-      </div>
-      <div class="mates-box">
-        <div class="mates-lbl">Teman Sekamar</div>
-        <div class="chip-row">${matesHtml}</div>
-      </div>
-      ${busHtml}
-    </div>`;
+  resultBox.innerHTML = '<div class="room-card">'
+    + '<div class="room-name">Halo, <strong>' + rr.nama + '</strong>!</div>'
+    + '<div class="room-grid">'
+    + '<div class="room-cell"><div class="lbl">Gedung</div><div class="val">' + gedungIco + ' ' + (rr.gedung || '-') + '</div></div>'
+    + '<div class="room-cell"><div class="lbl">Kamar</div><div class="val">' + (rr.nomor_kamar || '-') + '</div></div>'
+    + '<div class="room-cell"><div class="lbl">Lantai</div><div class="val">' + lantaiStr + '</div></div>'
+    + '</div>'
+    + '<div class="mates-box">'
+    + '<div class="mates-lbl">Teman Sekamar</div>'
+    + '<div class="chip-row">' + temanHtml + '</div>'
+    + '</div>'
+    + busHtml2
+    + '</div>';
 }
 
 /* ══════════════════════════════════════════════
