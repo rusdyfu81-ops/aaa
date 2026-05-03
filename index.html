@@ -274,13 +274,24 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;paddin
 .b-par{background:rgba(15,118,110,0.12);color:var(--teal)}
 .b-br{background:rgba(0,0,0,0.06);color:var(--muted)}
 .b-sp{background:rgba(37,99,168,0.12);color:var(--blue)}
-.par-table-wrap{overflow-x:auto;margin-top:10px;border-radius:8px;border:1px solid var(--cream2);-webkit-overflow-scrolling:touch}
-.par-table-hint{font-size:0.72rem;color:var(--muted);margin-top:4px;text-align:center}
-.par-table-wrap table{width:100%;border-collapse:collapse;font-size:0.78rem;min-width:380px}
-.par-table-wrap th{background:var(--navy);color:var(--gold2);padding:8px 10px;font-weight:600;text-align:left;font-size:0.7rem}
-.par-table-wrap td{padding:8px 10px;border-bottom:1px solid var(--cream2);vertical-align:top;line-height:1.45;color:var(--text)}
-.par-table-wrap tr:last-child td{border-bottom:none}
-.par-table-wrap tr:nth-child(even) td{background:rgba(0,0,0,0.02)}
+.accordion-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;background:rgba(42,127,111,0.08);border:1px solid rgba(42,127,111,0.2);
+  border-radius:8px;padding:10px 12px;margin-top:8px;
+  font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;
+  color:var(--teal);cursor:pointer;text-align:left;min-height:44px;
+}
+.accordion-btn:active{background:rgba(42,127,111,0.15)}
+.accordion-arrow{font-size:0.75rem;transition:transform 0.25s ease;flex-shrink:0}
+.accordion-arrow.open{transform:rotate(180deg)}
+.accordion-body{display:none;margin-top:6px;border-radius:8px;overflow:hidden;border:1px solid var(--cream2)}
+.accordion-body.open{display:block;animation:fadeIn 0.2s ease}
+.acc-row{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--cream2)}
+.acc-row:last-child{border-bottom:none}
+.acc-row:nth-child(even){background:rgba(0,0,0,0.02)}
+.acc-cell{padding:10px 12px;font-size:0.82rem;line-height:1.45;color:var(--text)}
+.acc-cell:first-child{border-right:1px solid var(--cream2);font-weight:600;color:var(--navy)}
+.acc-loc{font-size:0.75rem;color:var(--muted);margin-top:2px}
 
 /* ── SPEAKERS ── */
 .speaker-card{display:flex;gap:14px;padding:14px;align-items:flex-start}
@@ -570,14 +581,31 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;paddin
       <div class="sched-item pl"><div class="sched-time">08.30<br>09.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. Allen Widjaja</div><div class="sched-loc">📍 Grand Pancar</div><span class="badge b-pl">⭐ Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">09.30<br>10.00</div><div class="sched-body"><div class="sched-name">Sesi Foto & Snack ☕</div><div class="sched-loc">📍 Area Kolam Renang</div><span class="badge b-br">📸 Santai</span></div></div>
       <div class="sched-item par"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Q&A per Kelompok</div><div class="sched-desc">Tanya jawab & game per komisi</div><div class="sched-loc">📍 Ruang masing-masing</div><span class="badge b-par">🔀 Paralel</span>
-        <div class="par-table-wrap"><table><thead><tr><th>Kelompok</th><th>Pembicara</th><th>Ruang</th></tr></thead><tbody>
-          <tr><td>👴 Senior</td><td>Pdt. Yudie</td><td>Grand Pancar (kanan)</td></tr>
-          <tr><td>🧑 Umum</td><td>Pdt. Youn</td><td>Grand Pancar (kiri)</td></tr>
-          <tr><td>🙋 Remaja + SD</td><td>Pdt. Allen</td><td>Pancar 1</td></tr>
-          <tr><td>🎒 Sunday School</td><td>Panitia Anak</td><td>Pancar 3</td></tr>
-          <tr><td>💪 Pemuda</td><td>Pdt. Jung</td><td>Pancar 4</td></tr>
-        </tbody></table></div>
-        <div class="par-table-hint">← geser untuk lihat →</div>
+        <button class="accordion-btn" onclick="toggleAccordion(this)">
+          🔀 Lihat ruang per kelompok <span class="accordion-arrow">▼</span>
+        </button>
+        <div class="accordion-body">
+          <div class="acc-row">
+            <div class="acc-cell">👴 Senior<div class="acc-loc">Pdt. Yudie Lengkong</div></div>
+            <div class="acc-cell">Grand Pancar<div class="acc-loc">Sisi Kanan</div></div>
+          </div>
+          <div class="acc-row">
+            <div class="acc-cell">🧑‍🤝‍🧑 Umum<div class="acc-loc">Pdt. Youn Doo Hee</div></div>
+            <div class="acc-cell">Grand Pancar<div class="acc-loc">Sisi Kiri</div></div>
+          </div>
+          <div class="acc-row">
+            <div class="acc-cell">🙋 Remaja + SD<div class="acc-loc">Pdt. Allen Widjaja</div></div>
+            <div class="acc-cell">Ruang Pancar 1<div class="acc-loc">Moderator: Rusdy</div></div>
+          </div>
+          <div class="acc-row">
+            <div class="acc-cell">🎒 Sunday School<div class="acc-loc">Panitia Anak</div></div>
+            <div class="acc-cell">Ruang Pancar 3<div class="acc-loc">Acara mandiri</div></div>
+          </div>
+          <div class="acc-row">
+            <div class="acc-cell">💪 Pemuda<div class="acc-loc">Pdt. JungWon Jung</div></div>
+            <div class="acc-cell">Ruang Pancar 4<div class="acc-loc">Moderator: Coni</div></div>
+          </div>
+        </div>
       </div></div>
       <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-loc">📍 Restoran Area</div><span class="badge b-br">🍽️ Konsumsi</span></div></div>
       <div class="sched-item pl"><div class="sched-time">12.30<br>14.30</div><div class="sched-body"><div class="sched-name">🏆 Giring-Giring Emas</div><div class="sched-desc">Kompetisi bersama · snack 30 menit terakhir</div><div class="sched-loc">📍 Grand Pancar</div><span class="badge b-sp">Event Utama</span></div></div>
@@ -965,6 +993,13 @@ function zoomMap() {
 document.getElementById('room-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') searchRoom();
 });
+
+function toggleAccordion(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.accordion-arrow');
+  const isOpen = body.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+}
 
 /* ── TOAST ── */
 function showToast(msg) {
