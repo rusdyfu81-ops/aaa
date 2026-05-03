@@ -274,6 +274,70 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;paddin
 .b-par{background:rgba(15,118,110,0.12);color:var(--teal)}
 .b-br{background:rgba(0,0,0,0.06);color:var(--muted)}
 .b-sp{background:rgba(37,99,168,0.12);color:var(--blue)}
+
+/* ── TANYA & SARAN ── */
+.form-label{font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:6px;display:block}
+.form-input,.form-select,.form-textarea{
+  width:100%;border:1.5px solid var(--cream2);border-radius:var(--rs);
+  padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:0.875rem;
+  color:var(--text);background:white;outline:none;
+  transition:border-color 0.2s;-webkit-appearance:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue)}
+.form-textarea{resize:none;min-height:96px;line-height:1.6}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.form-group{margin-bottom:14px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--cream2)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:0.875rem;color:var(--text)}
+.toggle-sub{font-size:0.75rem;color:var(--muted);margin-top:2px}
+.toggle-switch{position:relative;width:44px;height:26px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--cream2);border-radius:13px;cursor:pointer;transition:background 0.2s}
+.toggle-switch input:checked + .toggle-track{background:var(--green)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;background:white;border-radius:50%;transition:transform 0.2s;pointer-events:none}
+.toggle-switch input:checked ~ .toggle-thumb{transform:translateX(18px)}
+.submit-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;height:52px;background:var(--navy);color:white;
+  border:none;border-radius:var(--rs);font-size:0.95rem;font-weight:600;
+  font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px;
+  transition:opacity 0.2s;
+}
+.submit-btn:active{opacity:0.85}
+.submit-btn.loading{opacity:0.6;pointer-events:none}
+.submit-btn.success{background:var(--green)}
+.q-feed{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.q-item{background:white;border-radius:var(--r);border:1px solid var(--cream2);padding:14px}
+.q-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.q-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--gold2);flex-shrink:0}
+.q-name{font-size:0.82rem;font-weight:700;color:var(--navy)}
+.q-group{font-size:0.72rem;color:var(--muted)}
+.q-badge{font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:auto}
+.q-to{font-size:0.72rem;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.q-text{font-size:0.875rem;color:var(--text);line-height:1.65}
+.q-time{font-size:0.68rem;color:var(--muted);margin-top:6px}
+.status-menunggu{background:rgba(200,168,75,0.15);color:#7A5000}
+.status-dipilih{background:rgba(37,99,168,0.12);color:var(--blue)}
+.status-dijawab{background:rgba(21,128,61,0.12);color:var(--green)}
+.saran-item{background:white;border-radius:var(--r);border:1px solid var(--cream2);padding:14px}
+.saran-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.saran-cat{font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:100px}
+.cat-acara{background:rgba(37,99,168,0.1);color:var(--blue)}
+.cat-fasilitas{background:rgba(15,118,110,0.1);color:var(--teal)}
+.cat-konsumsi{background:rgba(200,168,75,0.15);color:#7A5000}
+.cat-ibadah{background:rgba(21,128,61,0.1);color:var(--green)}
+.cat-lain{background:rgba(0,0,0,0.06);color:var(--muted)}
+.saran-text{font-size:0.875rem;color:var(--text);line-height:1.65}
+.saran-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.saran-name{font-size:0.72rem;color:var(--muted)}
+.empty-state{text-align:center;padding:32px 16px;color:var(--muted);font-size:0.875rem}
+.empty-state div{font-size:2rem;margin-bottom:8px}
+.char-count{font-size:0.72rem;color:var(--muted);text-align:right;margin-top:4px}
+.section-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px}
+.section-divider span{font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--cream2)}
+
 .accordion-btn{
   display:flex;align-items:center;justify-content:space-between;
   width:100%;background:rgba(42,127,111,0.08);border:1px solid rgba(42,127,111,0.2);
@@ -463,6 +527,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;paddin
     <a class="drawer-item" href="#" onclick="nav('aturan');closeDrawer()"><span class="drawer-item-icon">📜</span>Tata Tertib</a>
     <a class="drawer-item" href="#" onclick="nav('panitia');closeDrawer()"><span class="drawer-item-icon">🙋</span>Panitia</a>
     <a class="drawer-item" href="#" onclick="nav('kontak');closeDrawer()"><span class="drawer-item-icon">📞</span>Kontak</a>
+    <a class="drawer-item" href="#" onclick="nav('tanya');closeDrawer()"><span class="drawer-item-icon">❓</span>Tanya Pembicara</a>
+    <a class="drawer-item" href="#" onclick="nav('saran');closeDrawer()"><span class="drawer-item-icon">💬</span>Saran & Komentar</a>
   </nav>
   <div class="drawer-footer">
     "Angkatlah mukamu! Sebab penyelamatanmu sudah dekat" — Luk 21:28
@@ -882,21 +948,193 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);overflow-x:hidden;paddin
   </div>
 </div>
 
+
+<!-- ═══════════ PAGE: TANYA ═══════════ -->
+<div class="page" id="pg-tanya">
+  <div class="sec">
+    <div class="sec-label">Interaktif</div>
+    <div class="sec-title">Tanya Pembicara</div>
+    <div class="sec-sub">Kirim pertanyaanmu sebelum sesi Q&A. Moderator akan memilih pertanyaan terbaik untuk dijawab langsung.</div>
+    <div class="gold-line"></div>
+
+    <div class="card card-body">
+      <div class="form-group">
+        <label class="form-label">Nama <span style="color:var(--muted);font-weight:400">(opsional)</span></label>
+        <input type="text" class="form-input" id="tq-nama" placeholder="Nama kamu..." autocapitalize="words">
+      </div>
+      <div class="form-group">
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Kirim sebagai anonim</div>
+            <div class="toggle-sub">Namamu tidak akan ditampilkan</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="tq-anonim" onchange="toggleAnonim()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kelompokmu *</label>
+        <select class="form-select" id="tq-kelompok">
+          <option value="">— Pilih kelompok —</option>
+          <option value="Senior">👴 Kelompok Senior</option>
+          <option value="Umum">🧑‍🤝‍🧑 Kelompok Umum</option>
+          <option value="Remaja">🙋 Remaja Jeshurun + SD Besar</option>
+          <option value="Sunday School">🎒 Sunday School</option>
+          <option value="Pemuda">💪 Kelompok Pemuda</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ditujukan kepada</label>
+        <select class="form-select" id="tq-pembicara">
+          <option value="Pdt. Yudie Lengkong">Pdt. Yudie Lengkong</option>
+          <option value="Pdt. Youn Doo Hee">Pdt. Youn Doo Hee</option>
+          <option value="Pdt. JungWon Jung">Pdt. JungWon Jung</option>
+          <option value="Pdt. Allen Widjaja">Pdt. Allen Widjaja</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pertanyaanmu *</label>
+        <textarea class="form-textarea" id="tq-isi" placeholder="Tulis pertanyaanmu di sini..." maxlength="400" oninput="updateCount('tq-isi','tq-count',400)"></textarea>
+        <div class="char-count"><span id="tq-count">0</span>/400</div>
+      </div>
+      <button class="submit-btn" id="tq-btn" onclick="submitTanya()">
+        <span id="tq-btn-text">Kirim Pertanyaan ✉️</span>
+      </button>
+    </div>
+
+    <div class="section-divider"><span>Pertanyaan masuk</span></div>
+    <div class="notice notice-blue" style="margin-bottom:12px">ℹ️ <span>Pertanyaan terbaik akan dipilih moderator untuk dijawab saat sesi Q&A per kelompok.</span></div>
+
+    <div class="q-feed" id="q-feed">
+      <!-- Dummy data mockup -->
+      <div class="q-item">
+        <div class="q-header">
+          <div class="q-avatar">K</div>
+          <div><div class="q-name">Kevin P.</div><div class="q-group">Kelompok Pemuda</div></div>
+          <span class="q-badge status-menunggu">Menunggu</span>
+        </div>
+        <div class="q-to">→ Pdt. JungWon Jung</div>
+        <div class="q-text">Bagaimana cara tetap setia dalam iman di tengah kesibukan sehari-hari sebagai anak muda yang baru masuk dunia kerja?</div>
+        <div class="q-time">Baru saja</div>
+      </div>
+      <div class="q-item">
+        <div class="q-header">
+          <div class="q-avatar">🙏</div>
+          <div><div class="q-name">Anonim</div><div class="q-group">Kelompok Senior</div></div>
+          <span class="q-badge status-dipilih">Dipilih ✓</span>
+        </div>
+        <div class="q-to">→ Pdt. Yudie Lengkong</div>
+        <div class="q-text">Bagaimana cara kami sebagai orang tua mendoakan anak-anak yang sudah jarang beribadah dan tampaknya menjauh dari Tuhan?</div>
+        <div class="q-time">5 menit lalu</div>
+      </div>
+      <div class="q-item">
+        <div class="q-header">
+          <div class="q-avatar">S</div>
+          <div><div class="q-name">Susanti W.</div><div class="q-group">Kelompok Umum</div></div>
+          <span class="q-badge status-dijawab">Sudah dijawab ✓</span>
+        </div>
+        <div class="q-to">→ Pdt. Youn Doo Hee</div>
+        <div class="q-text">Apa langkah konkret untuk memulai pemulihan dalam hubungan keluarga yang sudah lama retak?</div>
+        <div class="q-time">20 menit lalu</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE: SARAN ═══════════ -->
+<div class="page" id="pg-saran">
+  <div class="sec">
+    <div class="sec-label">Masukan</div>
+    <div class="sec-title">Saran & Komentar</div>
+    <div class="sec-sub">Bantu panitia menjadi lebih baik. Semua saran bersifat pribadi — hanya panitia yang bisa membaca.</div>
+    <div class="gold-line"></div>
+
+    <div class="card card-body">
+      <div class="form-group">
+        <label class="form-label">Nama <span style="color:var(--muted);font-weight:400">(opsional)</span></label>
+        <input type="text" class="form-input" id="sr-nama" placeholder="Nama kamu..." autocapitalize="words">
+      </div>
+      <div class="form-group">
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Kirim sebagai anonim</div>
+            <div class="toggle-sub">Namamu tidak akan ditampilkan ke panitia</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="sr-anonim" onchange="toggleSaranAnonim()">
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select class="form-select" id="sr-kategori">
+          <option value="Acara">🎯 Acara & Program</option>
+          <option value="Ibadah">🙏 Ibadah & Rohani</option>
+          <option value="Konsumsi">🍽️ Konsumsi & Makanan</option>
+          <option value="Fasilitas">🏨 Fasilitas & Akomodasi</option>
+          <option value="Transportasi">🚌 Transportasi</option>
+          <option value="Lain">💡 Lain-lain</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Saran atau komentarmu *</label>
+        <textarea class="form-textarea" id="sr-isi" placeholder="Tulis saranmu di sini — semua masukan sangat berarti bagi kami 🙏" maxlength="500" oninput="updateCount('sr-isi','sr-count',500)" style="min-height:110px"></textarea>
+        <div class="char-count"><span id="sr-count">0</span>/500</div>
+      </div>
+      <button class="submit-btn" id="sr-btn" onclick="submitSaran()">
+        <span id="sr-btn-text">Kirim Saran 💬</span>
+      </button>
+    </div>
+
+    <div class="section-divider"><span>Saran yang masuk</span></div>
+    <div class="notice" style="margin-bottom:12px">🔒 <span>Saran hanya bisa dibaca oleh panitia — tidak ditampilkan ke peserta lain.</span></div>
+
+    <div class="q-feed" id="s-feed">
+      <div class="saran-item">
+        <div class="saran-header">
+          <span class="saran-cat cat-acara">🎯 Acara</span>
+          <span style="font-size:0.72rem;color:var(--muted);margin-left:auto">Anonim · 10 mnt lalu</span>
+        </div>
+        <div class="saran-text">Sesi Giring-Giring Emas seru sekali! Mungkin bisa ditambah satu sesi games outdoor yang melibatkan semua kelompok usia supaya lebih seru lagi.</div>
+      </div>
+      <div class="saran-item">
+        <div class="saran-header">
+          <span class="saran-cat cat-konsumsi">🍽️ Konsumsi</span>
+          <span style="font-size:0.72rem;color:var(--muted);margin-left:auto">Vera W. · 25 mnt lalu</span>
+        </div>
+        <div class="saran-text">Makanannya enak dan variatif, terima kasih banyak! Kalau bisa tolong tambahkan pilihan buah-buahan di meja makan untuk snack sehat.</div>
+      </div>
+      <div class="saran-item">
+        <div class="saran-header">
+          <span class="saran-cat cat-fasilitas">🏨 Fasilitas</span>
+          <span style="font-size:0.72rem;color:var(--muted);margin-left:auto">Anonim · 1 jam lalu</span>
+        </div>
+        <div class="saran-text">AC di ruang Grand Pancar terlalu dingin saat malam. Mungkin bisa disesuaikan suhunya, terutama untuk kelompok senior yang lebih sensitif terhadap suhu dingin.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bnav-item active" id="bnav-home" onclick="nav('home')"><span class="bnav-icon">🏠</span>Beranda</button>
   <button class="bnav-item" id="bnav-kamar" onclick="nav('kamar')"><span class="bnav-icon">🛏</span>Kamarku</button>
   <button class="bnav-item" id="bnav-jadwal" onclick="nav('jadwal')"><span class="bnav-icon">📅</span>Jadwal</button>
-  <button class="bnav-item" id="bnav-bawa" onclick="nav('bawa')"><span class="bnav-icon">🎒</span>Bawa</button>
-  <button class="bnav-item" id="bnav-kontak" onclick="nav('kontak')"><span class="bnav-icon">📞</span>Kontak</button>
+  <button class="bnav-item" id="bnav-tanya" onclick="nav('tanya')"><span class="bnav-icon">❓</span>Tanya</button>
+  <button class="bnav-item" id="bnav-saran" onclick="nav('saran')"><span class="bnav-icon">💬</span>Saran</button>
 </div>
 
 <script>
 const ROOMS = [{"nama":"Pdt. Yudie Lengkong","kamar":"101","gedung":"Wisma 1","lantai":"1","teman":["Dk. Herry","Kevin Sundjaja"]},{"nama":"Pdt. Youn Doo Hee","kamar":"102","gedung":"Wisma 1","lantai":"1","teman":["Pdt. JungWon Jung"]},{"nama":"Pdt. JungWon Jung","kamar":"102","gedung":"Wisma 1","lantai":"1","teman":["Pdt. Youn Doo Hee"]},{"nama":"Pdt. Allen Widjaja","kamar":"103","gedung":"Wisma 1","lantai":"1","teman":["Fujianto"]},{"nama":"Dk. Herry","kamar":"101","gedung":"Wisma 1","lantai":"1","teman":["Pdt. Yudie Lengkong","Kevin Sundjaja"]},{"nama":"Kevin Sundjaja","kamar":"101","gedung":"Wisma 1","lantai":"1","teman":["Pdt. Yudie Lengkong","Dk. Herry"]},{"nama":"Sendy P","kamar":"201","gedung":"Wisma 2","lantai":"2","teman":["Chan Kok Long","Andre G"]},{"nama":"Chan Kok Long","kamar":"201","gedung":"Wisma 2","lantai":"2","teman":["Sendy P","Andre G"]},{"nama":"Andre G","kamar":"201","gedung":"Wisma 2","lantai":"2","teman":["Sendy P","Chan Kok Long"]},{"nama":"Fujianto","kamar":"103","gedung":"Wisma 1","lantai":"1","teman":["Pdt. Allen Widjaja"]},{"nama":"Dk. Atief","kamar":"202","gedung":"Wisma 2","lantai":"2","teman":["Evg. Diarta"]},{"nama":"Evg. Diarta","kamar":"202","gedung":"Wisma 2","lantai":"2","teman":["Dk. Atief"]},{"nama":"Ci Vera E Maria","kamar":"301","gedung":"Wisma 3","lantai":"1","teman":["Pntw. Aniek","Pntw. Joice"]},{"nama":"Pntw. Aniek","kamar":"301","gedung":"Wisma 3","lantai":"1","teman":["Ci Vera E Maria","Pntw. Joice"]},{"nama":"Pntw. Joice","kamar":"301","gedung":"Wisma 3","lantai":"1","teman":["Ci Vera E Maria","Pntw. Aniek"]},{"nama":"Ola","kamar":"302","gedung":"Wisma 3","lantai":"1","teman":["Florent","Flo"]},{"nama":"Florent","kamar":"302","gedung":"Wisma 3","lantai":"1","teman":["Ola","Flo"]},{"nama":"Flo","kamar":"302","gedung":"Wisma 3","lantai":"1","teman":["Ola","Florent"]},{"nama":"Yulis","kamar":"303","gedung":"Wisma 3","lantai":"1","teman":["Tatang"]},{"nama":"Tatang","kamar":"303","gedung":"Wisma 3","lantai":"1","teman":["Yulis"]},{"nama":"Rusdy","kamar":"203","gedung":"Wisma 2","lantai":"2","teman":["Lius"]},{"nama":"Lius","kamar":"203","gedung":"Wisma 2","lantai":"2","teman":["Rusdy"]},{"nama":"Coni","kamar":"104","gedung":"Wisma 1","lantai":"1","teman":["Tanti"]},{"nama":"Tanti","kamar":"104","gedung":"Wisma 1","lantai":"1","teman":["Coni"]},{"nama":"Kevin Prasetyo","kamar":"C1-01","gedung":"Cottage 1","lantai":"1","bus":"Bus 1","kursi":"12A","teman":["Bryan Wicaksono","Riko Halim"]},{"nama":"Bryan Wicaksono","kamar":"C1-01","gedung":"Cottage 1","lantai":"1","bus":"Bus 1","kursi":"12B","teman":["Kevin Prasetyo","Riko Halim"]},{"nama":"Riko Halim","kamar":"C1-01","gedung":"Cottage 1","lantai":"1","bus":"Bus 2","kursi":"5A","teman":["Kevin Prasetyo","Bryan Wicaksono"]},{"nama":"Natasha Gunawan","kamar":"C2-01","gedung":"Cottage 2","lantai":"1","bus":"Bus 1","kursi":"8A","teman":["Cindy Halomoan","Grace Tanoto"]},{"nama":"Cindy Halomoan","kamar":"C2-01","gedung":"Cottage 2","lantai":"1","bus":"Bus 1","kursi":"8B","teman":["Natasha Gunawan","Grace Tanoto"]},{"nama":"Grace Tanoto","kamar":"C2-01","gedung":"Cottage 2","lantai":"1","bus":"Bus 2","kursi":"3A","teman":["Natasha Gunawan","Cindy Halomoan"]},{"nama":"Matthew Santoso","kamar":"204","gedung":"Wisma 2","lantai":"2","bus":"Bus 2","kursi":"7A","teman":["Joshua Rahardjo","Daniel Kusuma"]},{"nama":"Joshua Rahardjo","kamar":"204","gedung":"Wisma 2","lantai":"2","bus":"Bus 2","kursi":"7B","teman":["Matthew Santoso","Daniel Kusuma"]},{"nama":"Daniel Kusuma","kamar":"204","gedung":"Wisma 2","lantai":"2","bus":"Bus 1","kursi":"15A","teman":["Matthew Santoso","Joshua Rahardjo"]},{"nama":"Priscilla Widjaja","kamar":"304","gedung":"Wisma 3","lantai":"1","bus":"Bus 1","kursi":"10A","teman":["Rebecca Kurnia","Sarah Lim"]},{"nama":"Rebecca Kurnia","kamar":"304","gedung":"Wisma 3","lantai":"1","bus":"Bus 1","kursi":"10B","teman":["Priscilla Widjaja","Sarah Lim"]},{"nama":"Sarah Lim","kamar":"304","gedung":"Wisma 3","lantai":"1","bus":"Bus 2","kursi":"1A","teman":["Priscilla Widjaja","Rebecca Kurnia"]},{"nama":"Opa Petrus Kusuma","kamar":"C3-01","gedung":"Cottage 3","lantai":"1","bus":"Bus 1","kursi":"2A","teman":["Bp. Sofyan Budiman"]},{"nama":"Bp. Sofyan Budiman","kamar":"C3-01","gedung":"Cottage 3","lantai":"1","bus":"Bus 1","kursi":"2B","teman":["Opa Petrus Kusuma"]},{"nama":"Oma Esther Wirawan","kamar":"C3-02","gedung":"Cottage 3","lantai":"1","bus":"Bus 2","kursi":"2A","teman":["Ibu Lina Hartono"]},{"nama":"Ibu Lina Hartono","kamar":"C3-02","gedung":"Cottage 3","lantai":"1","bus":"Bus 2","kursi":"2B","teman":["Oma Esther Wirawan"]}];
 
 /* ── NAV ── */
-const pages = ['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak'];
-const bnav5 = ['home','kamar','jadwal','bawa','kontak'];
+const pages = ['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak','tanya','saran'];
+const bnav5 = ['home','kamar','jadwal','tanya','saran'];
 
 function nav(id) {
   pages.forEach(p => {
@@ -993,6 +1231,141 @@ function zoomMap() {
 document.getElementById('room-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') searchRoom();
 });
+
+
+/* ── TANYA & SARAN ── */
+function toggleAnonim() {
+  const cb = document.getElementById('tq-anonim');
+  const namaInput = document.getElementById('tq-nama');
+  namaInput.disabled = cb.checked;
+  namaInput.style.opacity = cb.checked ? '0.4' : '1';
+  if (cb.checked) namaInput.value = '';
+}
+
+function toggleSaranAnonim() {
+  const cb = document.getElementById('sr-anonim');
+  const namaInput = document.getElementById('sr-nama');
+  namaInput.disabled = cb.checked;
+  namaInput.style.opacity = cb.checked ? '0.4' : '1';
+  if (cb.checked) namaInput.value = '';
+}
+
+function updateCount(inputId, countId, max) {
+  const len = document.getElementById(inputId).value.length;
+  document.getElementById(countId).textContent = len;
+  document.getElementById(countId).style.color = len > max * 0.9 ? 'var(--red)' : 'var(--muted)';
+}
+
+function submitTanya() {
+  const kelompok = document.getElementById('tq-kelompok').value;
+  const isi = document.getElementById('tq-isi').value.trim();
+  const btn = document.getElementById('tq-btn');
+  const btnText = document.getElementById('tq-btn-text');
+
+  if (!kelompok) { showToast('⚠️ Pilih kelompokmu dulu'); return; }
+  if (!isi) { showToast('⚠️ Tulis pertanyaanmu dulu'); return; }
+
+  const anonim = document.getElementById('tq-anonim').checked;
+  const nama = anonim ? 'Anonim' : (document.getElementById('tq-nama').value.trim() || 'Anonim');
+  const pembicara = document.getElementById('tq-pembicara').value;
+
+  btn.classList.add('loading');
+  btnText.textContent = 'Mengirim...';
+
+  setTimeout(() => {
+    const feed = document.getElementById('q-feed');
+    const initial = nama.replace(/[^A-Za-z]/g,'').charAt(0).toUpperCase() || '🙏';
+    const icons = {'Senior':'👴','Umum':'🧑','Remaja':'🙋','Sunday School':'🎒','Pemuda':'💪'};
+    const kelIcon = icons[kelompok] || '';
+
+    const item = document.createElement('div');
+    item.className = 'q-item';
+    item.style.animation = 'fadeIn 0.3s ease';
+    item.innerHTML = `
+      <div class="q-header">
+        <div class="q-avatar">${anonim ? '🙏' : initial}</div>
+        <div><div class="q-name">${nama}</div><div class="q-group">${kelIcon} Kelompok ${kelompok}</div></div>
+        <span class="q-badge status-menunggu">Menunggu</span>
+      </div>
+      <div class="q-to">→ ${pembicara}</div>
+      <div class="q-text">${isi}</div>
+      <div class="q-time">Baru saja</div>
+    `;
+    feed.insertBefore(item, feed.firstChild);
+
+    btn.classList.remove('loading');
+    btn.classList.add('success');
+    btnText.textContent = '✓ Pertanyaan terkirim!';
+
+    document.getElementById('tq-nama').value = '';
+    document.getElementById('tq-isi').value = '';
+    document.getElementById('tq-kelompok').value = '';
+    document.getElementById('tq-count').textContent = '0';
+    document.getElementById('tq-anonim').checked = false;
+    toggleAnonim();
+
+    setTimeout(() => {
+      btn.classList.remove('success');
+      btnText.textContent = 'Kirim Pertanyaan ✉️';
+    }, 3000);
+
+    showToast('✓ Pertanyaan berhasil dikirim! 🙏');
+  }, 800);
+}
+
+function submitSaran() {
+  const isi = document.getElementById('sr-isi').value.trim();
+  const btn = document.getElementById('sr-btn');
+  const btnText = document.getElementById('sr-btn-text');
+
+  if (!isi) { showToast('⚠️ Tulis saranmu dulu'); return; }
+
+  const anonim = document.getElementById('sr-anonim').checked;
+  const nama = anonim ? 'Anonim' : (document.getElementById('sr-nama').value.trim() || 'Anonim');
+  const kategori = document.getElementById('sr-kategori').value;
+
+  btn.classList.add('loading');
+  btnText.textContent = 'Mengirim...';
+
+  setTimeout(() => {
+    const feed = document.getElementById('s-feed');
+    const catMap = {
+      'Acara': 'cat-acara', 'Ibadah': 'cat-ibadah',
+      'Konsumsi': 'cat-konsumsi', 'Fasilitas': 'cat-fasilitas',
+      'Transportasi': 'cat-ibadah', 'Lain': 'cat-lain'
+    };
+    const catIcon = {'Acara':'🎯','Ibadah':'🙏','Konsumsi':'🍽️','Fasilitas':'🏨','Transportasi':'🚌','Lain':'💡'};
+
+    const item = document.createElement('div');
+    item.className = 'saran-item';
+    item.style.animation = 'fadeIn 0.3s ease';
+    item.innerHTML = `
+      <div class="saran-header">
+        <span class="saran-cat ${catMap[kategori]}">${catIcon[kategori]} ${kategori}</span>
+        <span style="font-size:0.72rem;color:var(--muted);margin-left:auto">${nama} · Baru saja</span>
+      </div>
+      <div class="saran-text">${isi}</div>
+    `;
+    feed.insertBefore(item, feed.firstChild);
+
+    btn.classList.remove('loading');
+    btn.classList.add('success');
+    btnText.textContent = '✓ Saran terkirim!';
+
+    document.getElementById('sr-nama').value = '';
+    document.getElementById('sr-isi').value = '';
+    document.getElementById('sr-count').textContent = '0';
+    document.getElementById('sr-anonim').checked = false;
+    toggleSaranAnonim();
+
+    setTimeout(() => {
+      btn.classList.remove('success');
+      btnText.textContent = 'Kirim Saran 💬';
+    }, 3000);
+
+    showToast('✓ Saran berhasil dikirim! Terima kasih 🙏');
+  }, 800);
+}
 
 function toggleAccordion(btn) {
   const body = btn.nextElementSibling;
