@@ -1373,13 +1373,20 @@ async function renderRoom(i) {
   box.classList.remove('notfound');
   box.className = 'room-result show';
 
-  // Cari teman sekamar — peserta lain di gedung + kamar yang sama
-  const { data: teman } = await sb
-    .from('peserta')
-    .select('nama')
-    .eq('gedung', r.gedung)
-    .eq('nomor_kamar', r.nomor_kamar)
-    .neq('id', r.id);
+ // Cari semua penghuni kamar yang sama lalu filter nama sendiri di client
+const { data: sekamar } = await sb
+  .from('peserta')
+  .select('nama')
+  .eq('gedung', r.gedung)
+  .eq('nomor_kamar', r.nomor_kamar);
+
+const teman = sekamar
+  ? sekamar.filter(t => t.nama.toLowerCase() !== r.nama.toLowerCase())
+  : [];
+
+const matesHtml = teman.length > 0
+  ? teman.map(t => `<span class="chip">${t.nama}</span>`).join('')
+  : '<span style="color:rgba(255,255,255,0.4);font-size:0.82rem">Kamar pribadi</span>';
 
   const matesHtml = (teman && teman.length > 0)
     ? teman.map(t => `<span class="chip">${t.nama}</span>`).join('')
