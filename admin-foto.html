@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Admin Foto — GPBSI 2026</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --green:#7DC242;--navy:#2C2C2E;--navy2:#3A3A3C;
+  --cream:#F5F5F5;--cream2:#E8E8E8;
+  --text:#3A3A3C;--muted:#808285;
+  --red:#B91C1C;
+}
+html,body{height:100%;background:#111;overflow:hidden}
+body{font-family:-apple-system,'Nunito',sans-serif;color:var(--text)}
+
+/* ── LOGIN ── */
+#ls{
+  height:100%;display:flex;align-items:center;justify-content:center;
+  background:var(--navy);padding:24px;
+}
+.lc{background:#1c1c1e;border-radius:18px;padding:28px 22px;width:100%;max-width:340px}
+.lt{font-size:1rem;font-weight:700;color:white;text-align:center;margin-bottom:2px}
+.ls{font-size:0.78rem;color:rgba(255,255,255,0.45);text-align:center;margin-bottom:20px}
+.lb{display:inline-flex;align-items:center;gap:5px;background:rgba(185,28,28,0.2);border:1px solid rgba(185,28,28,0.3);border-radius:100px;padding:4px 12px;font-size:0.72rem;font-weight:700;color:#f87171;letter-spacing:0.08em;text-transform:uppercase;margin:0 auto 20px;display:flex;width:fit-content}
+.li{width:100%;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;font-size:1rem;color:white;outline:none;font-family:inherit;margin-bottom:12px}
+.li:focus{border-color:var(--green)}
+.li::placeholder{color:rgba(255,255,255,0.25)}
+.lbtn{width:100%;height:50px;background:var(--green);color:#1a1a1a;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;cursor:pointer}
+.lbtn:active{opacity:0.85}
+.lerr{background:rgba(185,28,28,0.15);border:1px solid rgba(185,28,28,0.3);border-radius:10px;padding:10px;font-size:0.82rem;color:#f87171;font-weight:600;margin-top:10px;display:none;text-align:center}
+
+/* ── MAIN ── */
+#ms{height:100%;display:none;flex-direction:column}
+
+/* topbar */
+.tb{background:var(--navy2);padding:0 14px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-size:0.95rem;font-weight:700;color:white;display:flex;align-items:center;gap:7px}
+.tb-badge{font-size:0.62rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;background:var(--red);color:white;padding:2px 7px;border-radius:100px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-btn:active{background:rgba(255,255,255,0.18)}
+
+/* stats */
+.sb{display:grid;grid-template-columns:1fr 1fr 1fr;background:#1c1c1e;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.si{padding:10px 8px;text-align:center}
+.sn{font-size:1.3rem;font-weight:800;color:white;line-height:1}
+.sl{font-size:0.62rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.08em;margin-top:2px}
+
+/* filter bar */
+.fb{display:flex;gap:6px;padding:10px 12px;background:#1c1c1e;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.fb-btn{height:32px;padding:0 14px;border-radius:100px;font-size:0.78rem;font-weight:700;font-family:inherit;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(255,255,255,0.5)}
+.fb-btn.act{background:white;border-color:white;color:#111}
+
+/* grid — scrollable */
+.grid-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px}
+.pi{position:relative;aspect-ratio:1;overflow:hidden;background:#222;cursor:pointer}
+.pi img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* delete btn overlay — always visible on mobile */
+.del-btn{
+  position:absolute;top:4px;right:4px;
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(185,28,28,0.88);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.del-btn:active{transform:scale(0.9)}
+
+.pl{aspect-ratio:1;background:#222;animation:sh 1s infinite}
+@keyframes sh{0%,100%{opacity:0.3}50%{opacity:0.7}}
+.es{text-align:center;padding:48px 20px;color:rgba(255,255,255,0.3);grid-column:1/-1;font-size:0.85rem}
+
+/* ── LIGHTBOX ── */
+#lb{position:fixed;inset:0;z-index:200;background:#000;display:none;flex-direction:column}
+#lb.open{display:flex}
+.lb-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;flex-shrink:0;background:rgba(0,0,0,0.6)}
+.lb-info{font-size:0.78rem;color:rgba(255,255,255,0.5)}
+.lb-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:white;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lb-img-w{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px}
+.lb-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.lb-bottom{padding:12px 14px;flex-shrink:0;background:rgba(0,0,0,0.6)}
+.lb-date{font-size:0.78rem;color:rgba(255,255,255,0.45);text-align:center;margin-bottom:10px}
+.lb-del{width:100%;height:50px;background:var(--red);color:white;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.lb-del:active{opacity:0.85}
+.lb-del.loading{opacity:0.6;pointer-events:none}
+
+/* ── CONFIRM ── */
+#cv{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.7);display:none;align-items:flex-end;justify-content:center}
+#cv.open{display:flex}
+.cc{background:#1c1c1e;border-radius:20px 20px 0 0;padding:20px 16px 32px;width:100%;max-width:420px}
+.cc-title{font-size:1rem;font-weight:700;color:white;margin-bottom:6px}
+.cc-sub{font-size:0.82rem;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:14px}
+.cc-prev{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:14px;background:#333;display:block}
+.cc-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cc-yes{height:48px;background:var(--red);color:white;border:none;border-radius:12px;font-size:0.95rem;font-weight:800;font-family:inherit;cursor:pointer}
+.cc-yes:active{opacity:0.85}
+.cc-no{height:48px;background:rgba(255,255,255,0.08);color:white;border:1px solid rgba(255,255,255,0.12);border-radius:12px;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer}
+.cc-no:active{background:rgba(255,255,255,0.15)}
+
+/* toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(16px);background:#1c1c1e;color:var(--green);padding:9px 18px;border-radius:100px;font-size:0.82rem;font-weight:700;z-index:999;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;border:1px solid rgba(125,194,66,0.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{color:#f87171;border-color:rgba(248,113,113,0.3)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lc">
+    <div class="lt">GPBSI Retreat 2026</div>
+    <div class="ls">Admin Moderasi Foto</div>
+    <div class="lb">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5L12 1z"/></svg>
+      ADMIN ONLY
+    </div>
+    <input type="password" class="li" id="pwd" placeholder="Password admin..." onkeydown="if(event.key==='Enter')login()">
+    <button class="lbtn" onclick="login()">Masuk</button>
+    <div class="lerr" id="lerr">Password salah.</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="ms">
+  <div class="tb">
+    <div class="tb-title">
+      <span style="color:var(--green)">✦</span> Moderasi Foto
+      <span class="tb-badge">ADMIN</span>
+    </div>
+    <div class="tb-right">
+      <button class="icon-btn" onclick="loadPhotos()" title="Refresh">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
+      <button class="icon-btn" onclick="logout()" title="Keluar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="sb">
+    <div class="si"><div class="sn" id="s-tot">—</div><div class="sl">Total</div></div>
+    <div class="si"><div class="sn" id="s-today">—</div><div class="sl">Hari Ini</div></div>
+    <div class="si"><div class="sn" id="s-del" style="color:#f87171">0</div><div class="sl">Dihapus</div></div>
+  </div>
+
+  <div class="fb">
+    <button class="fb-btn act" id="f-all" onclick="setFilter('all')">Semua</button>
+    <button class="fb-btn" id="f-today" onclick="setFilter('today')">Hari Ini</button>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="pg" id="pg">
+      <div class="pl"></div><div class="pl"></div><div class="pl"></div>
+      <div class="pl"></div><div class="pl"></div><div class="pl"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lb">
+  <div class="lb-top">
+    <div class="lb-info" id="lb-info"></div>
+    <button class="lb-close" onclick="closeLB()">✕</button>
+  </div>
+  <div class="lb-img-w"><img class="lb-img" id="lb-img" src="" alt=""></div>
+  <div class="lb-bottom">
+    <div class="lb-date" id="lb-date"></div>
+    <button class="lb-del" id="lb-del" onclick="confirmDel()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+      Hapus Foto Ini
+    </button>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div id="cv">
+  <div class="cc">
+    <div class="cc-title">Hapus foto ini?</div>
+    <div class="cc-sub">Foto dihapus permanen dari database dan tidak akan muncul lagi untuk peserta.</div>
+    <img class="cc-prev" id="cc-prev" src="" alt="">
+    <div class="cc-btns">
+      <button class="cc-yes" id="cc-yes" onclick="execDel()">Ya, Hapus</button>
+      <button class="cc-no" onclick="closeCV()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const PWD  = 'GPBSI2026admin'; /* ← ganti password */
+const CLOUD = 'dimheaob1';
+const SB_URL = 'https://rzugyebwaxmhomztfgpc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6dWd5ZWJ3YXhtaG9tenRmZ3BjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjE1MjIsImV4cCI6MjA5MzM5NzUyMn0.0sHgF5H2dWCTfJ64wxzby1N-X6gLkK-tMwcbJ5UU3vc';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+/* thumbnail kecil + kompresi maksimal untuk speed */
+const thumbUrl = id => `https://res.cloudinary.com/${CLOUD}/image/upload/w_200,h_200,c_fill,q_30,f_webp/${id}`;
+const fullUrl  = id => `https://res.cloudinary.com/${CLOUD}/image/upload/w_800,q_60,f_webp/${id}`;
+const prevUrl  = id => `https://res.cloudinary.com/${CLOUD}/image/upload/w_400,h_200,c_fill,q_40,f_webp/${id}`;
+
+let photos = [], filter = 'all', idx = -1, delCount = 0;
+
+/* LOGIN */
+function login() {
+  const v = document.getElementById('pwd').value;
+  if (v === PWD) {
+    sessionStorage.setItem('ga','1');
+    document.getElementById('ls').style.display = 'none';
+    document.getElementById('ms').style.display = 'flex';
+    loadPhotos();
+  } else {
+    document.getElementById('lerr').style.display = 'block';
+    document.getElementById('pwd').value = '';
+  }
+}
+function logout() {
+  sessionStorage.removeItem('ga');
+  document.getElementById('ms').style.display  = 'none';
+  document.getElementById('ls').style.display  = 'flex';
+  document.getElementById('pwd').value = '';
+}
+if (sessionStorage.getItem('ga') === '1') {
+  document.getElementById('ls').style.display = 'none';
+  document.getElementById('ms').style.display = 'flex';
+  loadPhotos();
+}
+
+/* LOAD */
+async function loadPhotos() {
+  document.getElementById('pg').innerHTML = Array(6).fill('<div class="pl"></div>').join('');
+  const { data, error } = await sb
+    .from('photos').select('public_id,created_at')
+    .order('created_at',{ascending:false}).limit(500);
+  if (error || !data) { document.getElementById('pg').innerHTML='<div class="es">Gagal memuat. Coba refresh.</div>'; return; }
+  photos = data;
+  updateStats();
+  render();
+}
+
+function updateStats() {
+  document.getElementById('s-tot').textContent   = photos.length;
+  const today = new Date().toDateString();
+  document.getElementById('s-today').textContent = photos.filter(p=>new Date(p.created_at).toDateString()===today).length;
+  document.getElementById('s-del').textContent   = delCount;
+}
+
+function setFilter(f) {
+  filter = f;
+  document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('act'));
+  document.getElementById('f-'+f).classList.add('act');
+  render();
+}
+
+function filtered() {
+  if (filter==='today') { const t=new Date().toDateString(); return photos.filter(p=>new Date(p.created_at).toDateString()===t); }
+  return photos;
+}
+
+function render() {
+  const list = filtered();
+  const pg   = document.getElementById('pg');
+  if (!list.length) { pg.innerHTML='<div class="es">Belum ada foto.</div>'; return; }
+  pg.innerHTML = list.map((p,i)=>
+    `<div class="pi" onclick="openLB(${i})">
+      <img src="${thumbUrl(p.public_id)}" loading="lazy" alt="" decoding="async">
+      <button class="del-btn" onclick="event.stopPropagation();quickDel(${i})">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+    </div>`
+  ).join('');
+}
+
+/* LIGHTBOX */
+function openLB(i) {
+  idx = i;
+  const p = filtered()[i];
+  document.getElementById('lb-img').src  = fullUrl(p.public_id);
+  document.getElementById('lb-info').textContent = (i+1) + ' / ' + filtered().length;
+  const d = p.created_at ? new Date(p.created_at).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+  document.getElementById('lb-date').textContent = d ? 'Diupload ' + d : '';
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLB() {
+  document.getElementById('lb').classList.remove('open');
+  document.getElementById('lb-img').src = '';
+  document.body.style.overflow = '';
+}
+
+/* DELETE */
+function confirmDel() {
+  const p = filtered()[idx];
+  document.getElementById('cc-prev').src = prevUrl(p.public_id);
+  document.getElementById('cv').classList.add('open');
+}
+function quickDel(i) { idx=i; confirmDel(); }
+function closeCV()   { document.getElementById('cv').classList.remove('open'); }
+
+async function execDel() {
+  const p   = filtered()[idx];
+  const btn = document.getElementById('cc-yes');
+  btn.textContent='Menghapus...'; btn.style.opacity='0.6'; btn.style.pointerEvents='none';
+
+  try {
+    const { error } = await sb.from('photos').delete().eq('public_id', p.public_id);
+    if (error) throw error;
+    const ri = photos.findIndex(x=>x.public_id===p.public_id);
+    if (ri!==-1) photos.splice(ri,1);
+    delCount++;
+    closeCV(); closeLB();
+    updateStats(); render();
+    toast('Foto dihapus');
+  } catch(e) {
+    toast('Gagal menghapus',true);
+  } finally {
+    btn.textContent='Ya, Hapus'; btn.style.opacity=''; btn.style.pointerEvents='';
+  }
+}
+
+function toast(msg, err) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast'+(err?' err':'')+' show';
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){closeLB();closeCV();} });
+document.getElementById('pwd').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
+</script>
+</body>
+</html>
