@@ -197,6 +197,28 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
     <div id="list-kompetisi"><div class="loading"><div class="spinner"></div>Memuat...</div></div>
   </div>
 
+  <!-- PANEL PENGUMUMAN -->
+  <div class="panel" id="panel-pengumuman">
+    <div style="padding:16px">
+      <div class="sec-title" style="margin-bottom:4px">📢 Kirim Pengumuman</div>
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:16px">Pengumuman akan langsung muncul di Beranda app peserta</div>
+
+      <div style="background:white;border-radius:12px;border:1.5px solid var(--cream2);overflow:hidden;margin-bottom:12px">
+        <textarea id="ann-input" placeholder="Tulis pengumuman di sini..." style="width:100%;min-height:120px;padding:14px;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:0.95rem;color:var(--navy);resize:vertical;box-sizing:border-box"></textarea>
+        <div style="padding:10px 14px;border-top:1px solid var(--cream2);display:flex;align-items:center;justify-content:space-between">
+          <span id="ann-char" style="font-size:0.78rem;color:var(--muted)">0 / 200</span>
+          <button onclick="kirimPengumuman()" id="ann-btn" style="height:38px;padding:0 20px;background:var(--navy);color:var(--green2);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer">Kirim</button>
+        </div>
+      </div>
+
+      <!-- RIWAYAT PENGUMUMAN -->
+      <div class="sec-title" style="margin-bottom:12px;margin-top:20px">Riwayat</div>
+      <div id="ann-list">
+        <div style="text-align:center;padding:32px 0;color:var(--muted);font-size:0.88rem">Memuat...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- BOTTOM TABS -->
   <div class="bottom-tabs">
     <button class="btab active" id="btab-pertanyaan" onclick="switchTab('pertanyaan')">
@@ -219,6 +241,12 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3H19V11C19 14.3 15.9 17 12 17C8.1 17 5 14.3 5 11V3Z" fill="currentColor" opacity="0.9"/><rect x="10" y="17" width="4" height="3" fill="currentColor" opacity="0.7"/><rect x="7" y="20" width="10" height="2" rx="1" fill="currentColor"/><path d="M5 5H2C2 9 4 11 5 11M19 5H22C22 9 20 11 19 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </span>
       Kompetisi
+    </button>
+    <button class="btab" id="btab-pengumuman" onclick="switchTab('pengumuman')">
+      <span class="btab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      </span>
+      Kirim
     </button>
   </div>
 </div>
@@ -266,7 +294,7 @@ if (sessionStorage.getItem('gpbsi_admin') === '1') {
 
 /* TABS */
 function switchTab(name) {
-  ['pertanyaan','saran','kompetisi'].forEach(t => {
+  ['pertanyaan','saran','kompetisi','pengumuman'].forEach(t => {
     document.getElementById('panel-'+t).classList.toggle('active', t===name);
     document.getElementById('btab-'+t).classList.toggle('active', t===name);
   });
@@ -368,6 +396,81 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
+
+/* ══════════════════════════════════════════════
+   PENGUMUMAN
+══════════════════════════════════════════════ */
+// Counter karakter
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('ann-input');
+  if (input) {
+    input.addEventListener('input', () => {
+      const len = input.value.length;
+      const counter = document.getElementById('ann-char');
+      if (counter) counter.textContent = `${len} / 200`;
+      if (len > 200) input.value = input.value.slice(0, 200);
+    });
+  }
+});
+
+async function kirimPengumuman() {
+  const input = document.getElementById('ann-input');
+  const btn = document.getElementById('ann-btn');
+  const isi = input.value.trim();
+
+  if (!isi) { showToast('Tulis pengumuman dulu'); return; }
+  if (isi.length > 200) { showToast('Maksimal 200 karakter'); return; }
+
+  btn.textContent = 'Mengirim...';
+  btn.disabled = true;
+
+  const { error } = await sb.from('pengumuman').insert({ isi });
+
+  btn.textContent = 'Kirim';
+  btn.disabled = false;
+
+  if (error) {
+    showToast('Gagal kirim. Coba lagi.');
+    return;
+  }
+
+  input.value = '';
+  document.getElementById('ann-char').textContent = '0 / 200';
+  showToast('✅ Pengumuman terkirim!');
+  loadRiwayatPengumuman();
+}
+
+async function loadRiwayatPengumuman() {
+  const list = document.getElementById('ann-list');
+  if (!list) return;
+
+  const { data, error } = await sb.from('pengumuman')
+    .select('*').order('created_at', { ascending: false }).limit(20);
+
+  if (error || !data || !data.length) {
+    list.innerHTML = '<div style="text-align:center;padding:32px 0;color:var(--muted);font-size:0.88rem">Belum ada pengumuman</div>';
+    return;
+  }
+
+  list.innerHTML = data.map(ann => `
+    <div style="background:white;border-radius:12px;border:1.5px solid var(--cream2);padding:14px;margin-bottom:10px;position:relative">
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">${fmt(ann.created_at)}</div>
+      <div style="font-size:0.95rem;color:var(--navy);line-height:1.5">${ann.isi}</div>
+      <button onclick="hapusPengumuman('${ann.id}')" style="position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:1rem;color:var(--muted)" title="Hapus">🗑</button>
+    </div>
+  `).join('');
+}
+
+async function hapusPengumuman(id) {
+  if (!confirm('Hapus pengumuman ini?')) return;
+  const { error } = await sb.from('pengumuman').delete().eq('id', id);
+  if (error) { showToast('Gagal hapus'); return; }
+  showToast('Dihapus');
+  loadRiwayatPengumuman();
+}
+
+// Load riwayat saat tab pengumuman dibuka
+// load riwayat saat tab pengumuman dibuka sudah di-handle di switchTab
 </script>
 </body>
 </html>
