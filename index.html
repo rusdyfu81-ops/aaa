@@ -385,77 +385,113 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
 .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--cream2)}
 
 
-
-function goToLokasi(area) {
-  nav('lokasi');
-  // Small delay for page to render
-  setTimeout(function() {
-    if (area) highlightArea(area);
-    // Scroll to denah section
-    var denah = document.querySelector('.map-wrap');
-    if (denah) denah.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
-}
-
-/* ── INTERACTIVE MAP ── */
-.map-wrap{
-  position:relative;border-radius:var(--rs);overflow:hidden;
-  border:1px solid var(--cream2);margin-bottom:0;
-  background:#f0f0f0;
-}
-.siteplan-img{
-  width:100%;display:block;
-}
-.map-overlay{
-  position:absolute;inset:0;width:100%;height:100%;
-  pointer-events:all;
-}
-.map-area{
-  fill:transparent;stroke:transparent;
-  stroke-width:2;cursor:pointer;
-  transition:fill 0.25s ease, stroke 0.25s ease;
-}
-.map-area:hover{
-  fill:rgba(125,194,66,0.2);
-  stroke:rgba(125,194,66,0.6);
-}
-.map-area.highlighted{
-  fill:rgba(125,194,66,0.35);
-  stroke:#7DC242;
-  stroke-width:3;
-}
-.map-active-label{
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(125,194,66,0.12);border:1px solid rgba(125,194,66,0.3);
-  border-radius:var(--rs);padding:10px 14px;margin-top:8px;
-  font-size:0.875rem;font-weight:600;color:#3d7a14;
-}
-.map-clear-btn{
-  background:none;border:none;color:#3d7a14;cursor:pointer;
-  font-size:1rem;padding:0 0 0 8px;line-height:1;
-}
-.facility-chips{
-  display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;
-}
-.fac-chip{
-  display:flex;align-items:center;gap:6px;
-  min-height:36px;padding:0 12px;
-  background:white;border:1.5px solid var(--cream2);
-  border-radius:100px;font-family:'DM Sans',sans-serif;
-  font-size:0.82rem;font-weight:600;color:var(--muted);
+/* ── PHOTO WALL ── */
+.upload-area{
+  background:white;border-radius:var(--r);
+  border:2px dashed var(--cream2);
+  padding:28px 20px;text-align:center;
   cursor:pointer;transition:all 0.2s;
+  margin-bottom:14px;
 }
-.fac-chip:active{transform:scale(0.96)}
-.fac-chip.active{
-  background:var(--green-brand);border-color:var(--green-brand);
-  color:white;
+.upload-area:active{border-color:var(--green-brand);background:rgba(125,194,66,0.04)}
+.upload-area.dragover{border-color:var(--green-brand);background:rgba(125,194,66,0.06)}
+.upload-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:rgba(125,194,66,0.1);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 12px;
 }
-.fac-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--cream2);flex-shrink:0;
-  transition:background 0.2s;
+.upload-title{font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:4px}
+.upload-sub{font-size:0.8rem;color:var(--muted);line-height:1.5}
+.upload-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-top:14px;padding:0 20px;height:44px;
+  background:var(--green-brand);border:none;border-radius:var(--rs);
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:700;
+  color:white;cursor:pointer;
 }
-.fac-chip.active .fac-dot{background:rgba(255,255,255,0.6)}
+.upload-btn:active{opacity:0.85}
+.upload-progress{
+  margin-top:12px;display:none;
+}
+.progress-bar{
+  height:4px;background:var(--cream2);border-radius:2px;overflow:hidden;margin-bottom:6px;
+}
+.progress-fill{
+  height:100%;background:var(--green-brand);border-radius:2px;
+  width:0%;transition:width 0.3s ease;
+}
+.progress-text{font-size:0.78rem;color:var(--muted);text-align:center}
+
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:6px;
+}
+.photo-item{
+  aspect-ratio:1;border-radius:var(--rs);overflow:hidden;
+  background:var(--cream2);cursor:pointer;position:relative;
+}
+.photo-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 0.2s;
+}
+.photo-item:active img{transform:scale(0.97)}
+.photo-item .photo-meta{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,0.5));
+  padding:16px 8px 6px;
+  font-size:0.68rem;color:white;font-weight:500;
+}
+.photo-loading{
+  aspect-ratio:1;border-radius:var(--rs);
+  background:var(--cream2);
+  display:flex;align-items:center;justify-content:center;
+}
+.photo-spinner{
+  width:24px;height:24px;border:2px solid var(--cream);
+  border-top-color:var(--green-brand);border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+
+/* Photo lightbox */
+.photo-lightbox{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.92);
+  flex-direction:column;align-items:center;justify-content:center;
+}
+.photo-lightbox.open{display:flex}
+.lightbox-img{
+  max-width:100%;max-height:80vh;
+  object-fit:contain;border-radius:8px;
+}
+.lightbox-close{
+  position:fixed;top:14px;right:14px;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,0.15);border:none;
+  color:white;font-size:1.2rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.lightbox-meta{
+  color:rgba(255,255,255,0.6);font-size:0.78rem;
+  margin-top:12px;text-align:center;
+}
+.photo-empty{
+  text-align:center;padding:48px 24px;color:var(--muted);
+  grid-column:1/-1;
+}
+.photo-count-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.photo-count{font-size:0.82rem;color:var(--muted);font-weight:500}
+.photo-refresh{
+  height:34px;padding:0 12px;background:white;
+  border:1.5px solid var(--cream2);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:0.78rem;
+  font-weight:600;color:var(--text);cursor:pointer;
+}
+.photo-refresh:active{background:var(--cream2)}
 
 .accordion-btn{
   display:flex;align-items:center;justify-content:space-between;
@@ -754,6 +790,7 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
     <a class="drawer-item active" href="#" onclick="nav('home');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.6 20.6 21 20 21H15V16H9V21H4C3.4 21 3 20.6 3 20V10.5Z" fill="var(--green-brand)" rx="1"/></svg></span>Beranda</a>
     <a class="drawer-item" href="#" onclick="nav('jadwal');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="var(--cyan-brand)"/><rect x="3" y="5" width="18" height="6" rx="2" fill="var(--cyan-brand)" opacity="0.4"/><rect x="8" y="2" width="2.5" height="5" rx="1.25" fill="var(--cyan-brand)"/><rect x="13.5" y="2" width="2.5" height="5" rx="1.25" fill="var(--cyan-brand)"/><circle cx="8" cy="14" r="1.2" fill="white"/><circle cx="12" cy="14" r="1.2" fill="white"/><circle cx="16" cy="14" r="1.2" fill="white"/><circle cx="8" cy="18" r="1.2" fill="white"/><circle cx="12" cy="18" r="1.2" fill="white"/></svg></span>Jadwal Acara</a>
     <a class="drawer-item" href="#" onclick="nav('kamar');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="14" height="9" rx="2" fill="var(--green-brand)"/><rect x="4" y="7" width="5" height="4" rx="1" fill="white" opacity="0.6"/><rect x="16" y="11" width="6" height="7" rx="1.5" fill="var(--green-brand)" opacity="0.85"/><rect x="17" y="12.5" width="4" height="3" rx="0.5" fill="white" opacity="0.6"/><circle cx="17.5" cy="19.5" r="1.5" fill="var(--green-brand)"/><circle cx="20.5" cy="19.5" r="1.5" fill="var(--green-brand)"/><rect x="2" y="13" width="14" height="2" rx="1" fill="var(--green-brand)"/></svg></span>Kamar & Bus Saya</a>
+    <a class="drawer-item" href="#" onclick="nav('foto');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3L7 6H3C2.4 6 2 6.4 2 7V18C2 18.6 2.4 19 3 19H21C21.6 19 22 18.6 22 18V7C22 6.4 21.6 6 21 6H17L15 3H9Z" fill="var(--green-brand)"/><circle cx="12" cy="12.5" r="4" fill="white" opacity="0.25"/><circle cx="12" cy="12.5" r="2.5" fill="white" opacity="0.4"/></svg></span>Photo Wall</a>
     <a class="drawer-item" href="#" onclick="nav('tanya');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="var(--cyan-brand)"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="sans-serif">?</text></svg></span>Tanya Pembicara</a>
     <a class="drawer-item" href="#" onclick="nav('saran');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V15C21 16.1 20.1 17 19 17H8L3 21V5Z" fill="var(--green-brand)"/><path d="M7 8H17M7 11H13" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Saran & Komentar</a>
     <div class="drawer-section-label" style="margin-top:4px">Info Retret</div>
@@ -871,20 +908,20 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
     <div class="sched-wrap active" id="day1">
       <div class="sched-item"><div class="sched-time">09.00<br>11.30</div><div class="sched-body"><div class="sched-name">Kumpul & Berangkat</div><div class="sched-desc">Kumpul di Gereja — bus tidak menunggu</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Gereja → 5G Resort</div><span class="badge b-br">Transportasi</span></div></div>
       <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-desc">Nasi Box di perjalanan</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Di bus</div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">12.30<br>14.00</div><div class="sched-body"><div class="sched-name">Ibadah Hari Kenaikan</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">12.30<br>14.00</div><div class="sched-body"><div class="sched-name">Ibadah Hari Kenaikan</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">14.00<br>15.30</div><div class="sched-body"><div class="sched-name">Briefing + Pembagian Kunci + Snack</div><div class="sched-desc">Check-in kamar, pengarahan panitia</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar → Kamar</div><span class="badge b-br">Check-in</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">15.30<br>17.00</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">15.30<br>17.00</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">17.00<br>18.00</div><div class="sched-body"><div class="sched-name">Istirahat & Mandi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar masing-masing</div><span class="badge b-br">Istirahat</span></div></div>
-      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
       <div class="sched-item pl"><div class="sched-time">19.00<br>selesai</div><div class="sched-body"><div class="sched-name">🎤 Talent Show + Barbeque 🔥</div><div class="sched-desc">Malam kebersamaan — bakat & BBQ</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran (Talent) · Outdoor (BBQ)</div><span class="badge b-pl">Pleno</span></div></div>
     </div>
 
     <div class="sched-wrap" id="day2">
-      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Yudie Lengkong</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item"><div class="sched-time">06.15<br>07.00</div><div class="sched-body"><div class="sched-name">Senam Pagi</div><div class="sched-desc">Dipimpin Ci Dwi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('lapangan')">Lapangan Outdoor</span></div><span class="badge b-br">Olahraga</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Yudie Lengkong</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item"><div class="sched-time">06.15<br>07.00</div><div class="sched-body"><div class="sched-name">Senam Pagi</div><div class="sched-desc">Dipimpin Ci Dwi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Lapangan Outdoor</div><span class="badge b-br">Olahraga</span></div></div>
       <div class="sched-item"><div class="sched-time">07.00<br>08.30</div><div class="sched-body"><div class="sched-name">Mandi + Makan Pagi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar → Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">08.30<br>09.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item"><div class="sched-time">09.30<br>10.00</div><div class="sched-body"><div class="sched-name">Sesi Foto & Snack ☕</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('kolam')">Area Kolam Renang</span></div><span class="badge b-br">Santai</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">08.30<br>09.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item"><div class="sched-time">09.30<br>10.00</div><div class="sched-body"><div class="sched-name">Sesi Foto & Snack ☕</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Area Kolam Renang</div><span class="badge b-br">Santai</span></div></div>
       <div class="sched-item par"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Q&A per Kelompok</div><div class="sched-desc">Tanya jawab & game per komisi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Ruang masing-masing</div><span class="badge b-par">Paralel</span>
         <button class="accordion-btn" onclick="toggleAccordion(this)" style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;display:flex;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="8" height="6" rx="2" fill="currentColor"/><rect x="13" y="5" width="8" height="6" rx="2" fill="currentColor" opacity="0.7"/><rect x="3" y="14" width="8" height="6" rx="2" fill="currentColor" opacity="0.7"/><rect x="13" y="14" width="8" height="6" rx="2" fill="currentColor"/></svg></span> Lihat ruang per kelompok <span class="accordion-arrow" style="margin-left:auto">▼</span>
         </button>
@@ -911,24 +948,24 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
           </div>
         </div>
       </div></div>
-      <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">12.30<br>14.30</div><div class="sched-body"><div class="sched-name">🏆 Giring-Giring Emas</div><div class="sched-desc">Kompetisi bersama · snack 30 menit terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-sp">Event Utama</span></div></div>
+      <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">12.30<br>14.30</div><div class="sched-body"><div class="sched-name">🏆 Giring-Giring Emas</div><div class="sched-desc">Kompetisi bersama · snack 30 menit terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-sp">Event Utama</span></div></div>
       <div class="sched-item pl"><div class="sched-time">14.30<br>16.30</div><div class="sched-body"><div class="sched-name">Activity Indoor & Outdoor</div><div class="sched-desc">Aktivitas seru dibagi per area</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Aula · Outdoor · Kolam Renang</div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">16.30<br>18.00</div><div class="sched-body"><div class="sched-name">Istirahat & Mandi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar masing-masing</div><span class="badge b-br">Istirahat</span></div></div>
-      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">19.00<br>20.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">20.30<br>21.30</div><div class="sched-body"><div class="sched-name">Praise & Worship 🎵</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item"><div class="sched-time">21.30<br>22.00</div><div class="sched-body"><div class="sched-name">Snack Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Santai</span></div></div>
+      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">19.00<br>20.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">20.30<br>21.30</div><div class="sched-body"><div class="sched-name">Praise & Worship 🎵</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item"><div class="sched-time">21.30<br>22.00</div><div class="sched-body"><div class="sched-name">Snack Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Santai</span></div></div>
     </div>
 
     <div class="sched-wrap" id="day3">
-      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">06.15<br>08.00</div><div class="sched-body"><div class="sched-name">🏀 Sports Tournament</div><div class="sched-desc">Basket 3on3 + Pingpong Ganda</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('basket')">Lapangan Basket & Pingpong</span></div><span class="badge b-sp">Tournament</span></div></div>
-      <div class="sched-item"><div class="sched-time">08.00<br>09.00</div><div class="sched-body"><div class="sched-name">Makan Pagi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">06.15<br>08.00</div><div class="sched-body"><div class="sched-name">🏀 Sports Tournament</div><div class="sched-desc">Basket 3on3 + Pingpong Ganda</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Lapangan Basket & Pingpong</div><span class="badge b-sp">Tournament</span></div></div>
+      <div class="sched-item"><div class="sched-time">08.00<br>09.00</div><div class="sched-body"><div class="sched-name">Makan Pagi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
       <div class="sched-item"><div class="sched-time">09.00<br>10.00</div><div class="sched-body"><div class="sched-name">Mandi + Beberes & Kosongkan Kamar</div><div class="sched-desc">Check-out — kunci ke panitia</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar → Lobby</div><span class="badge b-br">Check-out</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Ibadah Penutup</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Ibadah Penutup</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">11.30<br>12.00</div><div class="sched-body"><div class="sched-name">Pengumuman + Pengembalian Kunci</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar → Lobby</div><span class="badge b-br">Penutup</span></div></div>
-      <div class="sched-item"><div class="sched-time">12.00<br>13.00</div><div class="sched-body"><div class="sched-name">Makan Siang Terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item"><div class="sched-time">12.00<br>13.00</div><div class="sched-body"><div class="sched-name">Makan Siang Terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
       <div class="sched-item"><div class="sched-time">13.00<br>13.30</div><div class="sched-body"><div class="sched-name">Masuk Bus & Pulang 🚌</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Area Parkir</div><span class="badge b-br">Transportasi</span></div></div>
     </div>
   </div>
@@ -1160,90 +1197,15 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
       </div>
     </div>
     <div class="sec-label" style="margin-top:16px;margin-bottom:6px">Denah Area 5G Resort</div>
+    <img src="area5g.png" alt="Denah 5G Resort" class="siteplan-img" onclick="zoomMap()" style="cursor:pointer">
 
-    <!-- Interactive Map -->
-    <div class="map-wrap">
-      <img src="area5g.png" alt="Denah 5G Resort" class="siteplan-img" id="denah-img">
-      <!-- SVG Overlay - koordinat dalam % relatif terhadap lebar/tinggi gambar -->
-      <svg class="map-overlay" id="map-overlay" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet">
-        <!-- Kolam Renang -->
-        <ellipse data-area="kolam" cx="740" cy="155" rx="145" ry="95" class="map-area" onclick="highlightArea('kolam')"/>
-        <!-- Restoran -->
-        <ellipse data-area="restoran" cx="750" cy="290" rx="130" ry="80" class="map-area" onclick="highlightArea('restoran')"/>
-        <!-- Aula / Grand Pancar -->
-        <rect data-area="aula" x="640" y="355" width="185" height="175" rx="8" class="map-area" onclick="highlightArea('aula')"/>
-        <!-- Wisma 1 -->
-        <rect data-area="wisma1" x="230" y="195" width="145" height="215" rx="8" class="map-area" onclick="highlightArea('wisma1')"/>
-        <!-- Wisma 2 -->
-        <rect data-area="wisma2" x="390" y="440" width="110" height="125" rx="8" class="map-area" onclick="highlightArea('wisma2')"/>
-        <!-- Wisma 3 -->
-        <rect data-area="wisma3" x="510" y="440" width="110" height="125" rx="8" class="map-area" onclick="highlightArea('wisma3')"/>
-        <!-- Cottage 1 -->
-        <rect data-area="cottage" x="890" y="115" width="120" height="95" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
-        <!-- Cottage 2 -->
-        <rect data-area="cottage" x="890" y="230" width="120" height="95" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
-        <!-- Cottage 3 -->
-        <rect data-area="cottage" x="890" y="345" width="120" height="90" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
-        <!-- Cottage 4 -->
-        <rect data-area="cottage" x="1020" y="345" width="120" height="90" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
-        <!-- Cottage 5 -->
-        <rect data-area="cottage" x="890" y="450" width="120" height="90" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
-        <!-- Cottage 6 -->
-        <rect data-area="cottage" x="1020" y="450" width="120" height="90" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
-        <!-- Lapangan Basket -->
-        <rect data-area="basket" x="935" y="680" width="140" height="115" rx="8" class="map-area" onclick="highlightArea('basket')"/>
-        <!-- Lapangan Outdoor -->
-        <rect data-area="lapangan" x="360" y="200" width="200" height="220" rx="8" class="map-area" onclick="highlightArea('lapangan')"/>
-        <!-- Lobby -->
-        <rect data-area="lobby" x="230" y="430" width="85" height="80" rx="8" class="map-area" onclick="highlightArea('lobby')"/>
-
-      </svg>
-    </div>
-
-    <!-- Active label -->
-    <div class="map-active-label" id="map-active-label" style="display:none">
-      <span id="map-active-text"></span>
-      <button onclick="clearHighlight()" class="map-clear-btn">✕</button>
-    </div>
-
-    <!-- Facility chips -->
-    <div class="facility-chips">
-      <button class="fac-chip" data-area="kolam" onclick="highlightArea('kolam')">
-        <span class="fac-dot"></span>Kolam Renang
-      </button>
-      <button class="fac-chip" data-area="restoran" onclick="highlightArea('restoran')">
-        <span class="fac-dot"></span>Restoran
-      </button>
-      <button class="fac-chip" data-area="aula" onclick="highlightArea('aula')">
-        <span class="fac-dot"></span>Grand Pancar
-      </button>
-      <button class="fac-chip" data-area="wisma1" onclick="highlightArea('wisma1')">
-        <span class="fac-dot"></span>Tower Salak
-      </button>
-      <button class="fac-chip" data-area="wisma2" onclick="highlightArea('wisma2')">
-        <span class="fac-dot"></span>Tower Pangrango
-      </button>
-      <button class="fac-chip" data-area="wisma3" onclick="highlightArea('wisma3')">
-        <span class="fac-dot"></span>Tower Gede
-      </button>
-      <button class="fac-chip" data-area="cottage" onclick="highlightArea('cottage')">
-        <span class="fac-dot"></span>Villa 1–5
-      </button>
-      <button class="fac-chip" data-area="lapangan" onclick="highlightArea('lapangan')">
-        <span class="fac-dot"></span>Lapangan
-      </button>
-      <button class="fac-chip" data-area="basket" onclick="highlightArea('basket')">
-        <span class="fac-dot"></span>Lap. Basket
-      </button>
-      <button class="fac-chip" data-area="lobby" onclick="highlightArea('lobby')">
-        <span class="fac-dot"></span>Lobby
-      </button>
-
-    </div>
-
+    <div class="zoom-hint" style="display:flex;align-items:center;justify-content:center;gap:5px"><span style="width:14px;height:14px;display:flex;color:var(--muted)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span> Ketuk gambar untuk perbesar</div>
     <div id="map-modal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.9);overflow:auto;padding:60px 8px 20px" onclick="this.style.display='none'">
       <button onclick="document.getElementById('map-modal').style.display='none'" style="position:fixed;top:12px;right:12px;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;width:40px;height:40px;border-radius:50%;cursor:pointer;z-index:301">✕</button>
       <img src="area5g.png" style="width:100%;max-width:900px;display:block;margin:0 auto;border-radius:8px">
+    </div>
+    <div style="font-size:0.95rem;color:var(--muted);margin-top:10px;line-height:1.8;padding:0 2px">
+      <strong>Fasilitas:</strong> Wisma 1, 2, 3 · Cottage 1–6 · Grand Pancar (Aula) · Restoran · Kolam Renang · Lapangan Basket · Lapangan Outdoor · Musala · Lobby
     </div>
   </div>
 </div>
@@ -1466,13 +1428,69 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
   </div>
 </div>
 
+
+<!-- ═══════════ PAGE: FOTO ═══════════ -->
+<div class="page" id="pg-foto">
+  <div class="sec">
+    <div class="sec-label">Kenangan Bersama</div>
+    <div class="sec-title">Photo Wall</div>
+    <div class="sec-sub">Upload foto terbaikmu — langsung tampil untuk semua peserta.</div>
+    <div class="gold-line"></div>
+
+    <!-- Upload area -->
+    <div class="upload-area" id="upload-area" onclick="document.getElementById('foto-input').click()">
+      <div class="upload-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M9 3L7 6H3C2.4 6 2 6.4 2 7V18C2 18.6 2.4 19 3 19H21C21.6 19 22 18.6 22 18V7C22 6.4 21.6 6 21 6H17L15 3H9Z" fill="var(--green-brand)"/>
+          <circle cx="12" cy="12.5" r="4" fill="white" opacity="0.3"/>
+          <circle cx="12" cy="12.5" r="2.5" fill="white" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="upload-title">Upload Foto Kenangan</div>
+      <div class="upload-sub">Foto langsung tampil di Photo Wall<br>untuk semua peserta</div>
+      <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('foto-input').click()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Pilih Foto
+      </button>
+      <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="handleFotoUpload(this)">
+    </div>
+
+    <!-- Upload progress -->
+    <div class="upload-progress" id="upload-progress">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-text">Mengupload...</div>
+    </div>
+
+    <!-- Photo grid -->
+    <div class="photo-count-bar">
+      <div class="photo-count" id="photo-count">Memuat foto...</div>
+      <button class="photo-refresh" onclick="loadPhotos()">↻ Refresh</button>
+    </div>
+    <div class="photo-grid" id="photo-grid">
+      <div class="photo-loading"><div class="photo-spinner"></div></div>
+      <div class="photo-loading"><div class="photo-spinner"></div></div>
+      <div class="photo-loading"><div class="photo-spinner"></div></div>
+      <div class="photo-loading"><div class="photo-spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="photo-lightbox" id="photo-lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightbox-img" src="" alt="">
+  <div class="lightbox-meta" id="lightbox-meta"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <button class="bnav-item active" id="bnav-home" onclick="nav('home')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.6 20.6 21 20 21H15V16H9V21H4C3.4 21 3 20.6 3 20V10.5Z" fill="currentColor" rx="1"/></svg></span>Beranda</button>
-  <button class="bnav-item" id="bnav-jadwal" onclick="nav('jadwal')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="currentColor"/><rect x="3" y="5" width="18" height="6" rx="2" fill="currentColor" opacity="0.4"/><rect x="8" y="2" width="2.5" height="5" rx="1.25" fill="currentColor"/><rect x="13.5" y="2" width="2.5" height="5" rx="1.25" fill="currentColor"/><circle cx="8" cy="14" r="1.2" fill="white"/><circle cx="12" cy="14" r="1.2" fill="white"/><circle cx="16" cy="14" r="1.2" fill="white"/><circle cx="8" cy="18" r="1.2" fill="white"/><circle cx="12" cy="18" r="1.2" fill="white"/></svg></span>Jadwal</button>
+  <button class="bnav-item active" id="bnav-home" onclick="nav('home')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.6 20.6 21 20 21H15V16H9V21H4C3.4 21 3 20.6 3 20V10.5Z" fill="currentColor"/></svg></span>Beranda</button>
   <button class="bnav-item" id="bnav-kamar" onclick="nav('kamar')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="14" height="9" rx="2" fill="currentColor"/><rect x="4" y="7" width="5" height="4" rx="1" fill="white" opacity="0.6"/><rect x="16" y="11" width="6" height="7" rx="1.5" fill="currentColor" opacity="0.85"/><rect x="17" y="12.5" width="4" height="3" rx="0.5" fill="white" opacity="0.6"/><circle cx="17.5" cy="19.5" r="1.5" fill="currentColor"/><circle cx="20.5" cy="19.5" r="1.5" fill="currentColor"/><rect x="2" y="13" width="14" height="2" rx="1" fill="currentColor"/></svg></span>Kamarku</button>
+  <button class="bnav-item" id="bnav-jadwal" onclick="nav('jadwal')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="16" rx="2.5" fill="currentColor"/><rect x="3" y="5" width="18" height="6" rx="2" fill="currentColor" opacity="0.4"/><rect x="8" y="2" width="2.5" height="5" rx="1.25" fill="currentColor"/><rect x="13.5" y="2" width="2.5" height="5" rx="1.25" fill="currentColor"/><circle cx="8" cy="14" r="1.2" fill="white"/><circle cx="12" cy="14" r="1.2" fill="white"/><circle cx="16" cy="14" r="1.2" fill="white"/><circle cx="8" cy="18" r="1.2" fill="white"/><circle cx="12" cy="18" r="1.2" fill="white"/></svg></span>Jadwal</button>
+  <button class="bnav-item" id="bnav-foto" onclick="nav('foto')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3L7 6H3C2.4 6 2 6.4 2 7V18C2 18.6 2.4 19 3 19H21C21.6 19 22 18.6 22 18V7C22 6.4 21.6 6 21 6H17L15 3H9Z" fill="currentColor"/><circle cx="12" cy="12.5" r="4" fill="white" opacity="0.25"/><circle cx="12" cy="12.5" r="2.5" fill="white" opacity="0.4"/></svg></span>Foto</button>
   <button class="bnav-item" id="bnav-tanya" onclick="nav('tanya')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="currentColor"/><text x="12" y="17" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="sans-serif">?</text></svg></span>Tanya</button>
-  <button class="bnav-item" id="bnav-saran" onclick="nav('saran')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V15C21 16.1 20.1 17 19 17H8L3 21V5Z" fill="currentColor"/><path d="M7 8H17M7 11H13" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Saran</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1486,26 +1504,157 @@ const SUPABASE_URL = 'https://rzugyebwaxmhomztfgpc.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6dWd5ZWJ3YXhtaG9tenRmZ3BjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjE1MjIsImV4cCI6MjA5MzM5NzUyMn0.0sHgF5H2dWCTfJ64wxzby1N-X6gLkK-tMwcbJ5UU3vc';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ── NAV ── */
-const pages = ['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak','tanya','saran'];
-const bnav5 = ['home','kamar','jadwal','tanya','saran'];
+
+/* ══════════════════════════════════════════════
+   PHOTO WALL — Cloudinary
+══════════════════════════════════════════════ */
+var CLOUDINARY_CLOUD = 'dimheaob1';      // ← ganti dengan Cloud Name kamu
+var CLOUDINARY_PRESET = 'gpbsi_retreat';        // ← Upload Preset yang sudah dibuat
+var CLOUDINARY_FOLDER = 'gpbsi2026';
+
+var photoCache = [];
+
+// Load saat halaman foto dibuka
+var pages = ['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak','tanya','saran','foto'];
+var bnav5 = ['home','kamar','jadwal','foto','tanya'];
+
+var _fotoLoaded = false;
+var _origNav = null;
 
 function nav(id) {
-  pages.forEach(p => {
-    const el = document.getElementById('pg-' + p);
+  pages.forEach(function(p) {
+    var el = document.getElementById('pg-' + p);
     if(el) el.classList.toggle('active', p === id);
   });
-  bnav5.forEach(b => {
-    const el = document.getElementById('bnav-' + b);
+  bnav5.forEach(function(b) {
+    var el = document.getElementById('bnav-' + b);
     if(el) el.classList.toggle('active', b === id);
   });
-  document.querySelectorAll('.drawer-item').forEach(el => {
-    const fn = el.getAttribute('onclick') || '';
+  document.querySelectorAll('.drawer-item').forEach(function(el) {
+    var fn = el.getAttribute('onclick') || '';
     el.classList.toggle('active', fn.includes("nav('" + id + "')"));
   });
   window.scrollTo(0, 0);
-  if (id === 'jadwal') setTimeout(highlightJadwal, 100);
+  if (id === 'foto' && !_fotoLoaded) {
+    _fotoLoaded = true;
+    loadPhotos();
+  }
 }
+
+async function loadPhotos() {
+  var grid = document.getElementById('photo-grid');
+  var countEl = document.getElementById('photo-count');
+  if (!grid) return;
+
+  grid.innerHTML = '<div class="photo-loading"><div class="photo-spinner"></div></div>'
+    + '<div class="photo-loading"><div class="photo-spinner"></div></div>'
+    + '<div class="photo-loading"><div class="photo-spinner"></div></div>'
+    + '<div class="photo-loading"><div class="photo-spinner"></div></div>';
+
+  try {
+    // Cloudinary list API - ambil foto dari folder
+    var url = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD
+      + '/image/list/' + CLOUDINARY_FOLDER + '.json';
+    var res = await fetch(url);
+    var data = await res.json();
+    var resources = (data.resources || []).reverse(); // terbaru di atas
+    photoCache = resources;
+
+    if (countEl) countEl.textContent = resources.length + ' foto';
+
+    if (resources.length === 0) {
+      grid.innerHTML = '<div class="photo-empty"><div style="font-size:2.5rem;margin-bottom:10px;opacity:0.4">📷</div><div style="font-size:0.875rem">Belum ada foto.<br>Jadilah yang pertama upload!</div></div>';
+      return;
+    }
+
+    grid.innerHTML = resources.map(function(r, i) {
+      var imgUrl = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD
+        + '/image/upload/w_400,h_400,c_fill,q_auto/' + r.public_id;
+      var date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short'}) : '';
+      return '<div class="photo-item" onclick="openLightbox(' + i + ')">'
+        + '<img src="' + imgUrl + '" loading="lazy" alt="Foto ' + (i+1) + '">'
+        + (date ? '<div class="photo-meta">' + date + '</div>' : '')
+        + '</div>';
+    }).join('');
+
+  } catch(e) {
+    grid.innerHTML = '<div class="photo-empty"><div style="font-size:0.875rem;grid-column:1/-1">Gagal memuat foto. Coba refresh.</div></div>';
+    if (countEl) countEl.textContent = '—';
+  }
+}
+
+function openLightbox(idx) {
+  var r = photoCache[idx];
+  if (!r) return;
+  var imgUrl = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD
+    + '/image/upload/w_1200,q_auto/' + r.public_id;
+  document.getElementById('lightbox-img').src = imgUrl;
+  var date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : '';
+  document.getElementById('lightbox-meta').textContent = date ? 'Diupload ' + date : '';
+  document.getElementById('photo-lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function handleFotoUpload(input) {
+  var files = Array.from(input.files);
+  if (!files.length) return;
+
+  var progressWrap = document.getElementById('upload-progress');
+  var progressFill = document.getElementById('progress-fill');
+  var progressText = document.getElementById('progress-text');
+  progressWrap.style.display = 'block';
+
+  var uploaded = 0;
+  var failed = 0;
+
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    progressText.textContent = 'Mengupload ' + (i + 1) + ' dari ' + files.length + '...';
+    progressFill.style.width = (((i) / files.length) * 100) + '%';
+
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_PRESET);
+    formData.append('folder', CLOUDINARY_FOLDER);
+
+    try {
+      var res = await fetch(
+        'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload',
+        { method: 'POST', body: formData }
+      );
+      if (res.ok) {
+        uploaded++;
+      } else {
+        failed++;
+      }
+    } catch(e) {
+      failed++;
+    }
+  }
+
+  progressFill.style.width = '100%';
+  progressText.textContent = uploaded + ' foto berhasil diupload!';
+
+  setTimeout(function() {
+    progressWrap.style.display = 'none';
+    progressFill.style.width = '0%';
+    input.value = '';
+    _fotoLoaded = false;
+    loadPhotos();
+  }, 1500);
+
+  if (failed > 0) {
+    showToast(failed + ' foto gagal diupload');
+  } else {
+    showToast(uploaded + ' foto berhasil! Terima kasih');
+  }
+}
+
 
 /* ── DRAWER ── */
 function toggleDrawer() {
@@ -1573,79 +1722,6 @@ function zoomMap() {
 }
 
 /* ── TOAST ── */
-
-
-function goToLokasi(area) {
-  nav('lokasi');
-  // Small delay for page to render
-  setTimeout(function() {
-    if (area) highlightArea(area);
-    // Scroll to denah section
-    var denah = document.querySelector('.map-wrap');
-    if (denah) denah.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
-}
-
-/* ── INTERACTIVE MAP ── */
-var AREA_NAMES = {
-  kolam: 'Kolam Renang',
-  restoran: 'Restoran Area',
-  aula: 'Grand Pancar (Aula Utama)',
-  wisma1: 'Tower Salak',
-  wisma2: 'Tower Pangrango',
-  wisma3: 'Tower Gede',
-  cottage: 'Villa 1–5',
-  lapangan: 'Lapangan Outdoor',
-  basket: 'Lapangan Basket',
-  lobby: 'Lobby',
-
-};
-
-var activeArea = null;
-
-function highlightArea(area) {
-  // Toggle off if same area
-  if (activeArea === area) {
-    clearHighlight();
-    return;
-  }
-
-  activeArea = area;
-
-  // Update SVG areas
-  document.querySelectorAll('.map-area').forEach(function(el) {
-    el.classList.toggle('highlighted', el.dataset.area === area);
-  });
-
-  // Update chips
-  document.querySelectorAll('.fac-chip').forEach(function(el) {
-    el.classList.toggle('active', el.dataset.area === area);
-    if (el.dataset.area === area) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-  });
-
-  // Show active label
-  var label = document.getElementById('map-active-label');
-  var text = document.getElementById('map-active-text');
-  if (label && text) {
-    text.textContent = '📍 ' + (AREA_NAMES[area] || area);
-    label.style.display = 'flex';
-  }
-}
-
-function clearHighlight() {
-  activeArea = null;
-  document.querySelectorAll('.map-area').forEach(function(el) {
-    el.classList.remove('highlighted');
-  });
-  document.querySelectorAll('.fac-chip').forEach(function(el) {
-    el.classList.remove('active');
-  });
-  var label = document.getElementById('map-active-label');
-  if (label) label.style.display = 'none';
-}
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
