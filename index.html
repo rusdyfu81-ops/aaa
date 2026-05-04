@@ -575,7 +575,22 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
   transition:opacity 0.2s;margin:14px 0 0;
 }
 .map-btn:active{opacity:0.8}
-.siteplan-img{width:100%;display:block;border-radius:var(--rs);border:1px solid var(--cream2)}
+.siteplan-img{width:100%;display:block;}
+/* ── INTERACTIVE MAP ── */
+.map-wrap{position:relative;border-radius:var(--rs);overflow:hidden;border:1px solid var(--cream2);background:#f0f0f0}
+.map-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:all}
+.map-area{fill:transparent;stroke:transparent;stroke-width:2;cursor:pointer;transition:fill 0.25s,stroke 0.25s}
+.map-area:hover{fill:rgba(125,194,66,0.2);stroke:rgba(125,194,66,0.6)}
+.map-area.highlighted{fill:rgba(125,194,66,0.38);stroke:#7DC242;stroke-width:3}
+.map-active-label{display:flex;align-items:center;justify-content:space-between;background:rgba(125,194,66,0.1);border:1px solid rgba(125,194,66,0.3);border-radius:var(--rs);padding:10px 14px;margin-top:8px;font-size:0.875rem;font-weight:600;color:#3d7a14}
+.map-clear-btn{background:none;border:none;color:#3d7a14;cursor:pointer;font-size:1rem;padding:0 0 0 8px;line-height:1}
+.facility-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.fac-chip{display:flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;background:white;border:1.5px solid var(--cream2);border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s}
+.fac-chip:active{transform:scale(0.96)}
+.fac-chip.active{background:var(--green-brand);border-color:var(--green-brand);color:white}
+.fac-dot{width:8px;height:8px;border-radius:50%;background:var(--cream2);flex-shrink:0;transition:background 0.2s}
+.fac-chip.active .fac-dot{background:rgba(255,255,255,0.6)}
+
 .zoom-hint{font-size:0.92rem;color:var(--muted);text-align:center;margin-top:6px}
 
 /* ── ATURAN ── */
@@ -754,6 +769,22 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
 }
 .dark-toggle:active{background:rgba(255,255,255,0.18)}
 </style>
+<script>
+/* Stub nav agar tidak error saat HTML render sebelum script utama dimuat */
+function nav(id){
+  var pages=['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak','tanya','saran','foto'];
+  var bnav5=['home','kamar','jadwal','foto','tanya'];
+  pages.forEach(function(p){var el=document.getElementById('pg-'+p);if(el)el.classList.toggle('active',p===id);});
+  bnav5.forEach(function(b){var el=document.getElementById('bnav-'+b);if(el)el.classList.toggle('active',b===id);});
+  document.querySelectorAll('.drawer-item').forEach(function(el){var fn=el.getAttribute('onclick')||'';el.classList.toggle('active',fn.includes("nav('"+id+"')"));});
+  window.scrollTo(0,0);
+  if(id==='foto'&&typeof _fotoLoaded!=='undefined'&&!_fotoLoaded){_fotoLoaded=true;if(typeof loadPhotos==='function')loadPhotos();}
+}
+function toggleDark(){var isDark=document.body.classList.toggle('dark');localStorage.setItem('gpbsi_dark',isDark?'1':'0');var btn=document.getElementById('dark-btn');if(btn)btn.textContent=isDark?'☀️':'🌙';}
+function toggleDrawer(){var d=document.getElementById('drawer');var o=document.getElementById('overlay');var b=document.getElementById('burger');if(!d)return;var open=d.classList.toggle('open');o&&o.classList.toggle('open',open);b&&b.classList.toggle('open',open);document.body.style.overflow=open?'hidden':'';}
+function closeDrawer(){var d=document.getElementById('drawer');var o=document.getElementById('overlay');var b=document.getElementById('burger');if(d)d.classList.remove('open');if(o)o.classList.remove('open');if(b)b.classList.remove('open');document.body.style.overflow='';}
+(function initDark(){if(localStorage.getItem('gpbsi_dark')==='1'){document.documentElement.classList.add('dark');}})();
+</script>
 </head>
 <body>
 
@@ -812,7 +843,7 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
 <div class="page active" id="pg-home">
   <div class="hero">
     <div class="hero-logo-wrap">
-      <img src="logo.png" alt="GPBSI Family Retreat 2026" class="hero-logo"
+      <img src="logo.PNG" alt="GPBSI Family Retreat 2026" class="hero-logo"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
            onload="this.nextElementSibling.style.display='none'">
       <div class="hero-logo-ph" id="logo-ph">LOGO · GPBSI FAMILY RETREAT 2026</div>
@@ -908,20 +939,20 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
     <div class="sched-wrap active" id="day1">
       <div class="sched-item"><div class="sched-time">09.00<br>11.30</div><div class="sched-body"><div class="sched-name">Kumpul & Berangkat</div><div class="sched-desc">Kumpul di Gereja — bus tidak menunggu</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Gereja → 5G Resort</div><span class="badge b-br">Transportasi</span></div></div>
       <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-desc">Nasi Box di perjalanan</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Di bus</div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">12.30<br>14.00</div><div class="sched-body"><div class="sched-name">Ibadah Hari Kenaikan</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">12.30<br>14.00</div><div class="sched-body"><div class="sched-name">Ibadah Hari Kenaikan</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">14.00<br>15.30</div><div class="sched-body"><div class="sched-name">Briefing + Pembagian Kunci + Snack</div><div class="sched-desc">Check-in kamar, pengarahan panitia</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar → Kamar</div><span class="badge b-br">Check-in</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">15.30<br>17.00</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">15.30<br>17.00</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">17.00<br>18.00</div><div class="sched-body"><div class="sched-name">Istirahat & Mandi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar masing-masing</div><span class="badge b-br">Istirahat</span></div></div>
-      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
       <div class="sched-item pl"><div class="sched-time">19.00<br>selesai</div><div class="sched-body"><div class="sched-name">🎤 Talent Show + Barbeque 🔥</div><div class="sched-desc">Malam kebersamaan — bakat & BBQ</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran (Talent) · Outdoor (BBQ)</div><span class="badge b-pl">Pleno</span></div></div>
     </div>
 
     <div class="sched-wrap" id="day2">
-      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Yudie Lengkong</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item"><div class="sched-time">06.15<br>07.00</div><div class="sched-body"><div class="sched-name">Senam Pagi</div><div class="sched-desc">Dipimpin Ci Dwi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Lapangan Outdoor</div><span class="badge b-br">Olahraga</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Yudie Lengkong</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item"><div class="sched-time">06.15<br>07.00</div><div class="sched-body"><div class="sched-name">Senam Pagi</div><div class="sched-desc">Dipimpin Ci Dwi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('lapangan')">Lapangan Outdoor</span></div><span class="badge b-br">Olahraga</span></div></div>
       <div class="sched-item"><div class="sched-time">07.00<br>08.30</div><div class="sched-body"><div class="sched-name">Mandi + Makan Pagi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar → Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">08.30<br>09.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item"><div class="sched-time">09.30<br>10.00</div><div class="sched-body"><div class="sched-name">Sesi Foto & Snack ☕</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Area Kolam Renang</div><span class="badge b-br">Santai</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">08.30<br>09.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item"><div class="sched-time">09.30<br>10.00</div><div class="sched-body"><div class="sched-name">Sesi Foto & Snack ☕</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('kolam')">Area Kolam Renang</span></div><span class="badge b-br">Santai</span></div></div>
       <div class="sched-item par"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Q&A per Kelompok</div><div class="sched-desc">Tanya jawab & game per komisi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Ruang masing-masing</div><span class="badge b-par">Paralel</span>
         <button class="accordion-btn" onclick="toggleAccordion(this)" style="display:flex;align-items:center;gap:8px"><span style="width:16px;height:16px;display:flex;color:var(--teal)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="8" height="6" rx="2" fill="currentColor"/><rect x="13" y="5" width="8" height="6" rx="2" fill="currentColor" opacity="0.7"/><rect x="3" y="14" width="8" height="6" rx="2" fill="currentColor" opacity="0.7"/><rect x="13" y="14" width="8" height="6" rx="2" fill="currentColor"/></svg></span> Lihat ruang per kelompok <span class="accordion-arrow" style="margin-left:auto">▼</span>
         </button>
@@ -948,24 +979,24 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
           </div>
         </div>
       </div></div>
-      <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">12.30<br>14.30</div><div class="sched-body"><div class="sched-name">🏆 Giring-Giring Emas</div><div class="sched-desc">Kompetisi bersama · snack 30 menit terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-sp">Event Utama</span></div></div>
+      <div class="sched-item"><div class="sched-time">11.30<br>12.30</div><div class="sched-body"><div class="sched-name">Makan Siang</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">12.30<br>14.30</div><div class="sched-body"><div class="sched-name">🏆 Giring-Giring Emas</div><div class="sched-desc">Kompetisi bersama · snack 30 menit terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-sp">Event Utama</span></div></div>
       <div class="sched-item pl"><div class="sched-time">14.30<br>16.30</div><div class="sched-body"><div class="sched-name">Activity Indoor & Outdoor</div><div class="sched-desc">Aktivitas seru dibagi per area</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Aula · Outdoor · Kolam Renang</div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">16.30<br>18.00</div><div class="sched-body"><div class="sched-name">Istirahat & Mandi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar masing-masing</div><span class="badge b-br">Istirahat</span></div></div>
-      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">19.00<br>20.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">20.30<br>21.30</div><div class="sched-body"><div class="sched-name">Praise & Worship 🎵</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item"><div class="sched-time">21.30<br>22.00</div><div class="sched-body"><div class="sched-name">Snack Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Santai</span></div></div>
+      <div class="sched-item"><div class="sched-time">18.00<br>19.00</div><div class="sched-body"><div class="sched-name">Makan Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">19.00<br>20.30</div><div class="sched-body"><div class="sched-name">Bible Study</div><div class="sched-desc">Pdt. JungWon Jung</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">20.30<br>21.30</div><div class="sched-body"><div class="sched-name">Praise & Worship 🎵</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item"><div class="sched-time">21.30<br>22.00</div><div class="sched-body"><div class="sched-name">Snack Malam</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Santai</span></div></div>
     </div>
 
     <div class="sched-wrap" id="day3">
-      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">06.15<br>08.00</div><div class="sched-body"><div class="sched-name">🏀 Sports Tournament</div><div class="sched-desc">Basket 3on3 + Pingpong Ganda</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Lapangan Basket & Pingpong</div><span class="badge b-sp">Tournament</span></div></div>
-      <div class="sched-item"><div class="sched-time">08.00<br>09.00</div><div class="sched-body"><div class="sched-name">Makan Pagi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">05.30<br>06.15</div><div class="sched-body"><div class="sched-name">Ibadah Subuh</div><div class="sched-desc">Pujian + Firman + Doa · Pdt. Allen Widjaja</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">06.15<br>08.00</div><div class="sched-body"><div class="sched-name">🏀 Sports Tournament</div><div class="sched-desc">Basket 3on3 + Pingpong Ganda</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('basket')">Lapangan Basket & Pingpong</span></div><span class="badge b-sp">Tournament</span></div></div>
+      <div class="sched-item"><div class="sched-time">08.00<br>09.00</div><div class="sched-body"><div class="sched-name">Makan Pagi</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
       <div class="sched-item"><div class="sched-time">09.00<br>10.00</div><div class="sched-body"><div class="sched-name">Mandi + Beberes & Kosongkan Kamar</div><div class="sched-desc">Check-out — kunci ke panitia</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Kamar → Lobby</div><span class="badge b-br">Check-out</span></div></div>
-      <div class="sched-item pl"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Ibadah Penutup</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar</div><span class="badge b-pl">Pleno</span></div></div>
+      <div class="sched-item pl"><div class="sched-time">10.00<br>11.30</div><div class="sched-body"><div class="sched-name">Ibadah Penutup</div><div class="sched-desc">Pdt. Youn Doo Hee</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('aula')">Grand Pancar</span></div><span class="badge b-pl">Pleno</span></div></div>
       <div class="sched-item"><div class="sched-time">11.30<br>12.00</div><div class="sched-body"><div class="sched-name">Pengumuman + Pengembalian Kunci</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Grand Pancar → Lobby</div><span class="badge b-br">Penutup</span></div></div>
-      <div class="sched-item"><div class="sched-time">12.00<br>13.00</div><div class="sched-body"><div class="sched-name">Makan Siang Terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Restoran Area</div><span class="badge b-br">Konsumsi</span></div></div>
+      <div class="sched-item"><div class="sched-time">12.00<br>13.00</div><div class="sched-body"><div class="sched-name">Makan Siang Terakhir</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> <span style="text-decoration:underline dotted;text-underline-offset:2px;cursor:pointer" onclick="event.stopPropagation();goToLokasi('restoran')">Restoran Area</span></div><span class="badge b-br">Konsumsi</span></div></div>
       <div class="sched-item"><div class="sched-time">13.00<br>13.30</div><div class="sched-body"><div class="sched-name">Masuk Bus & Pulang 🚌</div><div class="sched-loc"><span style="display:inline-flex;width:13px;height:13px;vertical-align:middle;margin-right:3px;color:var(--cyan-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="currentColor"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span> Area Parkir</div><span class="badge b-br">Transportasi</span></div></div>
     </div>
   </div>
@@ -1197,15 +1228,60 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
       </div>
     </div>
     <div class="sec-label" style="margin-top:16px;margin-bottom:6px">Denah Area 5G Resort</div>
-    <img src="area5g.png" alt="Denah 5G Resort" class="siteplan-img" onclick="zoomMap()" style="cursor:pointer">
+    <div class="map-wrap">
+      <img src="area5g.png" alt="Denah 5G Resort" class="siteplan-img" id="denah-img">
+      <!-- SVG overlay, viewBox sesuai proporsi gambar denah asli -->
+      <svg class="map-overlay" viewBox="0 0 1294 816" preserveAspectRatio="xMidYMid meet">
+        <!-- Kolam Renang -->
+        <rect data-area="kolam" x="686" y="106" width="211" height="77" rx="8" class="map-area" onclick="highlightArea('kolam')"/>
+        <!-- Restoran -->
+        <rect data-area="restoran" x="730" y="181" width="160" height="131" rx="8" class="map-area" onclick="highlightArea('restoran')"/>
+        <!-- Tower Salak / Wisma 1 -->
+        <rect data-area="wisma1" x="370" y="272" width="108" height="107" rx="8" class="map-area" onclick="highlightArea('wisma1')"/>
+        <!-- Tower Pangrango / Wisma 2 -->
+        <rect data-area="wisma2" x="491" y="499" width="107" height="105" rx="8" class="map-area" onclick="highlightArea('wisma2')"/>
+        <!-- Tower Gede / Wisma 3 -->
+        <rect data-area="wisma3" x="619" y="508" width="104" height="95" rx="8" class="map-area" onclick="highlightArea('wisma3')"/>
+        <!-- Cottage 1 -->
+        <rect data-area="cottage" x="934" y="234" width="69" height="53" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
+        <!-- Cottage 2 -->
+        <rect data-area="cottage" x="950" y="357" width="61" height="54" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
+        <!-- Cottage 3 -->
+        <rect data-area="cottage" x="950" y="433" width="72" height="49" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
+        <!-- Cottage 4 -->
+        <rect data-area="cottage" x="971" y="505" width="61" height="54" rx="8" class="map-area" onclick="highlightArea('cottage')"/>
+        <!-- Lapangan Outdoor -->
+        <rect data-area="lapangan" x="490" y="259" width="223" height="185" rx="8" class="map-area" onclick="highlightArea('lapangan')"/>
+        <!-- Lapangan Basket -->
+        <rect data-area="basket" x="1000" y="660" width="88" height="89" rx="8" class="map-area" onclick="highlightArea('basket')"/>
+        <!-- Lobby -->
+        <rect data-area="lobby" x="385" y="448" width="76" height="70" rx="8" class="map-area" onclick="highlightArea('lobby')"/>
+      </svg>
+    </div>
 
-    <div class="zoom-hint" style="display:flex;align-items:center;justify-content:center;gap:5px"><span style="width:14px;height:14px;display:flex;color:var(--muted)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></span> Ketuk gambar untuk perbesar</div>
+    <!-- Active label -->
+    <div class="map-active-label" id="map-active-label" style="display:none">
+      <span id="map-active-text"></span>
+      <button onclick="clearHighlight()" class="map-clear-btn">✕</button>
+    </div>
+
+    <!-- Facility chips -->
+    <div class="facility-chips">
+      <button class="fac-chip" data-area="kolam" onclick="highlightArea('kolam')"><span class="fac-dot"></span>Kolam Renang</button>
+      <button class="fac-chip" data-area="restoran" onclick="highlightArea('restoran')"><span class="fac-dot"></span>Restoran</button>
+      <button class="fac-chip" data-area="aula" onclick="highlightArea('aula')"><span class="fac-dot"></span>Grand Pancar</button>
+      <button class="fac-chip" data-area="wisma1" onclick="highlightArea('wisma1')"><span class="fac-dot"></span>Tower Salak</button>
+      <button class="fac-chip" data-area="wisma2" onclick="highlightArea('wisma2')"><span class="fac-dot"></span>Tower Pangrango</button>
+      <button class="fac-chip" data-area="wisma3" onclick="highlightArea('wisma3')"><span class="fac-dot"></span>Tower Gede</button>
+      <button class="fac-chip" data-area="cottage" onclick="highlightArea('cottage')"><span class="fac-dot"></span>Villa 1–5</button>
+      <button class="fac-chip" data-area="lapangan" onclick="highlightArea('lapangan')"><span class="fac-dot"></span>Lapangan</button>
+      <button class="fac-chip" data-area="basket" onclick="highlightArea('basket')"><span class="fac-dot"></span>Lap. Basket</button>
+      <button class="fac-chip" data-area="lobby" onclick="highlightArea('lobby')"><span class="fac-dot"></span>Lobby</button>
+    </div>
+
     <div id="map-modal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.9);overflow:auto;padding:60px 8px 20px" onclick="this.style.display='none'">
       <button onclick="document.getElementById('map-modal').style.display='none'" style="position:fixed;top:12px;right:12px;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;width:40px;height:40px;border-radius:50%;cursor:pointer;z-index:301">✕</button>
       <img src="area5g.png" style="width:100%;max-width:900px;display:block;margin:0 auto;border-radius:8px">
-    </div>
-    <div style="font-size:0.95rem;color:var(--muted);margin-top:10px;line-height:1.8;padding:0 2px">
-      <strong>Fasilitas:</strong> Wisma 1, 2, 3 · Cottage 1–6 · Grand Pancar (Aula) · Restoran · Kolam Renang · Lapangan Basket · Lapangan Outdoor · Musala · Lobby
     </div>
   </div>
 </div>
@@ -1521,25 +1597,8 @@ var bnav5 = ['home','kamar','jadwal','foto','tanya'];
 var _fotoLoaded = false;
 var _origNav = null;
 
-function nav(id) {
-  pages.forEach(function(p) {
-    var el = document.getElementById('pg-' + p);
-    if(el) el.classList.toggle('active', p === id);
-  });
-  bnav5.forEach(function(b) {
-    var el = document.getElementById('bnav-' + b);
-    if(el) el.classList.toggle('active', b === id);
-  });
-  document.querySelectorAll('.drawer-item').forEach(function(el) {
-    var fn = el.getAttribute('onclick') || '';
-    el.classList.toggle('active', fn.includes("nav('" + id + "')"));
-  });
-  window.scrollTo(0, 0);
-  if (id === 'foto' && !_fotoLoaded) {
-    _fotoLoaded = true;
-    loadPhotos();
-  }
-}
+// nav(), toggleDark(), toggleDrawer(), closeDrawer() sudah didefinisikan di <head>
+
 
 async function loadPhotos() {
   var grid = document.getElementById('photo-grid');
@@ -1552,12 +1611,16 @@ async function loadPhotos() {
     + '<div class="photo-loading"><div class="photo-spinner"></div></div>';
 
   try {
-    // Cloudinary list API - ambil foto dari folder
-    var url = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD
-      + '/image/list/' + CLOUDINARY_FOLDER + '.json';
-    var res = await fetch(url);
-    var data = await res.json();
-    var resources = (data.resources || []).reverse(); // terbaru di atas
+    // Ambil metadata foto dari tabel Supabase 'photos' (terbaru di atas)
+    var { data: rows, error } = await sb
+      .from('photos')
+      .select('public_id, created_at')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (error) throw error;
+
+    var resources = rows || [];
     photoCache = resources;
 
     if (countEl) countEl.textContent = resources.length + ' foto';
@@ -1572,7 +1635,7 @@ async function loadPhotos() {
         + '/image/upload/w_400,h_400,c_fill,q_auto/' + r.public_id;
       var date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short'}) : '';
       return '<div class="photo-item" onclick="openLightbox(' + i + ')">'
-        + '<img src="' + imgUrl + '" loading="lazy" alt="Foto ' + (i+1) + '">'
+        + '<img src="' + imgUrl + '" loading="lazy" alt="Foto ' + (i+1) + '" onerror="this.parentElement.style.display=\'none\'">'
         + (date ? '<div class="photo-meta">' + date + '</div>' : '')
         + '</div>';
     }).join('');
@@ -1580,6 +1643,7 @@ async function loadPhotos() {
   } catch(e) {
     grid.innerHTML = '<div class="photo-empty"><div style="font-size:0.875rem;grid-column:1/-1">Gagal memuat foto. Coba refresh.</div></div>';
     if (countEl) countEl.textContent = '—';
+    console.error('loadPhotos error:', e);
   }
 }
 
@@ -1628,6 +1692,11 @@ async function handleFotoUpload(input) {
         { method: 'POST', body: formData }
       );
       if (res.ok) {
+        var result = await res.json();
+        // Simpan public_id ke Supabase agar foto bisa ditampilkan
+        if (result.public_id) {
+          await sb.from('photos').insert({ public_id: result.public_id });
+        }
         uploaded++;
       } else {
         failed++;
@@ -1656,22 +1725,7 @@ async function handleFotoUpload(input) {
 }
 
 
-/* ── DRAWER ── */
-function toggleDrawer() {
-  const d = document.getElementById('drawer');
-  const o = document.getElementById('overlay');
-  const b = document.getElementById('burger');
-  const open = d.classList.toggle('open');
-  o.classList.toggle('open', open);
-  b.classList.toggle('open', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-}
-function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('overlay').classList.remove('open');
-  document.getElementById('burger').classList.remove('open');
-  document.body.style.overflow = '';
-}
+/* ── DRAWER — sudah ada di head ── */
 
 /* ── JADWAL ── */
 function showDay(n) {
@@ -1722,6 +1776,48 @@ function zoomMap() {
 }
 
 /* ── TOAST ── */
+
+/* ── INTERACTIVE MAP ── */
+var AREA_NAMES = {
+  kolam:'Kolam Renang', restoran:'Restoran Area',
+  aula:'Grand Pancar (Aula Utama)',
+  wisma1:'Tower Salak', wisma2:'Tower Pangrango', wisma3:'Tower Gede',
+  cottage:'Villa 1–5', lapangan:'Lapangan Outdoor',
+  basket:'Lapangan Basket', lobby:'Lobby',
+};
+var activeArea = null;
+
+function highlightArea(area) {
+  if (activeArea === area) { clearHighlight(); return; }
+  activeArea = area;
+  document.querySelectorAll('.map-area').forEach(function(el) {
+    el.classList.toggle('highlighted', el.dataset.area === area);
+  });
+  document.querySelectorAll('.fac-chip').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.area === area);
+  });
+  var label = document.getElementById('map-active-label');
+  var text = document.getElementById('map-active-text');
+  if (label && text) { text.textContent = '📍 ' + (AREA_NAMES[area] || area); label.style.display = 'flex'; }
+}
+
+function clearHighlight() {
+  activeArea = null;
+  document.querySelectorAll('.map-area').forEach(function(el) { el.classList.remove('highlighted'); });
+  document.querySelectorAll('.fac-chip').forEach(function(el) { el.classList.remove('active'); });
+  var label = document.getElementById('map-active-label');
+  if (label) label.style.display = 'none';
+}
+
+function goToLokasi(area) {
+  nav('lokasi');
+  setTimeout(function() {
+    if (area) highlightArea(area);
+    var el = document.querySelector('.map-wrap');
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }, 150);
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -2062,20 +2158,10 @@ async function loadAnnouncements() {
 }
 
 /* ══════════════════════════════════════════════
-   DARK MODE
+   DARK MODE — sudah diinisialisasi di <head>
 ══════════════════════════════════════════════ */
-function toggleDark() {
-  const isDark = document.body.classList.toggle('dark');
-  localStorage.setItem('gpbsi_dark', isDark ? '1' : '0');
-  document.getElementById('dark-btn').textContent = isDark ? '☀️' : '🌙';
-}
-(function initDark() {
-  if (localStorage.getItem('gpbsi_dark') === '1') {
-    document.body.classList.add('dark');
-    const btn = document.getElementById('dark-btn');
-    if (btn) btn.textContent = '☀️';
-  }
-})();
+// toggleDark() sudah ada di head
+
 
 async function submitSaran() {
   const isi = document.getElementById('sr-isi').value.trim();
