@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1A1A1C">
+<meta name="robots" content="noindex, nofollow">
+<title>Pembicara · GPBSI Retreat 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --green:#7DC242;--green2:#9FD96A;--green-deep:#5A9A2A;
+  --cyan:#30A8D8;--navy:#1A1A1C;--navy2:#2C2C2E;
+  --cream:#F5F5F5;--cream2:#E8E8E8;
+  --text:#1C1C1E;--muted:#6B7280;
+  --r:14px;--rs:10px;
+}
+html{background:var(--cream)}
+body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0px)}
+
+/* ── PILIH PEMBICARA ── */
+.pick-screen{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:32px 20px;
+  background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);
+}
+.pick-icon{
+  width:96px;height:96px;border-radius:22px;
+  overflow:hidden;margin-bottom:20px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.3);
+}
+.pick-icon img{width:100%;height:100%;object-fit:contain;display:block}
+.pick-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.5rem;color:white;text-align:center;margin-bottom:6px;
+}
+.pick-sub{font-size:0.85rem;color:rgba(255,255,255,0.45);text-align:center;margin-bottom:32px}
+.pick-list{width:100%;max-width:360px;display:flex;flex-direction:column;gap:10px}
+.pick-btn{
+  width:100%;min-height:68px;padding:0 20px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r);
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all 0.15s;text-align:left;
+}
+.pick-btn:active{background:rgba(255,255,255,0.12);transform:scale(0.98)}
+.pick-avatar{
+  width:48px;height:48px;border-radius:13px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--navy2),#3a3a4c);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.1rem;
+  color:var(--green2);font-weight:700;
+}
+.pick-name{font-size:0.95rem;font-weight:700;color:white;margin-bottom:4px}
+.pick-group{font-size:0.78rem;color:rgba(255,255,255,0.45);line-height:1.4}
+.pick-arrow{margin-left:auto;color:rgba(255,255,255,0.25);font-size:1rem;flex-shrink:0}
+
+/* ── MAIN VIEW ── */
+.main-view{display:none}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:var(--navy);height:56px;
+  display:flex;align-items:center;gap:12px;
+  padding:0 16px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+.back-btn{
+  width:36px;height:36px;border-radius:9px;
+  background:rgba(255,255,255,0.08);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;color:white;
+}
+.back-btn:active{background:rgba(255,255,255,0.15)}
+.topbar-info{flex:1;min-width:0}
+.topbar-name{font-size:0.9rem;font-weight:700;color:white;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-sub{font-size:0.68rem;color:rgba(255,255,255,0.4)}
+.refresh-btn{
+  width:36px;height:36px;border-radius:9px;
+  background:rgba(255,255,255,0.08);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;color:white;font-size:1rem;
+}
+.refresh-btn:active{background:rgba(255,255,255,0.15)}
+
+/* HERO STRIP */
+.hero-strip{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  padding:16px;display:flex;align-items:center;gap:14px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.hero-avatar{
+  width:52px;height:52px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--green-deep),var(--cyan));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.3rem;
+  color:white;font-weight:700;
+}
+.hero-speaker-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;color:white;margin-bottom:4px;
+}
+.hero-groups{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.5}
+.hero-count{
+  margin-left:auto;text-align:center;flex-shrink:0;
+}
+.hero-count-num{font-size:1.8rem;font-weight:700;color:var(--green2);line-height:1}
+.hero-count-label{font-size:0.72rem;color:rgba(255,255,255,0.4);margin-top:3px}
+
+/* FILTER CHIPS */
+.filter-row{
+  padding:10px 16px;display:flex;gap:8px;
+  overflow-x:auto;scrollbar-width:none;
+  border-bottom:1px solid var(--cream2);
+  background:var(--cream);
+  position:sticky;top:56px;z-index:90;
+}
+.filter-row::-webkit-scrollbar{display:none}
+.fchip{
+  flex-shrink:0;min-height:44px;padding:0 16px;
+  background:white;border:1.5px solid var(--cream2);
+  border-radius:100px;font-family:'DM Sans',sans-serif;
+  font-size:0.85rem;font-weight:600;color:var(--muted);
+  cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;
+}
+.fchip.active{background:var(--navy);border-color:var(--navy);color:white}
+.fchip:active{opacity:0.8}
+
+/* QUESTION CARDS */
+.list-wrap{padding:12px 16px 40px;display:flex;flex-direction:column;gap:12px}
+.q-card{
+  background:white;border-radius:var(--r);
+  border:1px solid var(--cream2);overflow:hidden;
+  animation:fadeIn 0.2s ease;
+}
+.q-card-top{
+  padding:12px 14px 10px;
+  display:flex;align-items:flex-start;gap:10px;
+  border-bottom:1px solid var(--cream2);
+}
+.q-avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--navy2),#3a3a4c);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.9rem;font-weight:700;color:var(--green2);
+}
+.q-name{font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:3px}
+.q-meta{font-size:0.78rem;color:var(--muted)}
+.q-grp-pill{
+  margin-left:auto;flex-shrink:0;
+  font-size:0.72rem;font-weight:700;
+  padding:4px 12px;border-radius:100px;
+  white-space:nowrap;
+}
+.gp-Senior,.gp-Remaja,.gp-Pemuda{background:rgba(125,194,66,0.12);color:#3d6e14}
+.gp-Umum,.gp-SundaySchool{background:rgba(48,168,216,0.12);color:#0a5a8a}
+.q-body{padding:14px 14px}
+.q-text{font-size:1rem;color:var(--text);line-height:1.75}
+.q-time{font-size:0.75rem;color:var(--muted);margin-top:10px}
+
+/* EMPTY & LOADING */
+.empty{text-align:center;padding:56px 24px;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:12px;opacity:0.4}
+.empty-text{font-size:0.9rem;line-height:1.65}
+.loading{display:flex;flex-direction:column;align-items:center;padding:56px 24px;color:var(--muted);font-size:0.875rem;gap:14px}
+.spinner{width:32px;height:32px;border:3px solid var(--cream2);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+
+
+/* ── PRIORITY ── */
+.q-card.priority{
+  border-color:var(--green);
+  box-shadow:0 0 0 1.5px var(--green);
+}
+.q-card.priority .q-card-top{
+  background:rgba(125,194,66,0.06);
+}
+.priority-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;
+  background:rgba(125,194,66,0.1);
+  border-bottom:1px solid rgba(125,194,66,0.2);
+}
+.priority-label{
+  font-size:0.78rem;font-weight:700;color:var(--green-deep);
+  letter-spacing:0.04em;text-transform:uppercase;flex:1;
+}
+.priority-btn{
+  min-height:44px;padding:0 16px;border:none;border-radius:100px;
+  font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:all 0.15s;flex-shrink:0;
+}
+.priority-btn.set{
+  background:rgba(125,194,66,0.15);color:var(--green-deep);
+}
+.priority-btn.set:active{background:rgba(125,194,66,0.25)}
+.priority-btn.unset{
+  background:var(--green);color:white;
+}
+.priority-btn.unset:active{opacity:0.85}
+.section-header{
+  padding:10px 16px 6px;
+  font-size:0.72rem;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);
+}
+.section-header.priority-hdr{color:var(--green-deep)}
+.priority-count-badge{
+  display:inline-block;
+  background:var(--green);color:white;
+  font-size:0.72rem;font-weight:700;
+  padding:2px 8px;border-radius:100px;
+  margin-left:6px;vertical-align:middle;
+}
+
+/* ── TRANSLATE ── */
+.q-lang-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 14px;background:rgba(48,168,216,0.06);
+  border-bottom:1px solid rgba(48,168,216,0.15);
+}
+.q-lang-flag{font-size:0.82rem;color:var(--cyan);font-weight:600;display:flex;align-items:center;gap:4px}
+.q-text-kr{
+  font-size:1rem;color:#0a5a8a;line-height:1.85;
+  word-break:keep-all;letter-spacing:0.01em;
+}
+.q-text-orig{font-size:0.82rem;color:var(--muted);line-height:1.65;margin-top:8px;padding-top:8px;border-top:1px solid var(--cream2)}
+.translating{color:var(--muted);font-size:0.875rem;font-style:italic;animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+.translate-status{
+  padding:8px 16px;background:rgba(48,168,216,0.06);
+  border-bottom:1px solid var(--cream2);
+  font-size:0.75rem;color:var(--cyan);font-weight:600;
+  display:flex;align-items:center;gap:6px;
+}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(16px);background:var(--navy);color:var(--green2);padding:10px 20px;border-radius:100px;font-size:0.82rem;font-weight:600;z-index:999;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- ══ PILIH PEMBICARA ══ -->
+<div class="pick-screen" id="pick-screen">
+  <div class="pick-icon"><img src="logo.PNG" alt="GPBSI Logo"></div>
+  <div class="pick-title">Selamat Datang</div>
+  <div class="pick-sub">Pilih nama Anda untuk melihat<br>pertanyaan dari kelompok Anda</div>
+  <div class="pick-list">
+    <button class="pick-btn" onclick="selectSpeaker('yudie')">
+      <div class="pick-avatar">YL</div>
+      <div>
+        <div class="pick-name">Pdt. Yudie Lengkong</div>
+        <div class="pick-group">Kelompok Senior</div>
+      </div>
+      <div class="pick-arrow">›</div>
+    </button>
+    <button class="pick-btn" onclick="selectSpeaker('youn')">
+      <div class="pick-avatar">YH</div>
+      <div>
+        <div class="pick-name">Pdt. Youn Doo Hee</div>
+        <div class="pick-group">Kelompok Umum</div>
+      </div>
+      <div class="pick-arrow">›</div>
+    </button>
+    <button class="pick-btn" onclick="selectSpeaker('jung')">
+      <div class="pick-avatar">JJ</div>
+      <div>
+        <div class="pick-name">Pdt. JungWon Jung</div>
+        <div class="pick-group">Kelompok Pemuda</div>
+      </div>
+      <div class="pick-arrow">›</div>
+    </button>
+    <button class="pick-btn" onclick="selectSpeaker('allen')">
+      <div class="pick-avatar">AW</div>
+      <div>
+        <div class="pick-name">Pdt. Allen Widjaja</div>
+        <div class="pick-group">Remaja Jeshurun + SD Besar</div>
+      </div>
+      <div class="pick-arrow">›</div>
+    </button>
+  </div>
+</div>
+
+<!-- ══ MAIN VIEW ══ -->
+<div class="main-view" id="main-view">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <button class="back-btn" onclick="goBack()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M12 5l-7 7 7 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="topbar-info">
+      <div class="topbar-name" id="topbar-name">—</div>
+      <div class="topbar-sub" id="topbar-sub">—</div>
+    </div>
+    <button class="refresh-btn" onclick="loadQuestions()" title="Refresh">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M1 4v6h6M23 20v-6h-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20.5 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.5 15" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Hero Strip -->
+  <div class="hero-strip">
+    <div class="hero-avatar" id="hero-avatar">—</div>
+    <div>
+      <div class="hero-speaker-name" id="hero-name">—</div>
+      <div class="hero-groups" id="hero-groups">—</div>
+    </div>
+    <div class="hero-count">
+      <div class="hero-count-num" id="hero-count">0</div>
+      <div class="hero-count-label">pertanyaan</div>
+    </div>
+  </div>
+
+  <!-- Filter Chips -->
+  <div class="filter-row" id="filter-row" style="display:none"></div>
+
+  <!-- Questions -->
+  <div id="q-list">
+    <div class="loading"><div class="spinner"></div>Memuat pertanyaan...</div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://rzugyebwaxmhomztfgpc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6dWd5ZWJ3YXhtaG9tenRmZ3BjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MjE1MjIsImV4cCI6MjA5MzM5NzUyMn0.0sHgF5H2dWCTfJ64wxzby1N-X6gLkK-tMwcbJ5UU3vc';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const SPEAKERS = {
+  yudie: { name:'Pdt. Yudie Lengkong', initials:'YL', groups:['Senior'], groupLabel:'Kelompok Senior' },
+  youn:  { name:'Pdt. Youn Doo Hee',   initials:'YH', groups:['Umum'],   groupLabel:'Kelompok Umum' },
+  jung:  { name:'Pdt. JungWon Jung',    initials:'JJ', groups:['Pemuda'], groupLabel:'Kelompok Pemuda' },
+  allen: { name:'Pdt. Allen Widjaja',   initials:'AW', groups:['Remaja','Sunday School'], groupLabel:'Remaja + Sunday School' },
+};
+
+let currentSpeaker = null;
+let currentKey = null;
+let allQ = [];
+let activeFilter = '';
+
+// Auto-restore
+const saved = sessionStorage.getItem('speaker_key');
+if (saved && SPEAKERS[saved]) {
+  document.addEventListener('DOMContentLoaded', () => selectSpeaker(saved));
+}
+
+function selectSpeaker(key) {
+  currentKey = key;
+  currentSpeaker = SPEAKERS[key];
+  sessionStorage.setItem('speaker_key', key);
+
+  document.getElementById('topbar-name').textContent = currentSpeaker.name;
+  document.getElementById('topbar-sub').textContent = currentSpeaker.groupLabel;
+  document.getElementById('hero-avatar').textContent = currentSpeaker.initials;
+  document.getElementById('hero-name').textContent = currentSpeaker.name;
+  document.getElementById('hero-groups').textContent = currentSpeaker.groupLabel;
+
+  const filterRow = document.getElementById('filter-row');
+  if (currentSpeaker.groups.length > 1) {
+    filterRow.style.display = 'flex';
+    var chips = '<button class="fchip active" data-val="" onclick="filterBy(this)">Semua</button>';
+    currentSpeaker.groups.forEach(function(g) {
+      chips += '<button class="fchip" data-val="' + g + '" onclick="filterBy(this)">' + g + '</button>';
+    });
+    filterRow.innerHTML = chips;
+  } else {
+    filterRow.style.display = 'none';
+  }
+  activeFilter = '';
+
+  document.getElementById('pick-screen').style.display = 'none';
+  document.getElementById('main-view').style.display = 'block';
+  loadQuestions();
+}
+
+function goBack() {
+  sessionStorage.removeItem('speaker_key');
+  currentSpeaker = null; currentKey = null; allQ = []; activeFilter = '';
+  document.getElementById('pick-screen').style.display = 'flex';
+  document.getElementById('main-view').style.display = 'none';
+  window.scrollTo(0,0);
+}
+
+async function loadQuestions() {
+  const list = document.getElementById('q-list');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div>Memuat pertanyaan...</div>';
+  const { data, error } = await sb
+    .from('pertanyaan').select('*')
+    .in('kelompok', currentSpeaker.groups)
+    .order('created_at', { ascending: false });
+  if (error) {
+    list.innerHTML = '<div class="empty"><div class="empty-text">Gagal memuat: ' + error.message + '</div></div>';
+    return;
+  }
+  allQ = data || [];
+  document.getElementById('hero-count').textContent = allQ.length;
+  renderQ();
+}
+
+function filterBy(el) {
+  activeFilter = el.dataset.val;
+  document.querySelectorAll('.fchip').forEach(function(c) {
+    c.classList.toggle('active', c.dataset.val === activeFilter);
+  });
+  renderQ();
+}
+
+function renderQ() {
+  const list = document.getElementById('q-list');
+  var filtered = activeFilter ? allQ.filter(function(q){ return q.kelompok === activeFilter; }) : allQ;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon" style="font-size:2.5rem;opacity:0.4;margin-bottom:10px">💬</div><div class="empty-text">Belum ada pertanyaan' + (activeFilter ? ' dari kelompok ini' : '') + '</div></div>';
+    return;
+  }
+
+  // Sort prioritas naik ke atas
+  var prioritized = filtered.filter(function(q){ return q.prioritas; });
+  var normal = filtered.filter(function(q){ return !q.prioritas; });
+  var sorted = prioritized.concat(normal);
+
+  var gpClass = { 'Senior':'gp-Senior','Umum':'gp-Umum','Remaja':'gp-Remaja','Sunday School':'gp-SundaySchool','Pemuda':'gp-Pemuda' };
+  var isJung = (currentKey === 'jung');
+  var showPill = currentSpeaker.groups.length > 1;
+
+  function makeCard(q, displayNum) {
+    var anon = q.anonim || q.nama === 'Anonim';
+    var init = anon ? '?' : q.nama.trim().charAt(0).toUpperCase();
+    var name = anon ? 'Anonim' : q.nama;
+    var gc = gpClass[q.kelompok] || 'gp-Umum';
+
+    var priorityBar = q.prioritas
+      ? '<div class="priority-bar"><span class="priority-label">★ Prioritas</span><button class="priority-btn set" data-id="' + q.id + '" data-set="false" onclick="togglePriority(this)">Batalkan</button></div>'
+      : '';
+
+    var priorityBtn = q.prioritas
+      ? ''
+      : '<button class="priority-btn unset" data-id="' + q.id + '" data-set="true" onclick="togglePriority(this)" style="margin-top:10px;width:100%;justify-content:center">★ Tandai Prioritas</button>';
+
+    var bodyContent;
+    if (isJung) {
+      bodyContent = '<div class="q-lang-bar"><span class="q-lang-flag">🇰🇷 한국어 번역 중...</span></div>'
+        + '<div class="q-body">'
+        + '<div class="q-text-kr translating" id="kr-' + q.id + '">번역 중...</div>'
+        + '<div class="q-text-orig">' + q.isi + '</div>'
+        + '<div class="q-time">' + fmt(q.created_at) + '</div>'
+        + priorityBtn + '</div>';
+    } else {
+      bodyContent = '<div class="q-body"><div class="q-text">' + q.isi + '</div>'
+        + '<div class="q-time">' + fmt(q.created_at) + '</div>'
+        + priorityBtn + '</div>';
+    }
+
+    var pillHtml = showPill ? '<span class="q-grp-pill ' + gc + '">' + q.kelompok + '</span>' : '';
+
+    return '<div class="q-card' + (q.prioritas ? ' priority' : '') + '" id="card-' + q.id + '">'
+      + priorityBar
+      + '<div class="q-card-top">'
+      + '<div class="q-avatar">' + init + '</div>'
+      + '<div style="flex:1;min-width:0"><div class="q-name">' + name + '</div>'
+      + '<div class="q-meta">No. ' + displayNum + (anon ? ' · Anonim' : '') + '</div></div>'
+      + pillHtml
+      + '</div>'
+      + bodyContent
+      + '</div>';
+  }
+
+  var html = '<div class="list-wrap">';
+  if (prioritized.length > 0) {
+    html += '<div class="section-header priority-hdr">★ Prioritas <span class="priority-count-badge">' + prioritized.length + '</span></div>';
+    for (var i = 0; i < prioritized.length; i++) {
+      html += makeCard(prioritized[i], i + 1);
+    }
+  }
+  if (normal.length > 0) {
+    if (prioritized.length > 0) {
+      html += '<div class="section-header" style="margin-top:8px">Pertanyaan Lainnya</div>';
+    }
+    for (var j = 0; j < normal.length; j++) {
+      html += makeCard(normal[j], prioritized.length + j + 1);
+    }
+  }
+  html += '</div>';
+  list.innerHTML = html;
+
+  if (isJung && sorted.length > 0) {
+    translateAll(sorted);
+  }
+}
+
+async function togglePriority(btn) {
+  var id = btn.dataset.id;
+  var setPriority = btn.dataset.set === 'true';
+  var q = allQ.find(function(q){ return q.id === id; });
+  if (!q) return;
+
+  // Optimistic update
+  q.prioritas = setPriority;
+  renderQ();
+
+  var result = await sb.from('pertanyaan').update({ prioritas: setPriority }).eq('id', id);
+  if (result.error) {
+    q.prioritas = !setPriority;
+    renderQ();
+    showToast('Gagal menyimpan. Coba lagi.');
+  } else {
+    showToast(setPriority ? '★ Ditandai sebagai prioritas!' : 'Prioritas dibatalkan');
+  }
+}
+
+async function translateText(text) {
+  try {
+    var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=id|ko';
+    var res = await fetch(url);
+    var json = await res.json();
+    if (json.responseStatus === 200) return json.responseData.translatedText;
+    return null;
+  } catch(e) { return null; }
+}
+
+async function translateAll(questions) {
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    var el = document.getElementById('kr-' + q.id);
+    if (!el) continue;
+    var translated = await translateText(q.isi);
+    if (translated) {
+      el.textContent = translated;
+      el.classList.remove('translating');
+      var card = el.closest('.q-card');
+      var langBar = card ? card.querySelector('.q-lang-flag') : null;
+      if (langBar) langBar.innerHTML = '🇰🇷 한국어';
+    } else {
+      el.textContent = '번역을 사용할 수 없습니다';
+      el.classList.remove('translating');
+      el.style.color = 'var(--muted)';
+    }
+    await new Promise(function(r){ setTimeout(r, 300); });
+  }
+}
+
+function fmt(ts) {
+  if (!ts) return '-';
+  var d = new Date(ts);
+  return d.toLocaleDateString('id-ID',{day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+</script>
+</body>
+</html>
