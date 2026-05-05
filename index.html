@@ -882,15 +882,37 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
     </div>
 
     <div class="announce">
-      <h3 style="display:flex;align-items:center;gap:8px"><span style="width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="13" rx="2.5" fill="currentColor"/><rect x="5" y="7.5" width="6" height="4" rx="1" fill="white" opacity="0.55"/><rect x="13" y="7.5" width="6" height="4" rx="1" fill="white" opacity="0.55"/><rect x="3" y="14" width="18" height="2" rx="1" fill="currentColor" opacity="0.5"/><circle cx="7" cy="19.5" r="2" fill="currentColor"/><circle cx="17" cy="19.5" r="2" fill="currentColor"/><rect x="5" y="17.5" width="14" height="2" rx="1" fill="currentColor" opacity="0.4"/></svg></span> Info Keberangkatan <span style="font-size:0.95rem;font-weight:400;opacity:0.7">(Bus GPBSI Jakarta)</span></h3>
+      <h3 style="display:flex;align-items:center;gap:8px"><span style="width:20px;height:20px;display:flex;color:var(--green-brand)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="13" rx="2.5" fill="currentColor"/><rect x="5" y="7.5" width="6" height="4" rx="1" fill="white" opacity="0.55"/><rect x="13" y="7.5" width="6" height="4" rx="1" fill="white" opacity="0.55"/><rect x="3" y="14" width="18" height="2" rx="1" fill="currentColor" opacity="0.5"/><circle cx="7" cy="19.5" r="2" fill="currentColor"/><circle cx="17" cy="19.5" r="2" fill="currentColor"/><rect x="5" y="17.5" width="14" height="2" rx="1" fill="currentColor" opacity="0.4"/></svg></span> Info Keberangkatan</h3>
       <p>Shalom! Kiranya melalui retret ini kasih dan iman kita di dalam Kristus semakin bertumbuh.</p>
-      <div class="info-grid">
+
+      <!-- Jakarta -->
+      <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px">🚌 Jakarta</div>
+      <div class="info-grid" style="margin-bottom:10px">
         <div class="info-box"><div class="lbl">Tanggal</div><div class="val">Kamis, 14 Mei 2026</div></div>
         <div class="info-box"><div class="lbl">Jam Berangkat</div><div class="val">09.00 WIB<br><span style="color:#FCA5A5;font-size:0.95rem;font-weight:700">ON TIME ⚠️</span></div></div>
         <div class="info-box"><div class="lbl">Titik Kumpul</div><div class="val">GPBSI Jakarta</div></div>
         <div class="info-box"><div class="lbl">Ibadah Kenaikan</div><div class="val">12.30 WIB</div></div>
       </div>
-      <div class="warn-box"><span style="width:18px;height:18px;display:flex;flex-shrink:0;color:#FCA5A5"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L22 20H2L12 3Z" fill="currentColor"/><rect x="11" y="10" width="2" height="5" rx="1" fill="white"/><circle cx="12" cy="17" r="1.2" fill="white"/></svg></span> Bus tidak menunggu keterlambatan!</div>
+
+      <!-- Bandung -->
+      <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px;margin-top:4px">🚌 Bandung</div>
+      <div class="info-grid" style="margin-bottom:10px">
+        <div class="info-box"><div class="lbl">Tanggal</div><div class="val">Kamis, 14 Mei 2026</div></div>
+        <div class="info-box"><div class="lbl">Jam Berangkat</div><div class="val">07.00 WIB<br><span style="color:#FCA5A5;font-size:0.95rem;font-weight:700">ON TIME ⚠️</span></div></div>
+        <div class="info-box"><div class="lbl">Titik Kumpul</div><div class="val">Mall BTC Pasteur, Bandung</div></div>
+        <div class="info-box"><div class="lbl">Ibadah Kenaikan</div><div class="val">12.30 WIB</div></div>
+      </div>
+
+      <!-- Malang -->
+      <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px;margin-top:4px">🚌 Malang</div>
+      <div class="info-grid" style="margin-bottom:10px">
+        <div class="info-box"><div class="lbl">Tanggal</div><div class="val">Kamis, 14 Mei 2026</div></div>
+        <div class="info-box" style="grid-column:span 2"><div class="lbl">Info</div><div class="val" style="font-size:0.9rem">Hubungi PIC Malang untuk detail keberangkatan</div></div>
+        <div class="info-box"><div class="lbl">Ibadah Kenaikan</div><div class="val">12.30 WIB</div></div>
+      </div>
+
+      <div class="warn-box"><span style="width:18px;height:18px;display:flex;flex-shrink:0;color:#FCA5A5"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L22 20H2L12 3Z" fill="currentColor"/><rect x="11" y="10" width="2" height="5" rx="1" fill="white"/><circle cx="12" cy="17" r="1.2" fill="white"/></svg></span> Harap berkumpul <strong>minimal 30 menit</strong> sebelum jam keberangkatan!</div>
+      <div class="warn-box" style="margin-top:6px"><span style="width:18px;height:18px;display:flex;flex-shrink:0;color:#FCA5A5"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L22 20H2L12 3Z" fill="currentColor"/><rect x="11" y="10" width="2" height="5" rx="1" fill="white"/><circle cx="12" cy="17" r="1.2" fill="white"/></svg></span> Bus tidak menunggu keterlambatan!</div>
       <div class="tip-list">
 
         <div class="tip-item"><div class="tip-icon" style="display:flex;width:20px;height:20px;flex-shrink:0;color:var(--gold2)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L6 8L9 10L12 7L15 10L18 8L16 2H8Z" fill="currentColor"/><rect x="6" y="8" width="12" height="14" rx="1" fill="currentColor" opacity="0.7"/><path d="M10 8L12 11L14 8" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div>Persiapkan <strong style="color:white">persembahan</strong> dan <strong style="color:white">pakaian formal</strong> untuk Ibadah Kenaikan (langsung pakai)</div></div>
