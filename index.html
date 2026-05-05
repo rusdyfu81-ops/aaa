@@ -1636,7 +1636,7 @@ async function loadPhotos() {
 
     grid.innerHTML = resources.map(function(r, i) {
       var imgUrl = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD
-        + '/image/upload/w_400,h_400,c_fill,q_auto/' + r.public_id;
+        + '/image/upload/w_150,h_150,c_fill,q_20,f_auto,e_blur:100/' + r.public_id;
       var date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID', {day:'numeric',month:'short'}) : '';
       return '<div class="photo-item" onclick="openLightbox(' + i + ')">'
         + '<img src="' + imgUrl + '" loading="lazy" alt="Foto ' + (i+1) + '" onerror="this.parentElement.style.display=\'none\'">'
@@ -1655,7 +1655,7 @@ function openLightbox(idx) {
   var r = photoCache[idx];
   if (!r) return;
   var imgUrl = 'https://res.cloudinary.com/' + CLOUDINARY_CLOUD
-    + '/image/upload/w_1200,q_auto/' + r.public_id;
+    + '/image/upload/w_600,q_50,f_auto/' + r.public_id;
   document.getElementById('lightbox-img').src = imgUrl;
   var date = r.created_at ? new Date(r.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : '';
   document.getElementById('lightbox-meta').textContent = date ? 'Diupload ' + date : '';
