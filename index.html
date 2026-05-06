@@ -40,14 +40,18 @@
   --r:16px;--rs:10px;
 }
 html{scroll-behavior:smooth;background:var(--cream)}
-body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding-bottom:80px}
+body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))}
 
 /* ── TOP BAR ── */
 .topbar{
   position:fixed;top:0;left:0;right:0;z-index:200;
   background:var(--navy);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 16px;height:56px;
+  padding:0 16px;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-left:max(env(safe-area-inset-left,0px),16px);
+  padding-right:max(env(safe-area-inset-right,0px),16px);
+  height:calc(56px + env(safe-area-inset-top,0px));
   box-shadow:0 2px 12px rgba(0,0,0,0.3);
 }
 .topbar-title{
@@ -93,7 +97,7 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
   padding:20px 20px 16px;
   border-bottom:1px solid rgba(255,255,255,0.08);
   display:flex;align-items:center;justify-content:space-between;
-  padding-top:calc(env(safe-area-inset-top,0px) + 16px);
+  padding-top:max(env(safe-area-inset-top,0px),16px);
 }
 .drawer-logo{
   font-family:'Playfair Display',serif;
@@ -131,7 +135,7 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
 }
 
 /* ── PAGE CONTENT ── */
-.page{display:none;padding-top:56px;min-height:100vh;animation:fadeIn 0.25s ease}
+.page{display:none;padding-top:calc(56px + env(safe-area-inset-top,0px));min-height:100vh;animation:fadeIn 0.25s ease}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
@@ -293,13 +297,7 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
 }
 .sched-item.pl{border-left-color:var(--gold)}
 .sched-item.par{border-left-color:var(--teal2)}
-.sched-item::before{
-  content:'';position:absolute;left:-6px;top:20px;
-  width:10px;height:10px;border-radius:50%;
-  background:var(--cream2);border:2px solid #ccc;
-}
-.sched-item.pl::before{background:var(--gold);border-color:var(--gold)}
-.sched-item.par::before{background:var(--teal2);border-color:var(--teal)}
+.sched-item::before{display:none}
 .sched-time{
   padding:16px 8px 14px 20px;
   font-size:0.92rem;font-weight:600;color:var(--muted);
@@ -730,7 +728,10 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
   background:white;border-top:1px solid var(--cream2);
-  display:flex;padding-bottom:env(safe-area-inset-bottom,0px);
+  display:flex;
+  padding-bottom:max(env(safe-area-inset-bottom,0px),4px);
+  padding-left:env(safe-area-inset-left,0px);
+  padding-right:env(safe-area-inset-right,0px);
   box-shadow:0 -4px 16px rgba(0,0,0,0.08);
 }
 .bnav-item{
@@ -819,19 +820,90 @@ svg { overflow:visible; }
 .live-dot{width:6px;height:6px;background:#1A1A1C;border-radius:50%;animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 
-/* ── PENGUMUMAN BANNER ── */
+/* ── PENGUMUMAN BANNER (animated) ── */
 .announcement-banner{
-  background:linear-gradient(135deg,rgba(185,28,28,0.15),rgba(185,28,28,0.05));
-  border:1px solid rgba(185,28,28,0.3);
-  border-radius:var(--r);padding:14px 16px;margin-bottom:12px;
-  display:none;
+  border-radius:var(--r);margin-bottom:12px;
+  display:none;overflow:hidden;position:relative;
+  border:1px solid rgba(125,194,66,0.3);
 }
-.announcement-banner.show{display:block;animation:fadeIn 0.4s ease}
-.ann-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.ann-dot{width:8px;height:8px;background:#EF4444;border-radius:50%;animation:pulse 1s infinite;flex-shrink:0}
-.ann-title{font-size:0.92rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#EF4444}
-.ann-time{font-size:0.95rem;color:var(--muted);margin-left:auto}
-.ann-text{font-size:1rem;color:var(--text);line-height:1.6}
+.announcement-banner.show{display:block;animation:annSlideIn 0.5s cubic-bezier(.2,1,.3,1)}
+.announcement-banner.urgent{border-color:rgba(185,28,28,0.35)}
+@keyframes annSlideIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.ann-ticker{
+  background:linear-gradient(90deg,var(--green-deep),var(--cyan-deep));
+  padding:7px 14px;display:flex;align-items:center;gap:8px;
+}
+.announcement-banner.urgent .ann-ticker{background:linear-gradient(90deg,#991B1B,#B91C1C)}
+.ann-dot{width:7px;height:7px;background:rgba(255,255,255,0.7);border-radius:50%;animation:pulse 1.2s infinite;flex-shrink:0}
+.ann-title{font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:white;flex:1}
+.ann-time{font-size:0.72rem;color:rgba(255,255,255,0.65);white-space:nowrap;margin-right:8px}
+.ann-dismiss{width:22px;height:22px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;color:white;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;transition:background 0.15s}
+.ann-dismiss:active{background:rgba(255,255,255,0.3)}
+.ann-body{background:rgba(125,194,66,0.07);padding:11px 14px;border-top:1px solid rgba(125,194,66,0.15)}
+.announcement-banner.urgent .ann-body{background:rgba(185,28,28,0.06);border-top-color:rgba(185,28,28,0.15)}
+.ann-text{font-size:0.95rem;color:var(--text);line-height:1.65;font-weight:500}
+
+/* ── LEADERBOARD ── */
+.leaderboard-wrap{display:flex;flex-direction:column;gap:8px}
+.lb-podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:16px 0 20px;margin-bottom:4px}
+.lb-pod{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:90px}
+.lb-pod-rank{font-size:0.72rem;font-weight:800;letter-spacing:0.1em;color:var(--muted)}
+.lb-pod-avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;border:3px solid transparent;flex-shrink:0}
+.lb-pod-name{font-size:0.72rem;font-weight:700;color:var(--navy);text-align:center;line-height:1.3;margin-top:2px}
+.lb-pod-score{font-size:0.92rem;font-weight:800;color:var(--navy)}
+.lb-pod.first .lb-pod-avatar{width:60px;height:60px;background:rgba(234,179,8,0.15);border-color:#EAB308;color:#92400E;font-size:1.3rem}
+.lb-pod.second .lb-pod-avatar{width:50px;height:50px;background:rgba(156,163,175,0.15);border-color:#9CA3AF;color:#374151;font-size:1.1rem}
+.lb-pod.third .lb-pod-avatar{width:44px;height:44px;background:rgba(180,83,9,0.12);border-color:#B45309;color:#78350F;font-size:1rem}
+.lb-crown{font-size:1.2rem;margin-bottom:2px}
+.lb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:white;border-radius:var(--rs);border:1px solid var(--cream2)}
+.lb-rank{font-size:0.875rem;font-weight:800;color:var(--muted);min-width:20px;text-align:center}
+.lb-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-weight:800;flex-shrink:0}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-size:0.95rem;font-weight:700;color:var(--navy);line-height:1.3}
+.lb-sub{font-size:0.8rem;color:var(--muted)}
+.lb-pts{font-size:1.05rem;font-weight:800;color:var(--cyan-brand);white-space:nowrap}
+.lb-tabs-wrap{position:relative;margin-bottom:14px}
+.lb-tabs-wrap::after{content:'';position:absolute;right:0;top:0;bottom:2px;width:32px;background:linear-gradient(90deg,transparent,var(--cream));pointer-events:none;border-radius:0 100px 100px 0}
+.lb-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;padding-right:28px}
+.lb-tabs::-webkit-scrollbar{display:none}
+.lb-tab{flex-shrink:0;background:white;border:1.5px solid var(--cream2);border-radius:100px;padding:0 14px;height:36px;font-size:0.875rem;font-weight:600;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;display:flex;align-items:center}
+.lb-tab.active{background:var(--navy);border-color:var(--navy);color:white}
+
+/* ── PRAYER WALL ── */
+.prayer-card{background:white;border-radius:var(--r);border:1px solid var(--cream2);padding:16px;margin-bottom:10px;position:relative}
+.prayer-card::before{content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,var(--green-brand),var(--cyan-brand))}
+.prayer-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.prayer-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--green-brand),var(--cyan-brand));display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;color:white;flex-shrink:0}
+.prayer-name{font-size:0.92rem;font-weight:700;color:var(--navy)}
+.prayer-time{font-size:0.78rem;color:var(--muted);margin-left:auto}
+.prayer-text{font-size:1rem;color:var(--text);line-height:1.7;font-style:italic}
+.prayer-amen{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--cream2)}
+.prayer-amen-btn{display:flex;align-items:center;gap:5px;background:rgba(125,194,66,0.08);border:1px solid rgba(125,194,66,0.2);border-radius:100px;padding:5px 12px;font-size:0.875rem;font-weight:600;color:var(--green-deep);cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s}
+.prayer-amen-btn:active{background:rgba(125,194,66,0.18)}
+.prayer-amen-btn.amen-active{background:rgba(125,194,66,0.2);border-color:var(--green-brand)}
+.prayer-amen-count{font-size:0.875rem;color:var(--muted);margin-left:2px}
+.prayer-input-wrap{background:linear-gradient(140deg,#1A1A1C,var(--navy2));border-radius:var(--r);padding:18px;margin-bottom:14px}
+.prayer-input-wrap h3{font-family:'Playfair Display',serif;font-size:1rem;color:white;margin-bottom:4px}
+.prayer-input-wrap p{font-size:0.875rem;color:rgba(255,255,255,0.6);margin-bottom:14px;line-height:1.5}
+.prayer-input-wrap input::placeholder,.prayer-input-wrap textarea::placeholder{color:rgba(255,255,255,0.55)}
+
+/* ── SCHEDULE VISUAL TIMELINE ── */
+.sched-item{
+  display:flex;gap:0;margin-bottom:0;
+  border-left:3px solid var(--cream2);position:relative;
+  transition:background 0.2s,opacity 0.2s;
+}
+.sched-item.past{opacity:0.5}
+.timeline-dot{
+  position:absolute;left:-8px;top:18px;
+  width:13px;height:13px;border-radius:50%;
+  background:var(--cream2);border:2.5px solid #ccc;
+  transition:all 0.2s;z-index:1;flex-shrink:0;
+}
+.sched-item.pl .timeline-dot{background:var(--cyan-brand);border-color:var(--cyan-brand);box-shadow:0 0 0 3px rgba(48,168,216,0.15)}
+.sched-item.par .timeline-dot{background:var(--green-brand);border-color:var(--green-brand);box-shadow:0 0 0 3px rgba(125,194,66,0.15)}
+.sched-item.now-live .timeline-dot{background:var(--green-brand);border-color:var(--green-brand);box-shadow:0 0 0 5px rgba(125,194,66,0.25);animation:dotPulse 1.5s infinite}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(125,194,66,0.3)}50%{box-shadow:0 0 0 6px rgba(125,194,66,0.1)}}
 
 /* ── DARK MODE ── */
 body.dark{
@@ -856,13 +928,15 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
 <script>
 /* Stub nav agar tidak error saat HTML render sebelum script utama dimuat */
 function nav(id){
-  var pages=['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak','tanya','saran','foto','media'];
+  var pages=['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','leaderboard','doa','lokasi','aturan','panitia','kontak','tanya','saran','foto','media'];
   var bnav5=['home','kamar','jadwal','foto','tanya'];
   pages.forEach(function(p){var el=document.getElementById('pg-'+p);if(el)el.classList.toggle('active',p===id);});
   bnav5.forEach(function(b){var el=document.getElementById('bnav-'+b);if(el)el.classList.toggle('active',b===id);});
   document.querySelectorAll('.drawer-item').forEach(function(el){var fn=el.getAttribute('onclick')||'';el.classList.toggle('active',fn.includes("nav('"+id+"')"));});
   window.scrollTo(0,0);
   if(id==='foto'&&typeof _fotoLoaded!=='undefined'&&!_fotoLoaded){_fotoLoaded=true;if(typeof loadPhotos==='function')loadPhotos();}
+  if(id==='leaderboard'&&typeof loadLeaderboard==='function')loadLeaderboard(typeof currentLbType!=='undefined'?currentLbType:'total');
+  if(id==='doa'&&typeof loadPrayers==='function')loadPrayers();
 }
 function toggleDark(){var isDark=document.body.classList.toggle('dark');localStorage.setItem('gpbsi_dark',isDark?'1':'0');var btn=document.getElementById('dark-btn');if(btn)btn.textContent=isDark?'☀️':'🌙';}
 function toggleDrawer(){var d=document.getElementById('drawer');var o=document.getElementById('overlay');var b=document.getElementById('burger');if(!d)return;var open=d.classList.toggle('open');o&&o.classList.toggle('open',open);b&&b.classList.toggle('open',open);document.body.style.overflow=open?'hidden':'';}
@@ -911,6 +985,9 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
     <a class="drawer-item" href="#" onclick="nav('saran');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V15C21 16.1 20.1 17 19 17H8L3 21V5Z" fill="var(--green-brand)"/><path d="M7 8H17M7 11H13" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Saran & Komentar</a>
     <div class="drawer-section-label" style="margin-top:4px">Info Retret</div>
     <a class="drawer-item" href="#" onclick="nav('kompetisi');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3H19V11C19 14.3 15.9 17 12 17C8.1 17 5 14.3 5 11V3Z" fill="var(--cyan-brand)"/><rect x="10" y="17" width="4" height="3" fill="var(--cyan-brand)" opacity="0.8"/><rect x="7" y="20" width="10" height="2.5" rx="1.25" fill="var(--cyan-brand)"/><path d="M5 5H2C2 5 2 10 5 11M19 5H22C22 5 22 10 19 11" stroke="var(--cyan-brand)" stroke-width="2.5" stroke-linecap="round"/></svg></span>Kompetisi</a>
+    <!-- Papan Skor disembunyikan sementara -->
+    <!-- <a class="drawer-item" href="#" onclick="nav('leaderboard');closeDrawer()"><span class="drawer-item-icon">🏅</span>Papan Skor</a> -->
+    <a class="drawer-item" href="#" onclick="nav('doa');closeDrawer()"><span class="drawer-item-icon">🙏</span>Tembok Doa</a>
     <a class="drawer-item" href="#" onclick="nav('kontak');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="var(--green-brand)"/></svg></span>Kontak Panitia</a>
     <a class="drawer-item" href="#" onclick="nav('bawa');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="7" width="12" height="14" rx="3" fill="var(--cyan-brand)"/><path d="M9 7V5C9 3.9 9.9 3 11 3H13C14.1 3 15 3.9 15 5V7" fill="none" stroke="var(--cyan-brand)" stroke-width="2"/><rect x="9" y="11" width="6" height="4" rx="1.5" fill="white" opacity="0.5"/><rect x="11.5" y="9" width="1" height="8" rx="0.5" fill="white" opacity="0.5"/></svg></span>Bawa Apa</a>
     <a class="drawer-item" href="#" onclick="nav('pembicara');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="14" cy="8" rx="3.5" ry="5" transform="rotate(30 14 8)" fill="var(--green-brand)"/><circle cx="14" cy="8" r="2" fill="white" opacity="0.3"/><path d="M6 18L18 6" stroke="var(--green-brand)" stroke-width="2.5" stroke-linecap="round"/></svg></span>Pembicara</a>
@@ -945,14 +1022,17 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
   </div>
 
   <div class="sec">
-    <!-- BANNER PENGUMUMAN -->
+    <!-- BANNER PENGUMUMAN (animated) -->
     <div class="announcement-banner" id="ann-banner">
-      <div class="ann-header">
+      <div class="ann-ticker">
         <div class="ann-dot"></div>
-        <div class="ann-title">Pengumuman Panitia</div>
+        <div class="ann-title" id="ann-title">📢 Pengumuman Panitia</div>
         <div class="ann-time" id="ann-time"></div>
+        <button class="ann-dismiss" onclick="document.getElementById('ann-banner').classList.remove('show');setTimeout(()=>document.getElementById('ann-banner').style.display='none',300)" aria-label="Tutup pengumuman">✕</button>
       </div>
-      <div class="ann-text" id="ann-text"></div>
+      <div class="ann-body">
+        <div class="ann-text" id="ann-text"></div>
+      </div>
     </div>
 
     <!-- COUNTDOWN -->
@@ -1289,14 +1369,18 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
           <span class="comp-when" style="background:rgba(44,44,46,0.08);color:var(--muted)">Sepanjang Retret · Tidak perlu daftar</span>
           <ul class="comp-rules mt8">
             <li>Upload foto terbaikmu ke Instagram</li>
-            <li>Tag semua akun GPBSI:</li>
+            <li>Tag semua akun GPBSI di bawah ini</li>
           </ul>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
             <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.95rem;font-weight:600;color:var(--text)">@gpbsi.jkt</span>
             <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.95rem;font-weight:600;color:var(--text)">@gpbsi.mlg</span>
             <span style="background:rgba(44,44,46,0.07);border:1px solid rgba(44,44,46,0.15);border-radius:20px;padding:4px 10px;font-size:0.95rem;font-weight:600;color:var(--text)">@gpbsi_bdg</span>
           </div>
-          <div style="font-size:0.92rem;color:var(--muted);margin-top:6px">Foto paling kreatif & inspiratif menang!</div>
+          <div class="notice notice-red" style="margin-top:10px;margin-bottom:0">
+            <span>⚠️</span>
+            <span>Pastikan akun Instagram kamu <strong>tidak di-private</strong> agar foto bisa dilihat panitia.</span>
+          </div>
+          <div style="font-size:0.92rem;color:var(--muted);margin-top:8px">Foto paling kreatif & inspiratif menang!</div>
         </div>
       </div>
     </div>
@@ -1313,6 +1397,95 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
     <div id="modal-body"></div>
     <button id="modal-submit" onclick="submitDaftar()" style="width:100%;height:48px;border:none;border-radius:var(--rs);font-size:0.95rem;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:12px;color:white;background:var(--navy)">Daftar Sekarang</button>
     <button onclick="closeModal()" style="width:100%;height:44px;border:none;border-radius:var(--rs);font-size:0.95rem;font-weight:600;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:8px;color:var(--muted);background:var(--cream)">Batal</button>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE: LEADERBOARD ═══════════ -->
+<div class="page" id="pg-leaderboard" style="display:none!important">
+  <div class="sec">
+    <div class="sec-label">Kompetisi</div>
+    <div class="sec-title">Papan Skor 🏆</div>
+    <div class="sec-sub">Skor kelompok sepanjang retret — diperbarui panitia secara langsung.</div>
+    <div class="gold-line"></div>
+
+    <div class="lb-tabs-wrap">
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchLb('total',this)">🏅 Total</button>
+      <button class="lb-tab" onclick="switchLb('basket',this)">🏀 Basket</button>
+      <button class="lb-tab" onclick="switchLb('pingpong',this)">🏓 Ping Pong</button>
+      <button class="lb-tab" onclick="switchLb('talent',this)">🎤 Talent</button>
+      <button class="lb-tab" onclick="switchLb('fotokompetisi',this)">📸 Foto</button>
+    </div>
+    </div>
+
+    <!-- Podium -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-body" style="padding:12px">
+        <div class="lb-podium" id="lb-podium">
+          <div class="lb-pod second">
+            <div class="lb-pod-rank">2nd</div>
+            <div class="lb-pod-avatar">🥈</div>
+            <div class="lb-pod-name" id="lb-2nd-name">—</div>
+            <div class="lb-pod-score" id="lb-2nd-pts">—</div>
+          </div>
+          <div class="lb-pod first">
+            <div class="lb-crown">👑</div>
+            <div class="lb-pod-avatar">🥇</div>
+            <div class="lb-pod-name" id="lb-1st-name">—</div>
+            <div class="lb-pod-score" id="lb-1st-pts">—</div>
+          </div>
+          <div class="lb-pod third">
+            <div class="lb-pod-rank">3rd</div>
+            <div class="lb-pod-avatar">🥉</div>
+            <div class="lb-pod-name" id="lb-3rd-name">—</div>
+            <div class="lb-pod-score" id="lb-3rd-pts">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full ranking list -->
+    <div class="leaderboard-wrap" id="lb-list"></div>
+
+    <div style="margin-top:12px;text-align:center;font-size:0.78rem;color:var(--muted)">Skor diperbarui oleh panitia · Terakhir refresh: <span id="lb-last-update">—</span></div>
+    <button onclick="loadLeaderboard(currentLbType)" style="display:flex;align-items:center;justify-content:center;gap:6px;margin:10px auto 0;height:36px;padding:0 16px;background:white;border:1.5px solid var(--cream2);border-radius:8px;font-family:'Nunito',sans-serif;font-size:0.875rem;font-weight:600;color:var(--muted);cursor:pointer">↻ Refresh Skor</button>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE: DOA ═══════════ -->
+<div class="page" id="pg-doa">
+  <div class="sec">
+    <div class="sec-label">Berdoa Bersama</div>
+    <div class="sec-title">Tembok Doa 🙏</div>
+    <div class="sec-sub">Tuliskan pokok doamu — semua peserta bisa mendoakanmu bersama.</div>
+    <div class="gold-line"></div>
+
+    <div class="prayer-input-wrap">
+      <h3>Bagikan Pokok Doamu</h3>
+      <p>Semua peserta dapat melihat dan mendoakan permintaan doamu.</p>
+      <div class="form-group" style="margin-bottom:10px">
+        <input type="text" class="form-input" id="pr-nama" placeholder="Namamu (opsional)..." autocapitalize="words"
+          style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.18);color:white;--placeholder-color:rgba(255,255,255,0.55)"
+          onfocus="this.style.borderColor='var(--green-brand)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <textarea class="form-textarea" id="pr-isi" placeholder="Tuliskan pokok doamu di sini..."
+          maxlength="300" oninput="updateCount('pr-isi','pr-count',300)"
+          style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.18);color:white;min-height:80px"
+          onfocus="this.style.borderColor='var(--green-brand)'" onblur="this.style.borderColor='rgba(255,255,255,0.18)'"></textarea>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.4);text-align:right;margin-top:4px"><span id="pr-count">0</span>/300</div>
+      </div>
+      <button class="submit-btn" id="pr-btn" onclick="submitPrayer()" style="background:linear-gradient(135deg,var(--green-brand),var(--cyan-brand));margin-top:0">
+        <span id="pr-btn-text" style="display:flex;align-items:center;gap:8px">🙏 Kirim Pokok Doa</span>
+      </button>
+    </div>
+
+    <div class="section-divider"><span>Pokok Doa Peserta</span></div>
+    <div class="notice notice-blue" style="margin-bottom:14px">🕊️ <span>Doakan satu sama lain — tekan <strong>Amin</strong> untuk mendoakan bersama.</span></div>
+
+    <div id="prayer-feed">
+      <div class="empty-state"><div>🙏</div>Belum ada pokok doa.<br>Jadilah yang pertama berbagi!</div>
+    </div>
   </div>
 </div>
 
@@ -1546,8 +1719,7 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
       <div class="form-group">
         <label class="form-label">Pertanyaanmu *</label>
         <textarea class="form-textarea" id="tq-isi" placeholder="Tulis pertanyaanmu di sini..." maxlength="400" oninput="updateCount('tq-isi','tq-count',400)"></textarea>
-        <div class="char-count"><span id="tq-count">0</span>/400
-      <div style="margin-top:8px;font-size:0.78rem;color:var(--red);font-weight:600">⚠️ Pastikan akun Instagram kamu tidak di-private agar foto bisa dilihat panitia</div></div>
+        <div class="char-count"><span id="tq-count">0</span>/400</div>
       </div>
       <button class="submit-btn" id="tq-btn" onclick="submitTanya()">
         <span id="tq-btn-text" style="display:flex;align-items:center;gap:8px"><span style="width:18px;height:18px;display:flex"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" fill="white"/></svg></span> Kirim Pertanyaan</span>
@@ -1823,12 +1995,7 @@ var CLOUDINARY_FOLDER = 'gpbsi2026';
 
 var photoCache = [];
 
-// Load saat halaman foto dibuka
-var pages = ['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','lokasi','aturan','panitia','kontak','tanya','saran','foto','media'];
-var bnav5 = ['home','kamar','jadwal','foto','tanya'];
-
 var _fotoLoaded = false;
-var _origNav = null;
 
 // nav(), toggleDark(), toggleDrawer(), closeDrawer() sudah didefinisikan di <head>
 
@@ -2382,10 +2549,20 @@ async function loadAnnouncements() {
     const banner = document.getElementById('ann-banner');
     const text = document.getElementById('ann-text');
     const time = document.getElementById('ann-time');
+    const title = document.getElementById('ann-title');
     if (!banner || !text) return;
     text.textContent = ann.isi;
     const d = new Date(ann.created_at);
     time.textContent = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    // urgent flag: panitia bisa set kolom `urgent: true` di Supabase
+    if (ann.urgent) {
+      banner.classList.add('urgent');
+      if (title) title.textContent = '🚨 Pengumuman Penting';
+    } else {
+      banner.classList.remove('urgent');
+      if (title) title.textContent = '📢 Pengumuman Panitia';
+    }
+    banner.style.display = '';
     banner.classList.add('show');
   } catch(e) { /* tabel belum ada, skip */ }
 }
@@ -2544,6 +2721,209 @@ async function submitDaftar() {
   await loadKompetisiCounts();
   showToast('Pendaftaran berhasil! Terima kasih');
 }
+
+/* ══════════════════════════════════════════════
+   LEADERBOARD — Supabase
+══════════════════════════════════════════════ */
+let currentLbType = 'total';
+const LB_COLORS = {
+  Senior: {bg:'rgba(125,194,66,0.12)',color:'#3d6e14'},
+  Umum: {bg:'rgba(48,168,216,0.12)',color:'#0a4d6e'},
+  Remaja: {bg:'rgba(185,28,28,0.08)',color:'#7F1D1D'},
+  'Sunday School': {bg:'rgba(234,179,8,0.12)',color:'#78350F'},
+  Pemuda: {bg:'rgba(124,58,237,0.1)',color:'#4C1D95'},
+};
+const LB_EMOJIS = {Senior:'👴',Umum:'👥',Remaja:'🙋',['Sunday School']:'🎒',Pemuda:'💪'};
+
+function switchLb(type, btn) {
+  currentLbType = type;
+  document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  loadLeaderboard(type);
+}
+
+async function loadLeaderboard(type) {
+  const listEl = document.getElementById('lb-list');
+  const updateEl = document.getElementById('lb-last-update');
+  if (!listEl) return;
+  listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)">Memuat skor...</div>';
+  try {
+    const { data, error } = await sb.from('leaderboard').select('*').order('skor', { ascending: false });
+    if (error) throw error;
+    const rows = (data || []);
+    // Filter by type if not total
+    const filtered = type === 'total' ? rows : rows.filter(r => r.jenis === type);
+    // Sort and show
+    const sorted = [...filtered].sort((a, b) => (b.skor || 0) - (a.skor || 0));
+    // Update podium
+    ['1st','2nd','3rd'].forEach((pos, i) => {
+      const r = sorted[i];
+      const nameEl = document.getElementById(`lb-${pos}-name`);
+      const ptsEl = document.getElementById(`lb-${pos}-pts`);
+      if (nameEl) nameEl.textContent = r ? (LB_EMOJIS[r.kelompok] || '') + ' ' + r.kelompok : '—';
+      if (ptsEl) ptsEl.textContent = r ? r.skor + ' pts' : '—';
+    });
+    // Render list
+    if (sorted.length === 0) {
+      listEl.innerHTML = '<div class="empty-state" style="padding:32px 20px"><div style="font-size:2.5rem;margin-bottom:10px">🏅</div><div style="font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:6px">Skor belum tersedia</div><div style="font-size:0.875rem;color:var(--muted)">Panitia akan memperbarui skor<br>saat kompetisi berlangsung.</div></div>';
+    } else {
+      listEl.innerHTML = sorted.map((r, i) => {
+        const col = LB_COLORS[r.kelompok] || {bg:'rgba(0,0,0,0.04)',color:'var(--muted)'};
+        return `<div class="lb-item" style="${i<3?'border-left:3px solid var(--gold)':''};margin-bottom:8px">
+          <div class="lb-rank" style="color:${i===0?'#EAB308':i===1?'#9CA3AF':i===2?'#B45309':'var(--muted)'}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+          <div class="lb-avatar" style="background:${col.bg};color:${col.color}">${LB_EMOJIS[r.kelompok]||'👥'}</div>
+          <div class="lb-info">
+            <div class="lb-name">${r.kelompok}</div>
+            <div class="lb-sub">${r.jenis||'Total Poin'}</div>
+          </div>
+          <div class="lb-pts">${r.skor} pts</div>
+        </div>`;
+      }).join('');
+    }
+    if (updateEl) updateEl.textContent = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {
+    // Show sample data if table doesn't exist yet
+    const sampleData = [
+      {kelompok:'Pemuda',skor:320},{kelompok:'Umum',skor:285},
+      {kelompok:'Remaja',skor:260},{kelompok:'Senior',skor:240},
+      {kelompok:'Sunday School',skor:180}
+    ];
+    const el1 = document.getElementById('lb-1st-name'); if(el1) el1.textContent = '💪 Pemuda';
+    const el1p = document.getElementById('lb-1st-pts'); if(el1p) el1p.textContent = '320 pts';
+    const el2 = document.getElementById('lb-2nd-name'); if(el2) el2.textContent = '👥 Umum';
+    const el2p = document.getElementById('lb-2nd-pts'); if(el2p) el2p.textContent = '285 pts';
+    const el3 = document.getElementById('lb-3rd-name'); if(el3) el3.textContent = '🙋 Remaja';
+    const el3p = document.getElementById('lb-3rd-pts'); if(el3p) el3p.textContent = '260 pts';
+    listEl.innerHTML = sampleData.map((r,i) => {
+      const col = LB_COLORS[r.kelompok] || {bg:'rgba(0,0,0,0.04)',color:'var(--muted)'};
+      return `<div class="lb-item" style="${i<3?'border-left:3px solid var(--gold)':''};margin-bottom:8px">
+        <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+        <div class="lb-avatar" style="background:${col.bg};color:${col.color}">${LB_EMOJIS[r.kelompok]||'👥'}</div>
+        <div class="lb-info"><div class="lb-name">${r.kelompok}</div><div class="lb-sub">Contoh data</div></div>
+        <div class="lb-pts">${r.skor} pts</div>
+      </div>`;
+    }).join('');
+    if (updateEl) updateEl.textContent = '— (contoh)';
+  }
+}
+
+/* ══════════════════════════════════════════════
+   PRAYER WALL — Supabase
+══════════════════════════════════════════════ */
+let prayerAmenMap = JSON.parse(localStorage.getItem('gpbsi_amens') || '{}');
+
+async function loadPrayers() {
+  const feed = document.getElementById('prayer-feed');
+  if (!feed) return;
+  feed.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)">Memuat doa...</div>';
+  try {
+    const { data, error } = await sb.from('doa').select('*').order('created_at', { ascending: false }).limit(50);
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      feed.innerHTML = '<div class="empty-state"><div>🙏</div>Belum ada pokok doa.<br>Jadilah yang pertama berbagi!</div>';
+      return;
+    }
+    feed.innerHTML = data.map(r => {
+      const initials = (r.nama || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const d = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : '';
+      const hasAmen = !!prayerAmenMap[r.id];
+      return `<div class="prayer-card">
+        <div class="prayer-header">
+          <div class="prayer-avatar">${initials}</div>
+          <div class="prayer-name">${r.nama || 'Anonim'}</div>
+          <div class="prayer-time">${d}</div>
+        </div>
+        <div class="prayer-text">"${r.isi}"</div>
+        <div class="prayer-amen">
+          <button class="prayer-amen-btn ${hasAmen?'amen-active':''}" onclick="toggleAmen('${r.id}',this)">
+            🙏 Amin${hasAmen?' ✓':''}
+          </button>
+          <span class="prayer-amen-count" id="amen-${r.id}">${r.amen_count||0} orang mendoakan</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    feed.innerHTML = '<div class="empty-state"><div>🙏</div>Gagal memuat doa.<br>Coba refresh.</div>';
+  }
+}
+
+async function submitPrayer() {
+  const isi = document.getElementById('pr-isi').value.trim();
+  if (!isi) { showToast('Tulis pokok doamu dulu'); return; }
+  const nama = document.getElementById('pr-nama').value.trim() || 'Anonim';
+  const btn = document.getElementById('pr-btn');
+  const btnText = document.getElementById('pr-btn-text');
+  btn.classList.add('loading');
+  btnText.textContent = 'Mengirim...';
+  const { error } = await sb.from('doa').insert({ nama, isi, amen_count: 0 });
+  btn.classList.remove('loading');
+  if (error) { showToast('Gagal mengirim. Coba lagi.'); btnText.textContent = '🙏 Kirim Pokok Doa'; return; }
+  btn.classList.add('success');
+  btnText.textContent = 'Doa terkirim! 🙏';
+  document.getElementById('pr-nama').value = '';
+  document.getElementById('pr-isi').value = '';
+  document.getElementById('pr-count').textContent = '0';
+  setTimeout(() => { btn.classList.remove('success'); btnText.textContent = '🙏 Kirim Pokok Doa'; }, 3000);
+  showToast('Pokok doa terkirim! Tuhan memberkati 🙏');
+  await loadPrayers();
+}
+
+async function toggleAmen(id, btn) {
+  const hasAmen = !!prayerAmenMap[id];
+  const countEl = document.getElementById('amen-' + id);
+  if (hasAmen) {
+    delete prayerAmenMap[id];
+    btn.classList.remove('amen-active');
+    btn.innerHTML = '🙏 Amin';
+    if (countEl) {
+      const n = Math.max(0, parseInt(countEl.textContent) - 1);
+      countEl.textContent = n + ' orang mendoakan';
+      await sb.from('doa').update({ amen_count: n }).eq('id', id);
+    }
+  } else {
+    prayerAmenMap[id] = true;
+    btn.classList.add('amen-active');
+    btn.innerHTML = '🙏 Amin ✓';
+    if (countEl) {
+      const n = parseInt(countEl.textContent) + 1;
+      countEl.textContent = n + ' orang mendoakan';
+      await sb.from('doa').update({ amen_count: n }).eq('id', id);
+    }
+  }
+  localStorage.setItem('gpbsi_amens', JSON.stringify(prayerAmenMap));
+}
+
+
+
+
+// Inject timeline dots + mark past items
+document.querySelectorAll('.sched-item').forEach(item => {
+  if (!item.querySelector('.timeline-dot')) {
+    const dot = document.createElement('div');
+    dot.className = 'timeline-dot';
+    item.prepend(dot);
+  }
+});
+
+function markPastScheduleItems() {
+  const now = new Date();
+  const retreat_start = new Date('2026-05-14T00:00:00+07:00');
+  const dayNum = Math.floor((now - retreat_start) / 86400000) + 1;
+  if (dayNum < 1 || dayNum > 3) return;
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const matching = JADWAL_DATA.filter(j => j[0] === dayNum);
+  const items = document.querySelectorAll(`#day${dayNum} .sched-item`);
+  items.forEach((item, i) => {
+    if (!matching[i]) return;
+    const [,, selesai] = matching[i];
+    const [sh, sm] = selesai.split(':').map(Number);
+    const endMin = sh * 60 + sm;
+    if (nowMin >= endMin && !item.classList.contains('now-live')) {
+      item.classList.add('past');
+    }
+  });
+}
+markPastScheduleItems();
 </script>
 </body>
 </html>
