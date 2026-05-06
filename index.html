@@ -987,7 +987,8 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
     <a class="drawer-item" href="#" onclick="nav('kompetisi');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3H19V11C19 14.3 15.9 17 12 17C8.1 17 5 14.3 5 11V3Z" fill="var(--cyan-brand)"/><rect x="10" y="17" width="4" height="3" fill="var(--cyan-brand)" opacity="0.8"/><rect x="7" y="20" width="10" height="2.5" rx="1.25" fill="var(--cyan-brand)"/><path d="M5 5H2C2 5 2 10 5 11M19 5H22C22 5 22 10 19 11" stroke="var(--cyan-brand)" stroke-width="2.5" stroke-linecap="round"/></svg></span>Kompetisi</a>
     <!-- Papan Skor disembunyikan sementara -->
     <!-- <a class="drawer-item" href="#" onclick="nav('leaderboard');closeDrawer()"><span class="drawer-item-icon">🏅</span>Papan Skor</a> -->
-    <a class="drawer-item" href="#" onclick="nav('doa');closeDrawer()"><span class="drawer-item-icon">🙏</span>Tembok Doa</a>
+    <!-- Tembok Doa disembunyikan sementara -->
+    <!-- <a class="drawer-item" href="#" onclick="nav('doa');closeDrawer()"><span class="drawer-item-icon">🙏</span>Tembok Doa</a> -->
     <a class="drawer-item" href="#" onclick="nav('kontak');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 10.8C7.8 13.2 9.8 15.2 12.2 16.4L14.2 14.4C14.5 14.1 14.9 14 15.3 14.2C16.5 14.6 17.8 14.8 19 14.8C19.6 14.8 20 15.2 20 15.8V19C20 19.6 19.6 20 19 20C10.2 20 3 12.8 3 4C3 3.4 3.4 3 4 3H7.2C7.8 3 8.2 3.4 8.2 4C8.2 5.2 8.4 6.5 8.8 7.7C9 8.1 8.9 8.5 8.6 8.8L6.6 10.8Z" fill="var(--green-brand)"/></svg></span>Kontak Panitia</a>
     <a class="drawer-item" href="#" onclick="nav('bawa');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="7" width="12" height="14" rx="3" fill="var(--cyan-brand)"/><path d="M9 7V5C9 3.9 9.9 3 11 3H13C14.1 3 15 3.9 15 5V7" fill="none" stroke="var(--cyan-brand)" stroke-width="2"/><rect x="9" y="11" width="6" height="4" rx="1.5" fill="white" opacity="0.5"/><rect x="11.5" y="9" width="1" height="8" rx="0.5" fill="white" opacity="0.5"/></svg></span>Bawa Apa</a>
     <a class="drawer-item" href="#" onclick="nav('pembicara');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="14" cy="8" rx="3.5" ry="5" transform="rotate(30 14 8)" fill="var(--green-brand)"/><circle cx="14" cy="8" r="2" fill="white" opacity="0.3"/><path d="M6 18L18 6" stroke="var(--green-brand)" stroke-width="2.5" stroke-linecap="round"/></svg></span>Pembicara</a>
@@ -1453,7 +1454,7 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
 </div>
 
 <!-- ═══════════ PAGE: DOA ═══════════ -->
-<div class="page" id="pg-doa">
+<div class="page" id="pg-doa" style="display:none!important">
   <div class="sec">
     <div class="sec-label">Berdoa Bersama</div>
     <div class="sec-title">Tembok Doa 🙏</div>
@@ -2810,8 +2811,6 @@ async function loadLeaderboard(type) {
 /* ══════════════════════════════════════════════
    PRAYER WALL — Supabase
 ══════════════════════════════════════════════ */
-let prayerAmenMap = JSON.parse(localStorage.getItem('gpbsi_amens') || '{}');
-
 async function loadPrayers() {
   const feed = document.getElementById('prayer-feed');
   if (!feed) return;
@@ -2826,7 +2825,6 @@ async function loadPrayers() {
     feed.innerHTML = data.map(r => {
       const initials = (r.nama || 'A').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const d = r.created_at ? new Date(r.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : '';
-      const hasAmen = !!prayerAmenMap[r.id];
       return `<div class="prayer-card">
         <div class="prayer-header">
           <div class="prayer-avatar">${initials}</div>
@@ -2834,12 +2832,6 @@ async function loadPrayers() {
           <div class="prayer-time">${d}</div>
         </div>
         <div class="prayer-text">"${r.isi}"</div>
-        <div class="prayer-amen">
-          <button class="prayer-amen-btn ${hasAmen?'amen-active':''}" onclick="toggleAmen('${r.id}',this)">
-            🙏 Amin${hasAmen?' ✓':''}
-          </button>
-          <span class="prayer-amen-count" id="amen-${r.id}">${r.amen_count||0} orang mendoakan</span>
-        </div>
       </div>`;
     }).join('');
   } catch(e) {
@@ -2855,7 +2847,7 @@ async function submitPrayer() {
   const btnText = document.getElementById('pr-btn-text');
   btn.classList.add('loading');
   btnText.textContent = 'Mengirim...';
-  const { error } = await sb.from('doa').insert({ nama, isi, amen_count: 0 });
+  const { error } = await sb.from('doa').insert({ nama, isi });
   btn.classList.remove('loading');
   if (error) { showToast('Gagal mengirim. Coba lagi.'); btnText.textContent = '🙏 Kirim Pokok Doa'; return; }
   btn.classList.add('success');
@@ -2868,30 +2860,6 @@ async function submitPrayer() {
   await loadPrayers();
 }
 
-async function toggleAmen(id, btn) {
-  const hasAmen = !!prayerAmenMap[id];
-  const countEl = document.getElementById('amen-' + id);
-  if (hasAmen) {
-    delete prayerAmenMap[id];
-    btn.classList.remove('amen-active');
-    btn.innerHTML = '🙏 Amin';
-    if (countEl) {
-      const n = Math.max(0, parseInt(countEl.textContent) - 1);
-      countEl.textContent = n + ' orang mendoakan';
-      await sb.from('doa').update({ amen_count: n }).eq('id', id);
-    }
-  } else {
-    prayerAmenMap[id] = true;
-    btn.classList.add('amen-active');
-    btn.innerHTML = '🙏 Amin ✓';
-    if (countEl) {
-      const n = parseInt(countEl.textContent) + 1;
-      countEl.textContent = n + ' orang mendoakan';
-      await sb.from('doa').update({ amen_count: n }).eq('id', id);
-    }
-  }
-  localStorage.setItem('gpbsi_amens', JSON.stringify(prayerAmenMap));
-}
 
 
 
