@@ -112,6 +112,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
 .komp-name{font-size:0.875rem;font-weight:600;color:var(--navy);flex:1}
 .komp-detail{font-size:0.72rem;color:var(--muted);margin-top:2px}
 .komp-time-cell{font-size:0.68rem;color:var(--muted);flex-shrink:0;text-align:right}
+.del-btn{width:32px;height:32px;border:none;border-radius:8px;background:rgba(185,28,28,0.08);color:#B91C1C;font-size:1rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-left:6px}
+.del-btn:active{background:rgba(185,28,28,0.18)}
 .grup-tag{display:inline-block;background:rgba(125,194,66,0.12);color:#3d6e14;font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:4px}
 .solo-tag{font-size:0.7rem;color:var(--muted)}
 
@@ -371,9 +373,17 @@ async function loadKompetisi() {
     items.length ? '<div class="komp-section"><div class="komp-label">'+label+' <span class="komp-cnt">'+cnt+'</span></div><div class="komp-card">'+items.map(renderRow).join('')+'</div></div>' : '';
 
   list.innerHTML =
-    makeSection('Basket 3 on 3', basket.length+' tim', basket, (b,i,arr) => '<div class="komp-row"><div class="komp-num">'+(arr.indexOf(b)+1)+'</div><div class="komp-name">'+b.nama+'</div><div class="komp-time-cell">'+fmt(b.created_at)+'</div></div>') +
-    makeSection('Ping Pong Ganda', pingpong.length+' peserta', pingpong, (p,i,arr) => '<div class="komp-row"><div class="komp-num">'+(arr.indexOf(p)+1)+'</div><div class="komp-name">'+p.nama+'</div><div class="komp-time-cell">'+fmt(p.created_at)+'</div></div>') +
-    makeSection('Talent Show', talent.length+' penampil', talent, (t,i,arr) => '<div class="komp-row"><div class="komp-num">'+(arr.indexOf(t)+1)+'</div><div style="flex:1;min-width:0"><div class="komp-name">'+t.nama+'</div><div class="komp-detail">'+(t.jenis_talent||'-')+' &nbsp;'+(t.is_grup?'<span class="grup-tag">Grup</span>':'<span class="solo-tag">Solo</span>')+'</div></div><div class="komp-time-cell">'+fmt(t.created_at)+'</div></div>');
+    makeSection('Basket 3 on 3', basket.length+' tim', basket, (b,i,arr) => '<div class="komp-row"><div class="komp-num">'+(arr.indexOf(b)+1)+'</div><div class="komp-name">'+b.nama+'</div><div class="komp-time-cell">'+fmt(b.created_at)+'</div><button class="del-btn" onclick="hapusKompetisi(\''+b.id+'\')" title="Hapus">🗑</button></div>') +
+    makeSection('Ping Pong Ganda', pingpong.length+' peserta', pingpong, (p,i,arr) => '<div class="komp-row"><div class="komp-num">'+(arr.indexOf(p)+1)+'</div><div class="komp-name">'+p.nama+'</div><div class="komp-time-cell">'+fmt(p.created_at)+'</div><button class="del-btn" onclick="hapusKompetisi(\''+p.id+'\')" title="Hapus">🗑</button></div>') +
+    makeSection('Talent Show', talent.length+' penampil', talent, (t,i,arr) => '<div class="komp-row"><div class="komp-num">'+(arr.indexOf(t)+1)+'</div><div style="flex:1;min-width:0"><div class="komp-name">'+t.nama+'</div><div class="komp-detail">'+(t.jenis_talent||'-')+' &nbsp;'+(t.is_grup?'<span class="grup-tag">Grup</span>':'<span class="solo-tag">Solo</span>')+'</div></div><div class="komp-time-cell">'+fmt(t.created_at)+'</div><button class="del-btn" onclick="hapusKompetisi(\''+t.id+'\')" title="Hapus">🗑</button></div>');
+}
+
+async function hapusKompetisi(id) {
+  if (!confirm('Hapus pendaftaran ini?')) return;
+  const { error } = await sb.from('kompetisi').delete().eq('id', id);
+  if (error) { showToast('Gagal hapus'); return; }
+  showToast('✅ Dihapus');
+  loadKompetisi();
 }
 
 /* UTILS */
