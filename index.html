@@ -575,6 +575,98 @@ body{font-family:'Nunito',sans-serif;color:var(--text);overflow-x:hidden;padding
 .video-coming-icon{font-size:2rem;margin-bottom:8px;opacity:0.4}
 .video-coming-text{font-size:0.875rem;line-height:1.6}
 
+
+/* ── GIRING-GIRING EMAS ── */
+.quiz-progress-bar{height:4px;background:var(--cream2);border-radius:2px;margin-bottom:16px}
+.quiz-progress-fill{height:100%;background:var(--gold2);border-radius:2px;transition:width 0.3s}
+.quiz-section-title{
+  font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold2);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.quiz-card{
+  background:white;border-radius:var(--r);border:1px solid var(--cream2);
+  margin-bottom:12px;overflow:hidden;
+}
+.quiz-card-header{
+  padding:12px 14px 10px;border-bottom:1px solid var(--cream2);
+  display:flex;align-items:flex-start;gap:10px;
+}
+.quiz-num{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:var(--navy);color:var(--gold2);
+  font-size:0.75rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.quiz-soal{font-size:0.9rem;color:var(--navy);line-height:1.6;font-weight:500}
+.quiz-options{padding:10px 14px;display:flex;flex-direction:column;gap:7px}
+.quiz-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--rs);
+  border:1.5px solid var(--cream2);background:var(--cream);
+  cursor:pointer;transition:all 0.15s;font-size:0.875rem;
+}
+.quiz-opt:active{transform:scale(0.98)}
+.quiz-opt.selected{border-color:var(--cyan);background:rgba(48,168,216,0.08);color:var(--navy)}
+.quiz-opt.correct{border-color:var(--green-brand);background:rgba(125,194,66,0.1);color:#3d6e14;font-weight:600}
+.quiz-opt.wrong{border-color:#B91C1C;background:rgba(185,28,28,0.08);color:#B91C1C}
+.quiz-opt-letter{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:white;border:1.5px solid var(--cream2);
+  font-size:0.72rem;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+}
+.quiz-opt.selected .quiz-opt-letter{background:var(--cyan);border-color:var(--cyan);color:white}
+.quiz-opt.correct .quiz-opt-letter{background:var(--green-brand);border-color:var(--green-brand);color:white}
+.quiz-opt.wrong .quiz-opt-letter{background:#B91C1C;border-color:#B91C1C;color:white}
+.quiz-bs-opts{padding:10px 14px;display:flex;gap:8px}
+.quiz-bs-btn{
+  flex:1;height:44px;border:1.5px solid var(--cream2);border-radius:var(--rs);
+  background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.9rem;
+  font-weight:600;cursor:pointer;transition:all 0.15s;
+}
+.quiz-bs-btn.selected{border-color:var(--cyan);background:rgba(48,168,216,0.08);color:var(--navy)}
+.quiz-bs-btn.correct{border-color:var(--green-brand);background:rgba(125,194,66,0.1);color:#3d6e14}
+.quiz-bs-btn.wrong{border-color:#B91C1C;background:rgba(185,28,28,0.08);color:#B91C1C}
+.quiz-isian-input{
+  width:100%;border:1.5px solid var(--cream2);border-radius:var(--rs);
+  padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;
+  color:var(--navy);outline:none;margin:10px 14px;width:calc(100% - 28px);
+}
+.quiz-isian-input:focus{border-color:var(--cyan)}
+.quiz-isian-input.correct{border-color:var(--green-brand);background:rgba(125,194,66,0.05)}
+.quiz-isian-input.wrong{border-color:#B91C1C;background:rgba(185,28,28,0.05)}
+.quiz-answer-reveal{
+  padding:8px 14px 12px;font-size:0.8rem;display:none;
+}
+.quiz-answer-reveal.show{display:block}
+.quiz-answer-correct{color:#3d6e14;font-weight:600}
+.quiz-answer-wrong{color:#B91C1C}
+.quiz-check-btn{
+  margin:0 14px 12px;width:calc(100% - 28px);height:40px;
+  background:var(--navy);border:none;border-radius:var(--rs);
+  font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;
+  color:white;cursor:pointer;
+}
+.quiz-check-btn:active{opacity:0.85}
+.quiz-check-btn:disabled{opacity:0.3;pointer-events:none}
+.quiz-score-card{
+  background:linear-gradient(135deg,var(--navy),#2a2a1a);
+  border-radius:var(--r);padding:24px;text-align:center;margin-bottom:16px;
+}
+.quiz-score-num{font-size:3rem;font-weight:700;color:var(--gold2);line-height:1}
+.quiz-score-label{font-size:0.85rem;color:rgba(255,255,255,0.5);margin-top:4px}
+.quiz-score-detail{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;
+}
+.quiz-score-item{background:rgba(255,255,255,0.07);border-radius:var(--rs);padding:10px}
+.quiz-score-item-num{font-size:1.3rem;font-weight:700;color:white;line-height:1}
+.quiz-score-item-label{font-size:0.68rem;color:rgba(255,255,255,0.45);margin-top:3px}
+.quiz-reset-btn{
+  width:100%;height:48px;background:var(--gold2);border:none;border-radius:var(--rs);
+  font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;
+  color:var(--navy);cursor:pointer;margin-top:8px;
+}
+
 .accordion-btn{
   display:flex;align-items:center;justify-content:space-between;
   width:100%;background:rgba(42,127,111,0.08);border:1px solid rgba(42,127,111,0.2);
@@ -985,6 +1077,7 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
     <a class="drawer-item" href="#" onclick="nav('saran');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V15C21 16.1 20.1 17 19 17H8L3 21V5Z" fill="var(--green-brand)"/><path d="M7 8H17M7 11H13" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></span>Saran & Komentar</a>
     <div class="drawer-section-label" style="margin-top:4px">Info Retret</div>
     <a class="drawer-item" href="#" onclick="nav('kompetisi');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 3H19V11C19 14.3 15.9 17 12 17C8.1 17 5 14.3 5 11V3Z" fill="var(--cyan-brand)"/><rect x="10" y="17" width="4" height="3" fill="var(--cyan-brand)" opacity="0.8"/><rect x="7" y="20" width="10" height="2.5" rx="1.25" fill="var(--cyan-brand)"/><path d="M5 5H2C2 5 2 10 5 11M19 5H22C22 5 22 10 19 11" stroke="var(--cyan-brand)" stroke-width="2.5" stroke-linecap="round"/></svg></span>Kompetisi</a>
+    <a class="drawer-item" href="#" onclick="nav('giring');closeDrawer()"><span class="drawer-item-icon" style="color:var(--gold2)"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Giring-Giring Emas</a>
     <!-- Papan Skor disembunyikan sementara -->
     <!-- <a class="drawer-item" href="#" onclick="nav('leaderboard');closeDrawer()"><span class="drawer-item-icon">🏅</span>Papan Skor</a> -->
     <!-- Tembok Doa disembunyikan sementara -->
@@ -993,6 +1086,7 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
     <a class="drawer-item" href="#" onclick="nav('bawa');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="7" width="12" height="14" rx="3" fill="var(--cyan-brand)"/><path d="M9 7V5C9 3.9 9.9 3 11 3H13C14.1 3 15 3.9 15 5V7" fill="none" stroke="var(--cyan-brand)" stroke-width="2"/><rect x="9" y="11" width="6" height="4" rx="1.5" fill="white" opacity="0.5"/><rect x="11.5" y="9" width="1" height="8" rx="0.5" fill="white" opacity="0.5"/></svg></span>Bawa Apa</a>
     <a class="drawer-item" href="#" onclick="nav('pembicara');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><ellipse cx="14" cy="8" rx="3.5" ry="5" transform="rotate(30 14 8)" fill="var(--green-brand)"/><circle cx="14" cy="8" r="2" fill="white" opacity="0.3"/><path d="M6 18L18 6" stroke="var(--green-brand)" stroke-width="2.5" stroke-linecap="round"/></svg></span>Pembicara</a>
     <a class="drawer-item" href="#" onclick="nav('kelompok');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="3" fill="var(--cyan-brand)" opacity="0.7"/><circle cx="17" cy="7" r="3" fill="var(--cyan-brand)"/><circle cx="12" cy="6" r="3.5" fill="var(--cyan-brand)"/><path d="M2 20C2 17.2 4.2 15 7 15C8 15 8.9 15.3 9.7 15.8C10.4 15.3 11.2 15 12 15C12.8 15 13.6 15.3 14.3 15.8C15.1 15.3 16 15 17 15C19.8 15 22 17.2 22 20H2Z" fill="var(--cyan-brand)" opacity="0.8"/></svg></span>Kelompok</a>
+    
     <a class="drawer-item" href="#" onclick="nav('lokasi');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.1 2 5 5.1 5 9C5 14.2 12 22 12 22C12 22 19 14.2 19 9C19 5.1 15.9 2 12 2Z" fill="var(--green-brand)"/><circle cx="12" cy="9" r="3.5" fill="white" opacity="0.55"/></svg></span>Lokasi & Denah</a>
     <a class="drawer-item" href="#" onclick="nav('aturan');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="3" width="14" height="18" rx="3" fill="var(--cyan-brand)"/><rect x="8" y="7" width="8" height="1.5" rx="0.75" fill="white" opacity="0.7"/><rect x="8" y="10.5" width="8" height="1.5" rx="0.75" fill="white" opacity="0.7"/><rect x="8" y="14" width="5" height="1.5" rx="0.75" fill="white" opacity="0.7"/></svg></span>Tata Tertib</a>
     <a class="drawer-item" href="#" onclick="nav('panitia');closeDrawer()"><span class="drawer-item-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="var(--green-brand)" opacity="0.7"/><path d="M4 20C4 16.7 7.6 14 12 14C16.4 14 20 16.7 20 20H4Z" fill="var(--green-brand)" opacity="0.7"/><rect x="9" y="5" width="6" height="4" rx="1" fill="var(--green-brand)"/><rect x="10.5" y="4" width="3" height="1.5" rx="0.75" fill="var(--green-brand)" opacity="0.8"/><rect x="10" y="6.5" width="4" height="1" rx="0.5" fill="white" opacity="0.8"/></svg></span>Panitia</a>
@@ -1966,6 +2060,63 @@ function closeDrawer(){var d=document.getElementById('drawer');var o=document.ge
   </div>
 </div>
 
+
+<!-- ═══════════ PAGE: GIRING-GIRING EMAS ═══════════ -->
+<div class="page" id="pg-giring">
+  <div class="sec">
+    <div class="sec-label">Perlombaan</div>
+    <div class="sec-title">Giring-Giring Emas</div>
+    <div class="sec-sub">Uji pengetahuanmu tentang Alkitab! Jawab semua soal dan lihat skormu.</div>
+    <div class="gold-line"></div>
+
+    <!-- Score card (tampil setelah selesai) -->
+    <div id="giring-score" style="display:none">
+      <div class="quiz-score-card">
+        <div class="quiz-score-num" id="score-pct">0%</div>
+        <div class="quiz-score-label">Skor Akhir</div>
+        <div class="quiz-score-detail">
+          <div class="quiz-score-item">
+            <div class="quiz-score-item-num" id="score-benar" style="color:#7DC242">0</div>
+            <div class="quiz-score-item-label">Benar</div>
+          </div>
+          <div class="quiz-score-item">
+            <div class="quiz-score-item-num" id="score-salah" style="color:#B91C1C">0</div>
+            <div class="quiz-score-item-label">Salah</div>
+          </div>
+          <div class="quiz-score-item">
+            <div class="quiz-score-item-num" id="score-total">0</div>
+            <div class="quiz-score-item-label">Total Soal</div>
+          </div>
+        </div>
+      </div>
+      <button class="quiz-reset-btn" onclick="resetGiring()">🔄 Ulangi Kuis</button>
+      <div style="height:16px"></div>
+    </div>
+
+    <!-- Progress -->
+    <div class="quiz-progress-bar" id="giring-progress-bar" style="display:none">
+      <div class="quiz-progress-fill" id="giring-progress-fill" style="width:0%"></div>
+    </div>
+
+    <!-- Loading -->
+    <div id="giring-loading" style="text-align:center;padding:40px;color:var(--muted)">
+      <div class="spinner" style="margin:0 auto 12px"></div>
+      Memuat soal...
+    </div>
+
+    <!-- Quiz list -->
+    <div id="giring-list"></div>
+
+    <!-- Submit button -->
+    <div id="giring-submit-wrap" style="display:none;margin-top:8px">
+      <button onclick="submitGiring()" style="width:100%;height:52px;background:var(--gold2);border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);cursor:pointer">
+        ✓ Lihat Skorku
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bnav-item active" id="bnav-home" onclick="nav('home')"><span class="bnav-icon" style="display:flex;align-items:center;justify-content:center;width:24px;height:24px"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.6 20.6 21 20 21H15V16H9V21H4C3.4 21 3 20.6 3 20V10.5Z" fill="currentColor"/></svg></span>Beranda</button>
@@ -2217,6 +2368,256 @@ function goToLokasi(area) {
     var el = document.querySelector('.map-wrap');
     if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
   }, 150);
+}
+
+
+/* ══════════════════════════════════════════════
+   GIRING-GIRING EMAS
+══════════════════════════════════════════════ */
+var giringData = [];
+var giringAnswers = {};
+var giringLoaded = false;
+
+// Load saat halaman dibuka
+var _origNavGiring = window.nav;
+(function() {
+  var origNav = window.nav;
+  if (origNav) {
+    window.nav = function(id) {
+      origNav(id);
+      if (id === 'giring' && !giringLoaded) {
+        giringLoaded = true;
+        loadGiring();
+      }
+    };
+  }
+})();
+
+async function loadGiring() {
+  var loading = document.getElementById('giring-loading');
+  var list = document.getElementById('giring-list');
+  if (loading) loading.style.display = 'block';
+
+  var { data, error } = await sb
+    .from('giring_emas')
+    .select('*')
+    .order('nomor', { ascending: true });
+
+  if (loading) loading.style.display = 'none';
+
+  if (error || !data || data.length === 0) {
+    if (list) list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">Gagal memuat soal. Coba lagi.</div>';
+    return;
+  }
+
+  giringData = data;
+  renderGiring(data);
+}
+
+function renderGiring(data) {
+  var list = document.getElementById('giring-list');
+  var bar = document.getElementById('giring-progress-bar');
+  var submitWrap = document.getElementById('giring-submit-wrap');
+  if (!list) return;
+
+  if (bar) bar.style.display = 'block';
+  if (submitWrap) submitWrap.style.display = 'block';
+
+  var pg   = data.filter(function(d){ return d.tipe === 'pg'; });
+  var bs   = data.filter(function(d){ return d.tipe === 'bs'; });
+  var isian = data.filter(function(d){ return d.tipe === 'isian'; });
+
+  var html = '';
+
+  if (pg.length > 0) {
+    html += '<div class="quiz-section-title">★ Pilihan Ganda (' + pg.length + ' soal)</div>';
+    html += pg.map(function(q) { return renderPGCard(q); }).join('');
+  }
+  if (bs.length > 0) {
+    html += '<div class="quiz-section-title" style="margin-top:16px">★ Benar atau Salah (' + bs.length + ' soal)</div>';
+    html += bs.map(function(q) { return renderBSCard(q); }).join('');
+  }
+  if (isian.length > 0) {
+    html += '<div class="quiz-section-title" style="margin-top:16px">★ Isian (' + isian.length + ' soal)</div>';
+    html += isian.map(function(q) { return renderIsianCard(q); }).join('');
+  }
+
+  list.innerHTML = html;
+  updateProgress();
+}
+
+function renderPGCard(q) {
+  var opts = [
+    { key:'A', val: q.pilihan_a },
+    { key:'B', val: q.pilihan_b },
+    { key:'C', val: q.pilihan_c },
+    { key:'D', val: q.pilihan_d },
+  ];
+  return '<div class="quiz-card" id="card-'+q.id+'">'
+    + '<div class="quiz-card-header">'
+    + '<div class="quiz-num">'+q.nomor+'</div>'
+    + '<div class="quiz-soal">'+q.soal+'</div>'
+    + '</div>'
+    + '<div class="quiz-options">'
+    + opts.map(function(o){
+        return '<div class="quiz-opt" id="opt-'+q.id+'-'+o.key+'" data-id="'+q.id+'" data-key="'+o.key+'" onclick="selectPG(this)">'
+          + '<div class="quiz-opt-letter">'+o.key+'</div>'
+          + '<div>'+o.val+'</div>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<div class="quiz-answer-reveal" id="reveal-'+q.id+'"></div>'
+    + '</div>';
+}
+
+function renderBSCard(q) {
+  return '<div class="quiz-card" id="card-'+q.id+'">'
+    + '<div class="quiz-card-header">'
+    + '<div class="quiz-num">'+q.nomor+'</div>'
+    + '<div class="quiz-soal">'+q.soal+'</div>'
+    + '</div>'
+    + '<div class="quiz-bs-opts">'
+    + '<button class="quiz-bs-btn" id="bs-'+q.id+'-Benar" data-id="'+q.id+'" data-val="Benar" onclick="selectBS(this)">✓ Benar</button>'
+    + '<button class="quiz-bs-btn" id="bs-'+q.id+'-Salah" data-id="'+q.id+'" data-val="Salah" onclick="selectBS(this)">✗ Salah</button>'
+    + '</div>'
+    + '<div class="quiz-answer-reveal" id="reveal-'+q.id+'"></div>'
+    + '</div>';
+}
+
+function renderIsianCard(q) {
+  return '<div class="quiz-card" id="card-'+q.id+'">'
+    + '<div class="quiz-card-header">'
+    + '<div class="quiz-num">'+q.nomor+'</div>'
+    + '<div class="quiz-soal">'+q.soal+'</div>'
+    + '</div>'
+    + '<input class="quiz-isian-input" id="isian-'+q.id+'" placeholder="Jawaban kamu..." '
+    + 'oninput="giringAnswers['+q.id+']=this.value;updateProgress()">'
+    + '<div class="quiz-answer-reveal" id="reveal-'+q.id+'"></div>'
+    + '</div>';
+}
+
+function selectPG(el) {
+  var id = el.dataset.id;
+  var key = el.dataset.key;
+  ['A','B','C','D'].forEach(function(k) {
+    var opt = document.getElementById('opt-'+id+'-'+k);
+    if (opt) opt.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  giringAnswers[id] = key;
+  updateProgress();
+}
+
+function selectBS(el) {
+  var id = el.dataset.id;
+  var val = el.dataset.val;
+  ['Benar','Salah'].forEach(function(v) {
+    var btn = document.getElementById('bs-'+id+'-'+v);
+    if (btn) btn.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  giringAnswers[id] = val;
+  updateProgress();
+}
+
+function updateProgress() {
+  var answered = Object.keys(giringAnswers).filter(function(k){
+    return giringAnswers[k] && String(giringAnswers[k]).trim();
+  }).length;
+  var total = giringData.length;
+  var pct = total > 0 ? (answered / total * 100) : 0;
+  var fill = document.getElementById('giring-progress-fill');
+  if (fill) fill.style.width = pct + '%';
+}
+
+function submitGiring() {
+  var benar = 0;
+  var salah = 0;
+
+  giringData.forEach(function(q) {
+    var userAns = (giringAnswers[q.id] || '').toString().trim().toLowerCase();
+    var correctAns = (q.jawaban || '').toString().trim().toLowerCase();
+    var isCorrect = false;
+
+    if (q.tipe === 'isian') {
+      // Flexible matching for isian
+      isCorrect = userAns.length > 0 && (
+        correctAns.includes(userAns) ||
+        userAns.includes(correctAns.split('/')[0].trim()) ||
+        correctAns.split('/').some(function(a){ return userAns.includes(a.trim().toLowerCase()); })
+      );
+    } else {
+      isCorrect = userAns === correctAns;
+    }
+
+    if (isCorrect) benar++;
+    else salah++;
+
+    // Show correct/wrong on each card
+    var reveal = document.getElementById('reveal-'+q.id);
+    if (q.tipe === 'pg') {
+      ['A','B','C','D'].forEach(function(k) {
+        var el = document.getElementById('opt-'+q.id+'-'+k);
+        if (!el) return;
+        el.classList.remove('selected','correct','wrong');
+        el.style.cursor = 'default';
+        el.onclick = null;
+        if (k === q.jawaban) el.classList.add('correct');
+        else if (giringAnswers[q.id] === k) el.classList.add('wrong');
+      });
+    } else if (q.tipe === 'bs') {
+      ['Benar','Salah'].forEach(function(v) {
+        var el = document.getElementById('bs-'+q.id+'-'+v);
+        if (!el) return;
+        el.classList.remove('selected','correct','wrong');
+        el.onclick = null;
+        if (v === q.jawaban) el.classList.add('correct');
+        else if (giringAnswers[q.id] === v) el.classList.add('wrong');
+      });
+    } else if (q.tipe === 'isian') {
+      var inp = document.getElementById('isian-'+q.id);
+      if (inp) {
+        inp.readOnly = true;
+        inp.classList.add(isCorrect ? 'correct' : 'wrong');
+      }
+    }
+
+    if (reveal) {
+      reveal.classList.add('show');
+      if (isCorrect) {
+        reveal.innerHTML = '<span class="quiz-answer-correct">✓ Benar!</span>';
+      } else {
+        reveal.innerHTML = '<span class="quiz-answer-wrong">✗ Jawaban: <strong>' + q.jawaban + '</strong></span>';
+      }
+    }
+  });
+
+  // Show score
+  var pct = Math.round(benar / giringData.length * 100);
+  var scoreEl = document.getElementById('giring-score');
+  if (scoreEl) {
+    scoreEl.style.display = 'block';
+    document.getElementById('score-pct').textContent = pct + '%';
+    document.getElementById('score-benar').textContent = benar;
+    document.getElementById('score-salah').textContent = salah;
+    document.getElementById('score-total').textContent = giringData.length;
+    scoreEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Hide submit
+  var sw = document.getElementById('giring-submit-wrap');
+  if (sw) sw.style.display = 'none';
+}
+
+function resetGiring() {
+  giringAnswers = {};
+  var scoreEl = document.getElementById('giring-score');
+  if (scoreEl) scoreEl.style.display = 'none';
+  var sw = document.getElementById('giring-submit-wrap');
+  if (sw) sw.style.display = 'block';
+  giringLoaded = false;
+  loadGiring();
+  window.scrollTo(0, 0);
 }
 
 function showToast(msg) {
