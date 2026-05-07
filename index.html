@@ -1020,7 +1020,7 @@ body.dark .q-cnt-row,.dark .saran-card{background:#2C2C2E;border-color:#3A3A3C}
 <script>
 /* Stub nav agar tidak error saat HTML render sebelum script utama dimuat */
 function nav(id){
-  var pages=['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','leaderboard','doa','lokasi','aturan','panitia','kontak','tanya','saran','foto','media'];
+  var pages=['home','kamar','jadwal','pembicara','kelompok','bawa','kompetisi','giring','leaderboard','doa','lokasi','aturan','panitia','kontak','tanya','saran','foto','media'];
   var bnav5=['home','kamar','jadwal','foto','tanya'];
   pages.forEach(function(p){var el=document.getElementById('pg-'+p);if(el)el.classList.toggle('active',p===id);});
   bnav5.forEach(function(b){var el=document.getElementById('bnav-'+b);if(el)el.classList.toggle('active',b===id);});
@@ -1028,6 +1028,7 @@ function nav(id){
   window.scrollTo(0,0);
   if(id==='foto'&&typeof _fotoLoaded!=='undefined'&&!_fotoLoaded){_fotoLoaded=true;if(typeof loadPhotos==='function')loadPhotos();}
   if(id==='leaderboard'&&typeof loadLeaderboard==='function')loadLeaderboard(typeof currentLbType!=='undefined'?currentLbType:'total');
+  if(id==='giring'&&typeof giringLoaded!=='undefined'&&!giringLoaded){giringLoaded=true;if(typeof loadGiring==='function')loadGiring();}
   if(id==='doa'&&typeof loadPrayers==='function')loadPrayers();
 }
 function toggleDark(){var isDark=document.body.classList.toggle('dark');localStorage.setItem('gpbsi_dark',isDark?'1':'0');var btn=document.getElementById('dark-btn');if(btn)btn.textContent=isDark?'☀️':'🌙';}
@@ -2378,20 +2379,7 @@ var giringData = [];
 var giringAnswers = {};
 var giringLoaded = false;
 
-// Load saat halaman dibuka
-var _origNavGiring = window.nav;
-(function() {
-  var origNav = window.nav;
-  if (origNav) {
-    window.nav = function(id) {
-      origNav(id);
-      if (id === 'giring' && !giringLoaded) {
-        giringLoaded = true;
-        loadGiring();
-      }
-    };
-  }
-})();
+// loadGiring dipanggil dari nav() langsung via DOMContentLoaded check
 
 async function loadGiring() {
   var loading = document.getElementById('giring-loading');
