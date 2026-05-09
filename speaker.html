@@ -156,8 +156,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
   padding:4px 12px;border-radius:100px;
   white-space:nowrap;
 }
-.gp-Senior,.gp-Remaja,.gp-Pemuda{background:rgba(125,194,66,0.12);color:#3d6e14}
-.gp-Umum,.gp-SundaySchool{background:rgba(48,168,216,0.12);color:#0a5a8a}
+.gp-Senior,.gp-Remaja,.gp-Pemuda,.gp-Komwan{background:rgba(125,194,66,0.12);color:#3d6e14}
+.gp-Kompri,.gp-SDBesar{background:rgba(48,168,216,0.12);color:#0a5a8a}
 .q-body{padding:14px 14px}
 .q-text{font-size:1rem;color:var(--text);line-height:1.75}
 .q-time{font-size:0.75rem;color:var(--muted);margin-top:10px}
@@ -258,7 +258,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
       <div class="pick-avatar">YL</div>
       <div>
         <div class="pick-name">Pdt. Yudie Lengkong</div>
-        <div class="pick-group">Kelompok Senior</div>
+        <div class="pick-group">Kompri (Pria &lt;60 th)</div>
       </div>
       <div class="pick-arrow">›</div>
     </button>
@@ -266,7 +266,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
       <div class="pick-avatar">YH</div>
       <div>
         <div class="pick-name">Pdt. Youn Doo Hee</div>
-        <div class="pick-group">Kelompok Umum</div>
+        <div class="pick-group">Senior (&gt;60 th)</div>
       </div>
       <div class="pick-arrow">›</div>
     </button>
@@ -274,7 +274,15 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
       <div class="pick-avatar">JJ</div>
       <div>
         <div class="pick-name">Pdt. JungWon Jung</div>
-        <div class="pick-group">Kelompok Pemuda</div>
+        <div class="pick-group">Komwan (Wanita &lt;60 th)</div>
+      </div>
+      <div class="pick-arrow">›</div>
+    </button>
+    <button class="pick-btn" onclick="selectSpeaker('diarta')">
+      <div class="pick-avatar">ED</div>
+      <div>
+        <div class="pick-name">Evg. Diarta</div>
+        <div class="pick-group">Remaja &amp; Pemuda</div>
       </div>
       <div class="pick-arrow">›</div>
     </button>
@@ -282,7 +290,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;overflo
       <div class="pick-avatar">AW</div>
       <div>
         <div class="pick-name">Pdt. Allen Widjaja</div>
-        <div class="pick-group">Remaja Jeshurun + SD Besar</div>
+        <div class="pick-group">Remaja &amp; Pemuda</div>
       </div>
       <div class="pick-arrow">›</div>
     </button>
@@ -341,10 +349,11 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const SPEAKERS = {
-  yudie: { name:'Pdt. Yudie Lengkong', initials:'YL', groups:['Senior'], groupLabel:'Kelompok Senior' },
-  youn:  { name:'Pdt. Youn Doo Hee',   initials:'YH', groups:['Umum'],   groupLabel:'Kelompok Umum' },
-  jung:  { name:'Pdt. JungWon Jung',    initials:'JJ', groups:['Pemuda'], groupLabel:'Kelompok Pemuda' },
-  allen: { name:'Pdt. Allen Widjaja',   initials:'AW', groups:['Remaja','Sunday School'], groupLabel:'Remaja + Sunday School' },
+  yudie:  { name:'Pdt. Yudie Lengkong', initials:'YL', groups:['Kompri'],           groupLabel:'Kompri (Pria <60 th)' },
+  youn:   { name:'Pdt. Youn Doo Hee',   initials:'YH', groups:['Senior'],           groupLabel:'Senior (>60 th)' },
+  jung:   { name:'Pdt. JungWon Jung',   initials:'JJ', groups:['Komwan'],           groupLabel:'Komwan (Wanita <60 th)' },
+  allen:  { name:'Pdt. Allen Widjaja',  initials:'AW', groups:['Remaja','Pemuda'],  groupLabel:'Remaja & Pemuda' },
+  diarta: { name:'Evg. Diarta',         initials:'ED', groups:['Remaja','Pemuda'],  groupLabel:'Remaja & Pemuda' },
 };
 
 let currentSpeaker = null;
@@ -433,7 +442,7 @@ function renderQ() {
   var normal = filtered.filter(function(q){ return !q.prioritas; });
   var sorted = prioritized.concat(normal);
 
-  var gpClass = { 'Senior':'gp-Senior','Umum':'gp-Umum','Remaja':'gp-Remaja','Sunday School':'gp-SundaySchool','Pemuda':'gp-Pemuda' };
+  var gpClass = { 'Senior':'gp-Senior','Kompri':'gp-Kompri','Komwan':'gp-Komwan','Remaja':'gp-Remaja','SD Besar':'gp-SDBesar','Pemuda':'gp-Pemuda' };
   var isJung = (currentKey === 'jung');
   var showPill = currentSpeaker.groups.length > 1;
 
