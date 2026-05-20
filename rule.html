@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rule Game — Sejarah Penebusan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,700;1,900&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: radial-gradient(ellipse at 35% 20%, #9B1515 0%, #4A0808 50%, #120303 100%);
+  min-height: 100vh;
+  font-family: 'Oswald', sans-serif;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Header */
+.header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.brand { font-family:'Bebas Neue',sans-serif; font-size: clamp(13px,2.2vw,20px); color: rgba(255,255,255,0.6); letter-spacing: 4px; }
+.title { font-family:'Barlow Condensed',sans-serif; font-style:italic; font-weight:900; font-size: clamp(44px,8vw,80px); color: #F5C518; line-height:0.9; text-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+.title span { display:block; font-size: clamp(22px,4vw,40px); color: white; font-style:normal; letter-spacing:3px; }
+.divider { width: 140px; height: 2px; background: linear-gradient(to right, transparent, #F5C518, transparent); }
+.tagline { font-size: clamp(12px,1.8vw,16px); color: rgba(255,255,255,0.45); letter-spacing: 4px; text-transform: uppercase; }
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: 14px; }
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(245,197,24,0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  transition: border-color .2s;
+}
+.step:hover { border-color: rgba(245,197,24,0.45); }
+
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px,5vw,52px);
+  color: #F5C518;
+  line-height: 1;
+  min-width: clamp(36px,5vw,52px);
+  text-align: center;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.step-body { display: flex; flex-direction: column; gap: 4px; }
+.step-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size: clamp(18px,2.8vw,26px); color: white; letter-spacing: 1px; line-height:1.1; }
+.step-desc  { font-size: clamp(13px,1.8vw,16px); color: rgba(255,255,255,0.6); line-height: 1.6; font-weight:400; }
+.step-desc b { color: #F5C518; font-weight:600; }
+
+/* Scoring box */
+.score-box {
+  background: rgba(245,197,24,0.08);
+  border: 1.5px solid rgba(245,197,24,0.3);
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.score-title { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-style:italic; font-size: clamp(20px,3vw,28px); color: #F5C518; letter-spacing:2px; }
+
+.streak-rows { display: flex; flex-direction: column; gap: 8px; }
+.streak-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+}
+.streak-row.active { background: rgba(245,197,24,0.12); border: 1px solid rgba(245,197,24,0.25); }
+.streak-label { font-size: clamp(13px,1.8vw,16px); color: rgba(255,255,255,0.75); }
+.streak-label b { color: white; font-weight:600; }
+.streak-point { font-family:'Bebas Neue',sans-serif; font-size: clamp(20px,3vw,28px); color: #F5C518; letter-spacing:1px; }
+
+.score-note { font-size: clamp(11px,1.5vw,13px); color: rgba(255,255,255,0.35); line-height:1.6; }
+.score-note b { color: rgba(255,255,255,0.6); }
+
+/* Tier box */
+.tier-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tier-title { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-style:italic; font-size: clamp(20px,3vw,28px); color: white; letter-spacing:2px; }
+.tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tier-item {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px; padding: 12px 16px;
+}
+.tier-icon { font-size: clamp(22px,3.5vw,32px); line-height:1; }
+.tier-info { display:flex; flex-direction:column; gap:1px; }
+.tier-name  { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-style:italic; font-size:clamp(16px,2.2vw,22px); color:#F5C518; line-height:1; }
+.tier-range { font-size:clamp(11px,1.4vw,13px); color:rgba(255,255,255,0.45); }
+
+/* Footer rules */
+.rules-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.rule-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 16px 18px;
+  display:flex; gap:12px; align-items:flex-start;
+}
+.rule-icon { font-size: 22px; flex-shrink:0; margin-top:1px; }
+.rule-text { font-size: clamp(12px,1.6vw,14px); color: rgba(255,255,255,0.6); line-height:1.55; }
+.rule-text b { color: white; display:block; font-size: clamp(13px,1.7vw,15px); margin-bottom:2px; }
+
+/* Bottom */
+.bottom { text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.hashtag { font-family:'Bebas Neue',sans-serif; font-size: clamp(22px,4vw,36px); color:#F5C518; letter-spacing:2px; }
+.event-info { font-size: clamp(10px,1.4vw,13px); color:rgba(255,255,255,0.3); letter-spacing:3px; text-transform:uppercase; }
+
+@media (max-width: 560px) {
+  .tiers { grid-template-columns: 1fr; }
+  .rules-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">SEJARAH PENEBUSAN · BACK TO BIBLE 2026</div>
+    <div class="title"><span>BIBLE QUIZ</span>30 DETIK!</div>
+    <div class="divider"></div>
+    <div class="tagline">Seberapa jauh kamu tahu sejarah penebusan?</div>
+  </div>
+
+  <!-- CARA MAIN -->
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Maju ke depan TV</div>
+        <div class="step-desc">Satu orang maju berdiri di samping TV. Operator akan menjalankan game. <b>Kamu yang jawab — operator yang pencet.</b></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Jawab sebanyaknya dalam 30 detik</div>
+        <div class="step-desc">Soal muncul satu per satu — campuran <b>Benar/Salah</b> dan <b>Pilihan Ganda A/B/C/D</b>. Teriak jawabanmu! Operator tap pilihanmu di layar.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Boleh skip kalau tidak tahu</div>
+        <div class="step-desc">Tidak tahu jawabannya? Bilang <b>"Skip!"</b> — operator akan lanjut ke soal berikutnya. Tapi hati-hati: <b>skip akan memutus streak-mu!</b></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Kumpulkan poin sebanyaknya</div>
+        <div class="step-desc">Setiap jawaban benar = poin. Jawab beruntun tanpa salah = <b>bonus streak 🔥</b> poin berlipat ganda! Salah sekali = streak kembali ke nol.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Foto achievement frame & follow IG</div>
+        <div class="step-desc">Waktu habis → layar achievement muncul dengan skormu. <b>Foto bareng layar TV</b>, upload ke IG Story dengan <b>#sejarahpenebusan</b>, tunjukkan ke panitia → <b>ambil hadiahmu! 🎁</b></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SISTEM POIN -->
+  <div class="score-box">
+    <div class="score-title">⚡ Sistem Poin & Streak Bonus</div>
+    <div class="streak-rows">
+      <div class="streak-row">
+        <div class="streak-label">Jawaban benar ke-1 <b>(mulai main)</b></div>
+        <div class="streak-point">+1 poin</div>
+      </div>
+      <div class="streak-row active">
+        <div class="streak-label">🔥 Streak x2 — <b>2 jawaban benar beruntun</b></div>
+        <div class="streak-point">+2 poin</div>
+      </div>
+      <div class="streak-row active">
+        <div class="streak-label">🔥 Streak x3 — <b>3 jawaban benar beruntun</b></div>
+        <div class="streak-point">+3 poin</div>
+      </div>
+      <div class="streak-row active">
+        <div class="streak-label">🔥 Streak x4 — <b>4 jawaban benar beruntun</b></div>
+        <div class="streak-point">+4 poin</div>
+      </div>
+      <div class="streak-row active">
+        <div class="streak-label">🔥🔥 Streak x5 — <b>5+ jawaban benar beruntun</b></div>
+        <div class="streak-point">+5 poin</div>
+      </div>
+      <div class="streak-row">
+        <div class="streak-label">Salah atau Skip</div>
+        <div class="streak-point" style="color:#E74C3C">Streak reset ke 0</div>
+      </div>
+    </div>
+    <div class="score-note">
+      <b>Contoh:</b> Jawab 6 benar beruntun = 1+2+3+4+5+5 = <b>20 poin</b> · Jawab 6 tapi sekali salah di tengah = jauh lebih sedikit.<br>
+      Kunci skor tinggi bukan hanya banyak benar — tapi <b>tidak salah beruntun!</b>
+    </div>
+  </div>
+
+  <!-- TIER -->
+  <div class="tier-box">
+    <div class="tier-title">🏆 Peringkat Akhir</div>
+    <div class="tiers">
+      <div class="tier-item">
+        <div class="tier-icon">🏆</div>
+        <div class="tier-info">
+          <div class="tier-name">LEGEND!</div>
+          <div class="tier-range">40 poin ke atas</div>
+        </div>
+      </div>
+      <div class="tier-item">
+        <div class="tier-icon">🥇</div>
+        <div class="tier-info">
+          <div class="tier-name">MASTER!</div>
+          <div class="tier-range">25 – 39 poin</div>
+        </div>
+      </div>
+      <div class="tier-item">
+        <div class="tier-icon">🎉</div>
+        <div class="tier-info">
+          <div class="tier-name">FREEDOM!</div>
+          <div class="tier-range">15 – 24 poin</div>
+        </div>
+      </div>
+      <div class="tier-item">
+        <div class="tier-icon">📖</div>
+        <div class="tier-info">
+          <div class="tier-name">FIGHTER!</div>
+          <div class="tier-range">5 – 14 poin</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATURAN TAMBAHAN -->
+  <div class="rules-row">
+    <div class="rule-card">
+      <div class="rule-icon">🎯</div>
+      <div class="rule-text"><b>Soal Diacak</b>Setiap pemain mendapat urutan soal yang berbeda dari 300+ bank soal.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon">⏱</div>
+      <div class="rule-text"><b>30 Detik Saja</b>Waktu mulai berjalan saat soal pertama muncul. Tidak ada perpanjangan waktu.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon">🎮</div>
+      <div class="rule-text"><b>Operator yang Pencet</b>Peserta cukup teriak jawaban. Operator yang menyentuh layar TV.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon">🔄</div>
+      <div class="rule-text"><b>Bisa Main Ulang</b>Mau coba lagi? Boleh! Tapi antri dulu ya — beri kesempatan yang lain.</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom">
+    <div class="hashtag">#sejarahpenebusan</div>
+    <div class="event-info">Youth Workshop · 30 Mei 2026 · Lapace Hall</div>
+  </div>
+
+</div>
+</body>
+</html>
