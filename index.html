@@ -303,8 +303,8 @@ function renderQ() {
     });
   } else {
     area.className = 'g-opts-abcd';
-    const opts = JSON.parse(curQ.options);
-    const correctIdx = parseInt(curQ.answer);
+    const opts = Array.isArray(curQ.options) ? curQ.options : JSON.parse(curQ.options);
+    const correctIdx = parseInt(curQ.answer) || 0;
     const indexed = opts.map((o,i) => ({o, correct: i===correctIdx}));
     const shuffled = shuffle(indexed);
     shuffled.forEach((item, i) => {
