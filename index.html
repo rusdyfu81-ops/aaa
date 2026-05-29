@@ -316,16 +316,7 @@ body {
   margin-top: 8px;
 }
 
-/* ── ACHIEVEMENT — overlay to hide verse text on right side ── */
-.ach::after {
-  content: '';
-  position: absolute;
-  right: 0; bottom: 0;
-  width: 38%; height: 55%;
-  background: linear-gradient(to left, rgba(50,5,5,0.92) 60%, transparent 100%);
-  z-index: 3;
-  pointer-events: none;
-}
+/* ── ACHIEVEMENT — no overlay needed, verse & hashtag are part of design ── */
 
 /* Achievement content sits above overlay */
 .ach-content { z-index: 10 !important; }
