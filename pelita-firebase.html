@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pelita — Pelarian Daud</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#8a6f30;--cream:#f0e6cf;--parchment:#d8c9a4;--ink:#0d0a04;--bg:#0d0a04;--panel:#191307;--panel2:#221a09;--border:#463713;--red:#a13a2a;--green:#5c8a3a;--green-light:#8fc46a;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Crimson Pro',serif;background:var(--bg);color:var(--cream);position:fixed;inset:0;overscroll-behavior:none;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 30% 0%,rgba(201,168,76,.09) 0%,transparent 55%),radial-gradient(ellipse at 70% 100%,rgba(161,58,42,.07) 0%,transparent 55%);}
+#lobby{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.6rem;text-align:center;overflow-y:auto;}
+.flame{font-size:3rem;margin-bottom:.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,.6));animation:flicker 3s ease-in-out infinite;}
+@keyframes flicker{0%,100%{opacity:1;transform:scale(1)}45%{opacity:.85;transform:scale(.97)}70%{opacity:.95;transform:scale(1.02)}}
+.lobby-title{font-family:'Cinzel',serif;font-weight:700;font-size:1.9rem;color:var(--gold);letter-spacing:.04em;text-shadow:0 0 30px rgba(201,168,76,.4);line-height:1.2;}
+.lobby-sub{font-style:italic;color:var(--gold-dim);font-size:.95rem;margin-top:.5rem;letter-spacing:.08em;}
+.lobby-ref{color:var(--parchment);font-size:.85rem;margin-top:.3rem;opacity:.7;}
+.divider-line{width:60%;max-width:240px;height:1px;margin:1.6rem 0;background:linear-gradient(to right,transparent,var(--gold),transparent);}
+.role-grid{display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:320px;}
+.role-btn{font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;letter-spacing:.06em;padding:1.05rem 1rem;border-radius:12px;cursor:pointer;background:var(--panel2);border:1px solid var(--border);color:var(--cream);transition:transform .12s,border-color .2s,background .2s;}
+.role-btn:active{transform:scale(.97);}
+.role-btn small{display:block;font-family:'Crimson Pro',serif;font-weight:400;font-size:.78rem;letter-spacing:0;color:var(--parchment);opacity:.7;margin-top:.25rem;text-transform:none;}
+.role-btn.primary{background:linear-gradient(135deg,#2e2109,#221a09);border-color:var(--gold);color:var(--gold-light);padding:1.25rem 1rem;font-size:.95rem;}
+.role-teacher-link{margin-top:1.3rem;color:var(--gold-dim);font-size:.8rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;letter-spacing:.04em;font-family:'Cinzel',serif;}
+.join-panel{width:100%;max-width:320px;margin-top:1rem;display:none;}
+.join-panel.show{display:block;animation:fadeUp .3s ease;}
+.field-label{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.5rem;}
+.code-input{width:100%;text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:2rem;letter-spacing:.5em;text-indent:.5em;padding:.9rem;border-radius:12px;background:var(--ink);border:1px solid var(--gold-dim);color:var(--gold-light);outline:none;margin-bottom:.8rem;}
+.code-input::placeholder{color:#5a4a20;letter-spacing:.3em;}
+.join-go{width:100%;font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;letter-spacing:.06em;padding:.95rem;border-radius:12px;cursor:pointer;background:var(--gold);color:var(--ink);border:none;transition:transform .12s;}
+.join-go:active{transform:scale(.97);}
+.join-msg{color:var(--red);font-size:.82rem;margin-top:.6rem;min-height:1rem;font-style:italic;}
+.back-link{color:var(--gold-dim);font-size:.82rem;margin-top:1.2rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+#stage{position:absolute;inset:0;z-index:10;display:none;flex-direction:column;}
+#stage.show{display:flex;}
+.topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;padding-top:calc(.7rem + env(safe-area-inset-top));border-bottom:1px solid var(--border);background:rgba(13,10,4,.85);backdrop-filter:blur(8px);position:relative;z-index:5;gap:.5rem;}
+.topbar .brand{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.1em;color:var(--gold);display:flex;align-items:center;gap:.4rem;flex:0 0 auto;}
+.topbar .brand .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:flicker 3s infinite;}
+.topbar .meta{display:flex;align-items:center;gap:.6rem;font-size:.7rem;color:var(--gold-dim);flex:0 0 auto;}
+.badge-role{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.08em;padding:.2rem .5rem;border-radius:20px;border:1px solid var(--border);color:var(--parchment);}
+.badge-role.teacher{border-color:var(--gold);color:var(--gold-light);}
+.font-ctl{display:flex;align-items:center;gap:.3rem;}
+.font-btn{width:34px;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--border);color:var(--gold);font-family:'Cinzel',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:transform .1s,background .2s;}
+.font-btn:active{transform:scale(.9);background:var(--panel);}
+.font-btn.minus{font-size:.8rem;}.font-btn.plus{font-size:1rem;}
+.viewport{flex:1 1 auto;position:relative;overflow:hidden;font-size:16px;}
+.slide{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:1.6rem 1.4rem 6rem;opacity:0;pointer-events:none;transform:translateX(20px);transition:opacity .35s ease,transform .35s ease;-webkit-overflow-scrolling:touch;}
+.slide.active{opacity:1;pointer-events:auto;transform:translateX(0);}
+.slide::-webkit-scrollbar{width:0;}
+.kicker{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:.14em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.7rem;}
+.slide h1{font-family:'Cinzel',serif;font-weight:700;font-size:1.7em;color:var(--gold);line-height:1.25;margin-bottom:1rem;text-shadow:0 0 24px rgba(201,168,76,.3);}
+.slide h2{font-family:'Cinzel',serif;font-weight:600;font-size:1.15em;color:var(--gold-light);margin:1.3rem 0 .6rem;}
+.points{list-style:none;margin:.4rem 0;}
+.points li{position:relative;padding:.55rem 0 .55rem 1.5rem;font-size:1.18em;line-height:1.45;color:var(--cream);border-bottom:1px solid rgba(70,55,19,.4);}
+.points li:last-child{border-bottom:none;}
+.points li::before{content:'';position:absolute;left:0;top:1.05em;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.5);}
+.points li b{color:var(--gold-light);}
+.verse{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 8px 8px 0;padding:.85rem 1rem;margin:1rem 0;}
+.verse .ref{font-family:'Cinzel',serif;font-size:.78em;letter-spacing:.06em;color:var(--gold);margin-bottom:.35rem;}
+.verse .txt{font-style:italic;font-size:1.05em;line-height:1.55;color:var(--parchment);}
+.note-line{font-size:1em;color:var(--parchment);opacity:.75;font-style:italic;text-align:center;margin-top:1rem;}
+.cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;text-align:center;padding-bottom:6rem;}
+.cover .flame{font-size:2.6rem;}
+.cover h1{font-size:2.2em;margin:.6rem 0 .4rem;}
+.cover .c-ref{font-style:italic;color:var(--gold-dim);letter-spacing:.1em;font-size:1em;}
+.cover .c-series{color:var(--parchment);opacity:.6;font-size:.85em;margin-top:.4rem;font-style:italic;}
+.session-chip{margin-top:1.8rem;padding:.7rem 1.3rem;border:1px solid var(--border);border-radius:12px;background:var(--panel);}
+.session-chip .lbl{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.14em;color:var(--gold-dim);text-transform:uppercase;}
+.session-chip .code{font-family:'Cinzel',serif;font-weight:700;font-size:2.2em;letter-spacing:.4em;text-indent:.4em;color:var(--gold-light);text-shadow:0 0 20px rgba(201,168,76,.4);}
+.timeline{position:relative;margin:1.4rem 0 .5rem;padding-left:1.2rem;}
+.timeline::before{content:'';position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:linear-gradient(to bottom,var(--gold-dim),rgba(201,168,76,.2));}
+.tl-item{position:relative;padding:0 0 1.4rem 1.2rem;}
+.tl-item::before{content:'';position:absolute;left:-1.15rem;top:5px;width:11px;height:11px;border-radius:50%;background:var(--panel2);border:2px solid var(--gold-dim);}
+.tl-item.key::before{background:var(--gold);border-color:var(--gold-light);box-shadow:0 0 12px rgba(201,168,76,.7);}
+.tl-year{font-family:'Cinzel',serif;font-weight:600;font-size:1.05em;color:var(--gold);}
+.tl-label{font-size:1.08em;color:var(--cream);margin-top:.15rem;}
+.tl-sub{font-size:.9em;color:var(--parchment);opacity:.6;font-style:italic;margin-top:.1rem;}
+.chain{display:flex;flex-direction:column;gap:.6rem;margin:1.2rem 0;}
+.chain-step{display:flex;align-items:center;gap:.8rem;padding:.9rem 1rem;border-radius:10px;background:var(--panel);border:1px solid var(--border);opacity:.35;transform:translateX(-8px);transition:opacity .4s ease,transform .4s ease,border-color .4s ease,background .4s ease;}
+.chain-step.lit{opacity:1;transform:translateX(0);border-color:var(--gold-dim);background:var(--panel2);}
+.chain-step .num{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.9em;font-weight:600;background:var(--ink);color:var(--gold);border:1px solid var(--gold-dim);}
+.chain-step .body{flex:1;}
+.chain-step .word{font-family:'Cinzel',serif;font-size:1.1em;color:var(--cream);}
+.chain-step .heb{font-size:.86em;color:var(--gold-dim);font-style:italic;margin-top:.15rem;}
+.chain-step.danger .word{color:var(--red);}.chain-step.danger .num{border-color:var(--red);color:var(--red);}
+.chain-arrow{text-align:center;color:var(--gold-dim);font-size:.9rem;opacity:.5;margin:-.3rem 0;}
+.tap-hint{text-align:center;font-size:.85em;color:var(--gold-dim);font-style:italic;margin-top:.7rem;opacity:.7;}
+.gen-strip{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:1.3rem 0;}
+.gen-node{font-family:'Cinzel',serif;font-size:.85em;padding:.4rem .6rem;border-radius:8px;background:var(--panel);border:1px solid var(--border);color:var(--parchment);}
+.gen-node.mark{background:linear-gradient(135deg,#2e2109,#221a09);border-color:var(--gold);color:var(--gold-light);font-weight:600;}
+.gen-node.q{border-style:dashed;color:var(--gold-dim);}
+.gen-sep{color:var(--gold-dim);font-size:.9em;}
+.phase{margin:1.1rem 0;}
+.phase-head{font-family:'Cinzel',serif;font-size:.85em;letter-spacing:.06em;color:var(--gold);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.phase-head .pnum{background:var(--gold);color:var(--ink);border-radius:6px;padding:.1rem .45rem;font-weight:700;font-size:.85em;}
+.phase-head .pyears{color:var(--gold-dim);font-weight:400;font-size:.85em;font-style:italic;}
+.place-row{display:flex;flex-wrap:wrap;gap:.45rem;}
+.place-chip{padding:.45rem .75rem;border-radius:20px;font-size:.92em;background:var(--panel);border:1px solid var(--border);color:var(--cream);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;}
+.place-chip:active{transform:scale(.94);}
+.place-chip.open{border-color:var(--gold);background:var(--panel2);color:var(--gold-light);}
+.place-detail{margin-top:.5rem;padding:.75rem .9rem;border-radius:8px;background:var(--panel);border-left:3px solid var(--gold);font-size:1em;color:var(--parchment);display:none;}
+.place-detail.show{display:block;animation:fadeUp .25s ease;}
+.place-detail .pmean{color:var(--gold);font-style:italic;}
+.par-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.7rem;background:var(--panel);}
+.par-head{display:flex;cursor:pointer;}
+.par-head > div{flex:1;padding:.8rem .9rem;}
+.par-head .d{border-right:1px solid var(--border);}
+.par-lbl{font-family:'Cinzel',serif;font-size:.68em;letter-spacing:.08em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.2rem;}
+.par-ref{font-size:1em;color:var(--cream);}
+.par-body{display:none;padding:.4rem .9rem 1rem;border-top:1px solid var(--border);background:var(--ink);}
+.par-body.show{display:block;animation:fadeUp .25s ease;}
+.par-body .pv{margin-top:.7rem;}
+.par-body .pv .pvl{font-family:'Cinzel',serif;font-size:.68em;letter-spacing:.06em;color:var(--gold);margin-bottom:.2rem;}
+.par-body .pv .pvt{font-style:italic;font-size:1em;line-height:1.5;color:var(--parchment);}
+.par-caret{text-align:center;font-size:.82em;color:var(--gold-dim);padding:.25rem 0 .55rem;opacity:.6;}
+.lesson-num{display:inline-block;font-family:'Cinzel',serif;font-size:.75em;letter-spacing:.1em;color:var(--ink);background:var(--gold);padding:.28rem .7rem;border-radius:20px;margin-bottom:.9rem;}
+.callout{border:1px solid var(--gold-dim);border-radius:10px;padding:1.1rem;margin:1.2rem 0;background:linear-gradient(135deg,rgba(46,33,9,.6),rgba(25,19,7,.6));text-align:center;}
+.callout .big{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.1em;margin-bottom:.5rem;}
+.callout .small{font-size:1.05em;color:var(--parchment);line-height:1.55;}
+/* ─── QUIZ ─── */
+.quiz-tag{display:inline-flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.7em;letter-spacing:.12em;color:var(--ink);background:var(--gold);padding:.28rem .8rem;border-radius:20px;margin-bottom:.9rem;text-transform:uppercase;}
+.quiz-q{font-size:1.3em;line-height:1.4;color:var(--cream);margin-bottom:1.2rem;font-weight:500;}
+.quiz-opts{display:flex;flex-direction:column;gap:.7rem;}
+.quiz-opt{display:flex;align-items:flex-start;gap:.7rem;padding:.9rem 1rem;border-radius:12px;background:var(--panel);border:1.5px solid var(--border);color:var(--cream);cursor:pointer;font-size:1.1em;line-height:1.4;transition:transform .1s,border-color .2s,background .2s;}
+.quiz-opt:active{transform:scale(.98);}
+.quiz-opt .opt-letter{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.85em;font-weight:600;background:var(--ink);color:var(--gold);border:1px solid var(--gold-dim);}
+.quiz-opt.sel{border-color:var(--gold);background:var(--panel2);}
+.quiz-opt.sel .opt-letter{background:var(--gold);color:var(--ink);}
+.quiz-opt.correct{border-color:var(--green);background:rgba(92,138,58,.18);}
+.quiz-opt.correct .opt-letter{background:var(--green);color:#fff;border-color:var(--green-light);}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(161,58,42,.15);}
+.quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;border-color:var(--red);}
+.quiz-opt .opt-mark{margin-left:auto;font-size:1.1em;opacity:0;flex:0 0 auto;}
+.quiz-opt.correct .opt-mark{opacity:1;color:var(--green-light);}
+.quiz-opt.wrong .opt-mark{opacity:1;color:var(--red);}
+.quiz-opts.revealed .quiz-opt{cursor:default;pointer-events:none;}
+.quiz-explain{display:none;margin-top:1.1rem;padding:.9rem 1rem;border-radius:10px;background:var(--panel);border-left:3px solid var(--green);font-size:1.02em;line-height:1.5;color:var(--parchment);}
+.quiz-explain.show{display:block;animation:fadeUp .3s ease;}
+.quiz-explain b{color:var(--green-light);}
+.reveal-btn{display:none;width:100%;margin-top:1.3rem;font-family:'Cinzel',serif;font-size:.85em;letter-spacing:.06em;padding:1rem;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#2e2109,#221a09);border:1px solid var(--gold);color:var(--gold-light);transition:transform .12s;}
+.reveal-btn:active{transform:scale(.98);}
+.reveal-btn.done{background:var(--panel);border-color:var(--border);color:var(--gold-dim);pointer-events:none;}
+body.is-teacher .reveal-btn{display:block;}
+.wait-hint{display:none;text-align:center;font-size:.9em;color:var(--gold-dim);font-style:italic;margin-top:1.2rem;}
+body.is-follower .wait-hint{display:block;}
+body.is-follower .wait-hint.hidden{display:none;}
+/* score */
+.score-ring{width:150px;height:150px;margin:1.5rem auto;border-radius:50%;border:3px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(46,33,9,.6),transparent);box-shadow:0 0 30px rgba(201,168,76,.3);}
+.score-ring .sv{font-family:'Cinzel',serif;font-weight:700;font-size:2.6em;color:var(--gold-light);line-height:1;}
+.score-ring .sl{font-size:.85em;color:var(--gold-dim);letter-spacing:.1em;margin-top:.3rem;}
+.controlbar{flex:0 0 auto;display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;padding-bottom:calc(.7rem + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:rgba(13,10,4,.9);backdrop-filter:blur(10px);position:relative;z-index:5;}
+.nav-btn{flex:0 0 auto;width:52px;height:52px;border-radius:14px;background:var(--panel2);border:1px solid var(--border);color:var(--gold);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .2s,opacity .2s;}
+.nav-btn:active{transform:scale(.92);}
+.nav-btn:disabled{opacity:.25;}
+.nav-btn.next{background:linear-gradient(135deg,#2e2109,#221a09);border-color:var(--gold);}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.35rem;}
+.dots{display:flex;gap:.2rem;justify-content:center;flex-wrap:wrap;}
+.dot-p{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .3s;}
+.dot-p.on{background:var(--gold);box-shadow:0 0 8px var(--gold);width:16px;border-radius:4px;}
+.dot-p.quiz{border:1px solid var(--gold-dim);background:transparent;}
+.dot-p.quiz.on{background:var(--gold);}
+.pos-text{text-align:center;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.08em;color:var(--gold-dim);}
+.follower-note{flex:1;text-align:center;font-style:italic;font-size:.9rem;color:var(--gold-dim);display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.follower-note .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.unlock-btn{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.05em;padding:.55rem .85rem;border-radius:10px;cursor:pointer;background:var(--panel2);border:1px solid var(--border);color:var(--parchment);}
+.follow-back{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.05em;padding:.65rem 1rem;border-radius:10px;cursor:pointer;background:var(--gold);color:var(--ink);border:none;flex:0 0 auto;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold-dim);color:var(--gold-light);font-size:.85rem;padding:.6rem 1rem;border-radius:20px;z-index:40;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body>
+<div id="lobby">
+  <div class="flame">🔥</div>
+  <div class="lobby-title">Pelita</div>
+  <div class="lobby-sub">Pelarian Daud</div>
+  <div class="lobby-ref">1 Samuel 18–19 · ±1020 SM</div>
+  <div class="divider-line"></div>
+  <div class="role-grid" id="roleGrid">
+    <button class="role-btn primary" onclick="showJoin()">Gabung ke Sesi<small>Masukkan kode dari pengajar</small></button>
+    <div class="role-teacher-link" onclick="showTeacher()">Saya pengajar — mulai sesi baru</div>
+  </div>
+  <div class="join-panel" id="joinPanel">
+    <div class="field-label">Kode Sesi</div>
+    <input class="code-input" id="codeInput" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off">
+    <button class="join-go" onclick="joinSession()">Gabung</button>
+    <div class="join-msg" id="joinMsg"></div>
+    <div class="back-link" onclick="hideJoin()">← kembali</div>
+  </div>
+  <div class="join-panel" id="teacherPanel">
+    <div class="field-label">PIN Pengajar</div>
+    <input class="code-input" id="pinInput" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+    <button class="join-go" onclick="startTeacher()">Mulai Sesi</button>
+    <div class="join-msg" id="pinMsg"></div>
+    <div class="back-link" onclick="hideTeacher()">← kembali</div>
+  </div>
+</div>
+<div id="stage">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span> PELITA</div>
+    <div class="meta">
+      <div class="font-ctl"><button class="font-btn minus" onclick="fontStep(-1)">A−</button><button class="font-btn plus" onclick="fontStep(1)">A+</button></div>
+      <span class="badge-role" id="roleBadge">PESERTA</span>
+      <span id="statusMeta"></span>
+    </div>
+  </div>
+  <div class="viewport" id="viewport"></div>
+  <div class="controlbar" id="controlbar"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   KONFIGURASI — WAJIB DIISI SEBELUM DIPAKAI
+   ══════════════════════════════════════════════════════════════
+   1. PIN pengajar (bebas, 4 angka)                               */
+const TEACHER_PIN = "1808";
+
+/* 2. Firebase config — tempel dari Firebase Console Anda di sini.
+      Panduan lengkap ada di komentar paling bawah file ini.      */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDDfuM0-MzrkIWbgIugQJEJQN9pacKzY5U",
+  authDomain: "test-7157e.firebaseapp.com",
+  databaseURL: "https://test-7157e-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "test-7157e",
+  storageBucket: "test-7157e.firebasestorage.app",
+  messagingSenderId: "462507037876",
+  appId: "1:462507037876:web:9e2f516e1d5d146268b3e1"
+};
+/* ══════════════════════════════════════════════════════════════ */
+
+let fbDB=null, fbRef=null, fbReady=false;
+try{
+  if(FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("GANTI")){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    fbDB=firebase.database();
+    fbReady=true;
+  }
+}catch(e){ console.warn("Firebase init gagal:", e); }
+
+const SLIDES=[
+{id:'cover',html:`<div class="cover"><div class="flame">🔥</div><div class="kicker">Pelajaran 8</div><h1>Pelarian Daud</h1><div class="c-ref">1 Samuel 18–19 · ±1020 SM</div><div class="c-series">Seri Sejarah Penebusan · Silsilah Yesus Kristus (I)</div><div class="session-chip" id="coverSession" style="display:none"><div class="lbl">Kode Sesi</div><div class="code" id="coverCode">----</div></div></div>`},
+{id:'review',html:`<div class="kicker">Review</div><h1>Di Mana Kita</h1><ul class="points"><li>Saul tidak taat → <b>ditolak</b></li><li>Daud diurapi Samuel, usia ±15</li><li>Kecapi · Goliat · pahlawan</li><li>Hari ini: <b>dari pahlawan ke pelarian</b></li></ul>`},
+{id:'timeline',html:`<div class="kicker">Garis Waktu</div><h1>Dari Saul ke Daud</h1><div class="timeline"><div class="tl-item"><div class="tl-year">±1050</div><div class="tl-label">Saul menjadi raja</div></div><div class="tl-item key"><div class="tl-year">±1025</div><div class="tl-label">Daud diurapi</div><div class="tl-sub">usia 15</div></div><div class="tl-item"><div class="tl-label">Kecapi · Goliat · pahlawan</div></div><div class="tl-item key"><div class="tl-year">±1020</div><div class="tl-label">Pelarian dimulai</div><div class="tl-sub">usia 20</div></div><div class="tl-item"><div class="tl-year">±1010</div><div class="tl-label">Saul mati · Daud raja</div><div class="tl-sub">10 tahun · 16 tempat</div></div><div class="tl-item"><div class="tl-year">±970</div><div class="tl-label">Akhir pemerintahan Daud</div></div></div>`},
+
+{id:'q1',quiz:{tag:'Kuis · Pancingan',q:'Saul mendengar apa yang membuatnya sangat marah pada Daud?',opts:['Daud menghina Saul di depan umum','Nubuat nabi bahwa Daud akan menjadi raja','Nyanyian rakyat: "Saul beribu-ribu, Daud berlaksa-laksa"','Daud menolak menikahi anak Saul'],correct:2,explain:'<b>Nyanyian rakyat.</b> Pujian yang tulus, tanpa niat jahat sedikit pun — tapi justru menanamkan benih iri di hati Saul. Efeknya lebih dahsyat dari gangguan roh jahat.'}},
+
+{id:'reaksi',html:`<div class="kicker">I · Dari Kagum ke Iri Hati</div><h1>Sebuah Nyanyian → Sebuah Benih</h1><ul class="points"><li>Saul bangga → <b>kepala prajurit</b></li><li>Nyanyian rakyat yang tulus, tanpa niat jahat</li><li>Efeknya lebih dahsyat dari roh jahat</li></ul><div class="verse"><div class="ref">1 Samuel 18:7</div><div class="txt">"Saul mengalahkan beribu-ribu musuh, tetapi Daud berlaksa-laksa."</div></div><div class="verse"><div class="ref">Ayub 34:3</div><div class="txt">Karena telinga itu menguji kata-kata, seperti langit-langit mencecap makanan.</div></div>`},
+{id:'anatomi',html:`<div class="kicker">Anatomi Kejatuhan Hati</div><h1>Lima Tahap</h1><div class="chain" id="chain"><div class="chain-step" data-step="0"><div class="num">1</div><div class="body"><div class="word">Sebal</div><div class="heb">ra'a — memecahkan, terluka</div></div></div><div class="chain-arrow">↓</div><div class="chain-step" data-step="1"><div class="num">2</div><div class="body"><div class="word">Marah</div><div class="heb">hara — menyala, terbakar</div></div></div><div class="chain-arrow">↓</div><div class="chain-step" data-step="2"><div class="num">3</div><div class="body"><div class="word">Dengki</div><div class="heb">1 Sam 18:9</div></div></div><div class="chain-arrow">↓</div><div class="chain-step" data-step="3"><div class="num">4</div><div class="body"><div class="word">Dikuasai roh jahat</div><div class="heb">1 Sam 18:10</div></div></div><div class="chain-arrow">↓</div><div class="chain-step danger" data-step="4"><div class="num">5</div><div class="body"><div class="word">Niat membunuh</div><div class="heb">tombak — dua kali</div></div></div></div><div class="tap-hint" id="chainHint">tap tahap untuk membuka →</div><div class="verse"><div class="ref">Efesus 4:26–27</div><div class="txt">...janganlah matahari terbenam, sebelum padam amarahmu — dan janganlah beri kesempatan kepada Iblis.</div></div><div class="note-line">Pola yang sama: Kain (Kejadian 4:4–7)</div>`},
+
+{id:'q2',quiz:{tag:'Kuis · Cek Pemahaman',q:'Apa langkah PERTAMA dalam kejatuhan hati Saul?',opts:['Langsung ingin membunuh','Rasa sebal / terluka (ra\'a)','Dikuasai roh jahat','Dengki bertahun-tahun'],correct:1,explain:'<b>Sebal (ra\'a)</b> — hati yang terluka sampai pecah. Dari sinilah semuanya bermula: sebal → marah → dengki → dikuasai roh jahat → niat membunuh. Kalau dihentikan di tahap awal, tidak akan sampai ke pembunuhan.'}},
+
+{id:'siasat',html:`<div class="kicker">Siasat Saul</div><h1>Pernikahan sebagai Jebakan</h1><ul class="points"><li>Jadikan Daud <b>menantu</b> — tapi berharap ia mati</li><li>Mas kawin: 100 kulit khatan Filistin</li><li>Daud membawa <b>200</b> — dua kali lipat</li><li>Saul makin takut, makin dendam</li></ul><div class="verse"><div class="ref">1 Samuel 18:21</div><div class="txt">"Baiklah Mikhal kuberikan kepadanya; biarlah ia menjadi jerat bagi Daud..."</div></div>`},
+{id:'malam',html:`<div class="kicker">Malam Pelarian</div><h1>Turun dari Jendela</h1><ul class="points"><li>Tombak dilempar lagi — Daud luput</li><li>Saul kirim orang membunuh di rumahnya</li><li>Mikhal menurunkan Daud dari <b>jendela</b></li><li>Daud menulis <b>Mazmur 59</b> malam itu</li></ul><div class="verse"><div class="ref">1 Samuel 19:12</div><div class="txt">Lalu Mikhal menurunkan Daud dari jendela, ia pergi melarikan diri dan luputlah ia.</div></div>`},
+{id:'konteks',html:`<div class="kicker">II · Dalam Konteks Seri</div><h1>Mengapa Ini Krusial</h1><div class="gen-strip"><span class="gen-node">Abraham</span><span class="gen-sep">→</span><span class="gen-node">…</span><span class="gen-sep">→</span><span class="gen-node mark">Daud · 14</span><span class="gen-sep">→</span><span class="gen-node q">Salomo?</span></div><ul class="points"><li>Daud = generasi ke-<b>14</b>, puncak Fase Pertama</li><li>Saat pelarian, <b>Salomo belum lahir</b></li><li>Rencana Mesias bergantung pada 1 pemuda usia 20</li></ul><div class="callout"><div class="big">Bukan Allah yang terancam gagal.</div><div class="small">Allah memelihara pilihan-Nya — bahkan sebelum janji formal diucapkan kepada Daud.</div></div>`},
+
+{id:'q3',quiz:{tag:'Kuis · Poin Inti',q:'Mengapa pemeliharaan Daud selama pelarian begitu penting?',opts:['Karena Daud raja yang paling kuat','Karena Allah sudah bersumpah di 2 Samuel 7','Karena dari keturunan Daud, Mesias akan lahir','Karena Daud tidak pernah berbuat dosa'],correct:2,explain:'<b>Dari keturunan Daud, Mesias akan lahir.</b> Menarik: janji formal 2 Samuel 7 baru diucapkan <i>setelah</i> Daud jadi raja — jadi saat pelarian, janji itu belum ada. Allah memelihara pilihan-Nya bahkan sebelum janji formal diikrarkan.'}},
+
+{id:'peta',html:`<div class="kicker">10 Tahun · 16 Tempat · 3 Fase</div><h1>Peta Pelarian</h1><ul class="points" style="margin-bottom:.8rem"><li>Setiap nama tempat <b>berbicara</b></li></ul><div class="phase"><div class="phase-head"><span class="pnum">1</span> Rama → Hutan Keret <span class="pyears">±1020–1018</span></div><div class="place-row" data-phase="1"><span class="place-chip" data-mean="tempat tinggi — mencari Samuel">Rama</span><span class="place-chip" data-mean="bukit — mencari Yonatan">Gibea</span><span class="place-chip" data-mean="tempat tinggi — kota imam, Daud berbohong">Nob</span><span class="place-chip" data-mean="pemerasan anggur — kota Goliat, pura-pura gila">Gat</span><span class="place-chip" data-mean="persembunyian — 400 orang berkumpul">Gua Adulam</span><span class="place-chip" data-mean="menara jaga — menitipkan orang tua">Mizpa Moab</span><span class="place-chip" data-mean="hutan tebal — nabi Gad memberi petunjuk">Hutan Keret</span></div><div class="place-detail" data-detail="1"></div></div><div class="phase"><div class="phase-head"><span class="pnum">2</span> Kehila → Paran <span class="pyears">±1017–1015</span></div><div class="place-row" data-phase="2"><span class="place-chip" data-mean="benteng — bertanya dulu pada Allah">Kehila</span><span class="place-chip" data-mean="melebur — pemurnian seperti emas">Zif</span><span class="place-chip" data-mean="tempat tinggal — 'Gunung Batu Keluputan'">Maon</span><span class="place-chip" data-mean="mata air — tak mau melukai Saul">En-Gedi</span><span class="place-chip" data-mean="banyak gua — titik tergelap, Samuel mati">Paran</span></div><div class="place-detail" data-detail="2"></div></div><div class="phase"><div class="phase-head"><span class="pnum">3</span> Gat → Ziklag <span class="pyears">±1014–1010</span></div><div class="place-row" data-phase="3"><span class="place-chip" data-mean="kebun anggur — Nabal & Abigail">Karmel</span><span class="place-chip" data-mean="pemerasan anggur — berlindung pada raja Filistin">Gat</span><span class="place-chip" data-mean="liku-liku — penuh liku, tapi Allah menyertai">Ziklag</span></div><div class="place-detail" data-detail="3"></div></div>`},
+{id:'mesias',html:`<span class="lesson-num">Pelajaran 1</span><h1>Gambaran Penderitaan Mesias</h1><ul class="points" style="margin-bottom:.9rem"><li>Mazmur ditulis <b>dari dalam</b> pelarian</li><li>Menggambarkan salib — ratusan tahun sebelumnya</li></ul><div class="par-card"><div class="par-head" data-par="0"><div class="d"><div class="par-lbl">Daud</div><div class="par-ref">Mzm 22:2</div></div><div><div class="par-lbl">Yesus</div><div class="par-ref">Mat 27:46</div></div></div><div class="par-body" data-body="0"><div class="pv"><div class="pvl">Mazmur 22:2</div><div class="pvt">Allahku, Allahku, mengapa Engkau meninggalkan aku?</div></div><div class="pv"><div class="pvl">Matius 27:46</div><div class="pvt">"Eli, Eli, lama sabakhtani?" — Allah-Ku, mengapa Engkau meninggalkan Aku?</div></div></div><div class="par-caret" data-caret="0">▾ buka</div></div><div class="par-card"><div class="par-head" data-par="1"><div class="d"><div class="par-lbl">Daud</div><div class="par-ref">Mzm 22:16</div></div><div><div class="par-lbl">Yesus</div><div class="par-ref">Yoh 19:28</div></div></div><div class="par-body" data-body="1"><div class="pv"><div class="pvl">Mazmur 22:16</div><div class="pvt">...lidahku melekat pada langit-langit mulutku; dalam debu maut Kauletakkan aku.</div></div><div class="pv"><div class="pvl">Yohanes 19:28</div><div class="pvt">...berkatalah Ia — supaya genaplah Kitab Suci —: "Aku haus!"</div></div></div><div class="par-caret" data-caret="1">▾ buka</div></div><div class="par-card"><div class="par-head" data-par="2"><div class="d"><div class="par-lbl">Daud</div><div class="par-ref">Mzm 22:19</div></div><div><div class="par-lbl">Yesus</div><div class="par-ref">Yoh 19:23–24</div></div></div><div class="par-body" data-body="2"><div class="pv"><div class="pvl">Mazmur 22:19</div><div class="pvt">Mereka membagi-bagi pakaianku, dan membuang undi atas jubahku.</div></div><div class="pv"><div class="pvl">Yohanes 19:23–24</div><div class="pvt">...mereka membuang undi untuk menentukan siapa yang mendapat jubah Yesus.</div></div></div><div class="par-caret" data-caret="2">▾ buka</div></div>`},
+
+{id:'q4',quiz:{tag:'Kuis · Cek Pemahaman',q:'Mazmur 22 yang Daud tulis dalam pelarian menggambarkan apa?',opts:['Kemenangan Daud atas Goliat','Penderitaan Yesus di kayu salib','Pemerintahan Daud yang adil','Pembangunan Bait Suci'],correct:1,explain:'<b>Penderitaan Yesus di salib.</b> Daud menulis dari penderitaannya sendiri, tapi Allah mengarahkan penanya — "Eli, Eli, lama sabakhtani", kehausan, undi atas jubah — semua tergenapi ratusan tahun kemudian.'}},
+
+{id:'zaman',html:`<span class="lesson-num">Pelajaran 2</span><h1>Penderitaan di Zaman Akhir</h1><ul class="points"><li>Hidup benar → kadang <b>iri & aniaya</b>, seperti Daud</li><li>Akan ada masa <b>kelaparan firman</b></li><li>Simpan firman selagi bisa — seperti Yusuf simpan gandum</li></ul><div class="verse"><div class="ref">Amos 8:11</div><div class="txt">"...bukan kelaparan akan makanan... melainkan akan mendengarkan firman TUHAN."</div></div><div class="verse"><div class="ref">Daniel 9:27</div><div class="txt">Pada pertengahan tujuh masa itu ia akan menghentikan korban sembelihan dan korban santapan...</div></div>`},
+{id:'latihan',html:`<span class="lesson-num">Pelajaran 3</span><h1>Masa Latihan</h1><ul class="points"><li>Allah <b>sengaja</b> mengizinkan proses ini</li><li>Raja yang tak pernah susah, tak mengerti rakyatnya</li><li>Kesusahan hari ini bisa jadi <b>latihan</b></li></ul><div class="verse"><div class="ref">Ibrani 12:11</div><div class="txt">...kemudian ia menghasilkan buah kebenaran yang memberikan damai kepada mereka yang dilatih olehnya.</div></div>`},
+{id:'bersalin',html:`<span class="lesson-num">Pelajaran 4</span><h1>Masa Sakit Bersalin</h1><ul class="points"><li>Bukan hanya latihan — <b>rupa Kristus dibentuk</b></li><li>Ada Kristus dalam Daud (tak penuh, tapi ada)</li><li>Teori firman → <b>praktik</b> dalam hidup sehari-hari</li></ul><div class="verse"><div class="ref">Galatia 4:19</div><div class="txt">...aku menderita sakit bersalin lagi, sampai rupa Kristus menjadi nyata di dalam kamu.</div></div><div class="verse"><div class="ref">Yohanes 16:21</div><div class="txt">Seorang perempuan berdukacita saat melahirkan, tetapi sesudah itu ia tidak ingat lagi penderitaannya...</div></div>`},
+{id:'kesimpulan',html:`<div class="kicker">Kesimpulan</div><h1>Pelita yang Tak Padam</h1><ul class="points"><li>Masa gelap = <b>periode berkat</b> yang Allah siapkan</li><li>Sama seperti Abraham, Yakub, Tamar, Rahab, Rut</li><li>Pilihan Allah tak bisa digagalkan manusia</li></ul><div class="callout"><div class="big">🔥</div><div class="small">Bukan karena manusia bertahan — melainkan karena kasih Allah tidak pernah menyerah, pelita menyala sampai Kristus datang.</div></div>`},
+
+{id:'recap-intro',html:`<div class="cover"><div class="quiz-tag" style="font-size:.8em">Rekap Akhir</div><h1 style="font-size:1.7em">Mari Kita Ingat</h1><div class="note-line" style="opacity:1;font-size:1.1em">3 pertanyaan singkat<br>untuk mengunci pelajaran hari ini</div></div>`},
+{id:'r1',quiz:{tag:'Rekap · 1 dari 3',q:'Kata Ibrani "ra\'a" yang menggambarkan hati Saul berarti...',opts:['Menyala dan terbakar','Memecahkan, hancur, terluka','Iri dan dengki','Takut dan gentar'],correct:1,explain:'<b>Memecahkan / terluka.</b> Hati Saul terluka sampai pecah — tak bisa dipulihkan. ("Menyala/terbakar" adalah <i>hara</i>, tahap berikutnya.)'}},
+{id:'r2',quiz:{tag:'Rekap · 2 dari 3',q:'Berapa lama dan berapa tempat pelarian Daud?',opts:['5 tahun, 8 tempat','7 tahun, 12 tempat','10 tahun, 16 tempat','15 tahun, 20 tempat'],correct:2,explain:'<b>10 tahun, 16 tempat</b> — dari usia 20 sampai 30, dalam 3 fase. Setiap tempat punya arti nama yang berbicara.'}},
+{id:'r3',quiz:{tag:'Rekap · 3 dari 3',q:'Pelajaran "sakit bersalin" dari pelarian Daud berarti...',opts:['Daud menderita tanpa tujuan','Rupa Kristus dibentuk melalui penderitaan','Daud akan segera mati','Penderitaan adalah hukuman dosa'],correct:1,explain:'<b>Rupa Kristus dibentuk melalui penderitaan.</b> Seperti sakit bersalin melahirkan kehidupan — penderitaan Daud membentuk rupa Kristus dalam dirinya, walau tak penuh.'}},
+{id:'score',html:`<div class="cover"><div class="kicker">Skor Anda</div><div class="score-ring"><div class="sv" id="scoreVal">–</div><div class="sl" id="scoreLbl">dari 5 kuis</div></div><div class="note-line" id="scoreMsg" style="opacity:1"></div></div>`},
+
+{id:'penutup',html:`<div class="cover"><div class="flame">🔥</div><h1 style="font-size:1.6em">Minggu Depan</h1><div class="note-line" style="opacity:1;font-size:1.1em">Detail 10 tahun pelarian<br>3 fase · 16 tempat</div><div class="c-series" style="margin-top:1.5rem">1 Samuel 18–19 · Pelajaran 8</div></div>`},
+];
+
+let role=null,sessionCode=null,current=0,following=true,pollTimer=null;
+let fontIdx=1;const FONT_STEPS=[14,16,18,20,23];
+let reveals={};            // slideIndex -> true (synced)
+let mySelections={};       // slideIndex -> optIndex (local, per peserta)
+const KEY=c=>`pelita:session:${c}`;
+const isQuiz=i=>!!SLIDES[i].quiz;
+const totalQuiz=SLIDES.filter(s=>s.quiz).length;
+
+function showJoin(){document.getElementById('roleGrid').style.display='none';document.getElementById('teacherPanel').classList.remove('show');document.getElementById('joinPanel').classList.add('show');setTimeout(()=>document.getElementById('codeInput').focus(),100);}
+function hideJoin(){document.getElementById('joinPanel').classList.remove('show');document.getElementById('roleGrid').style.display='flex';document.getElementById('joinMsg').textContent='';}
+function showTeacher(){document.getElementById('roleGrid').style.display='none';document.getElementById('joinPanel').classList.remove('show');document.getElementById('teacherPanel').classList.add('show');setTimeout(()=>document.getElementById('pinInput').focus(),100);}
+function hideTeacher(){document.getElementById('teacherPanel').classList.remove('show');document.getElementById('roleGrid').style.display='flex';document.getElementById('pinMsg').textContent='';}
+
+async function startTeacher(){const pin=document.getElementById('pinInput').value.trim();const msg=document.getElementById('pinMsg');if(pin!==TEACHER_PIN){msg.textContent='PIN salah.';document.getElementById('pinInput').value='';return;}if(!fbReady){msg.textContent='Firebase belum dikonfigurasi (lihat komentar di file).';return;}role='teacher';document.body.classList.add('is-teacher');sessionCode=String(Math.floor(1000+Math.random()*9000));fbRef=fbDB.ref('pelita/'+sessionCode);try{await fbRef.set({slide:0,reveals:{},ts:Date.now()});}catch(e){msg.textContent='Gagal membuat sesi. Cek koneksi/aturan database.';return;}enterStage();}
+async function joinSession(){const code=document.getElementById('codeInput').value.trim();const msg=document.getElementById('joinMsg');if(code.length!==4){msg.textContent='Masukkan 4 angka.';return;}if(!fbReady){msg.textContent='Firebase belum dikonfigurasi (lihat komentar di file).';return;}msg.textContent='Menghubungkan...';try{fbRef=fbDB.ref('pelita/'+code);const snap=await fbRef.get();if(!snap.exists()){msg.textContent='Sesi tidak ditemukan. Cek kode.';return;}const data=snap.val();role='follower';document.body.classList.add('is-follower');sessionCode=code;current=data.slide||0;reveals=data.reveals||{};following=true;enterStage();startListening();}catch(e){msg.textContent='Gagal terhubung. Cek koneksi.';}}
+
+function enterStage(){document.getElementById('lobby').style.display='none';document.getElementById('stage').classList.add('show');buildSlides();buildControlBar();applyFont();document.getElementById('roleBadge').textContent=role==='teacher'?'PENGAJAR':'PESERTA';document.getElementById('roleBadge').className='badge-role '+(role==='teacher'?'teacher':'');if(role==='teacher')document.getElementById('coverSession')?.style.setProperty('display','block');renderSession();goTo(current);}
+
+function buildSlides(){const vp=document.getElementById('viewport');vp.innerHTML='';SLIDES.forEach((s,i)=>{const d=document.createElement('div');d.className='slide';d.dataset.idx=i;d.innerHTML=s.quiz?renderQuiz(s.quiz,i):s.html;vp.appendChild(d);});wireInteractions();}
+
+function renderQuiz(q,idx){
+  const letters=['A','B','C','D','E'];
+  let opts=q.opts.map((o,k)=>`<div class="quiz-opt" data-qz="${idx}" data-opt="${k}"><span class="opt-letter">${letters[k]}</span><span class="opt-text">${o}</span><span class="opt-mark"></span></div>`).join('');
+  return `<div class="quiz-tag">${q.tag||'Kuis'}</div><div class="quiz-q">${q.q}</div><div class="quiz-opts" data-opts="${idx}">${opts}</div><button class="reveal-btn" data-reveal="${idx}" onclick="revealAnswer(${idx})">Buka Jawaban</button><div class="wait-hint" data-wait="${idx}">Pilih jawaban Anda — tunggu pengajar membuka.</div><div class="quiz-explain" data-explain="${idx}">${q.explain}</div>`;
+}
+
+function renderSession(){if(sessionCode){const cc=document.getElementById('coverCode');if(cc)cc.textContent=sessionCode;if(role==='teacher')document.getElementById('statusMeta').innerHTML=`<span style="color:var(--gold-light);font-family:'Cinzel';letter-spacing:.1em">${sessionCode}</span>`;}}
+function fontStep(dir){fontIdx=Math.max(0,Math.min(FONT_STEPS.length-1,fontIdx+dir));applyFont();toast('Ukuran teks: '+(fontIdx+1)+'/'+FONT_STEPS.length);}
+function applyFont(){document.getElementById('viewport').style.fontSize=FONT_STEPS[fontIdx]+'px';}
+
+function buildControlBar(){const cb=document.getElementById('controlbar');if(role==='teacher'){cb.innerHTML=`<button class="nav-btn prev" id="btnPrev" onclick="prev()">‹</button><div class="progress-wrap"><div class="dots" id="dots"></div><div class="pos-text" id="posText"></div></div><button class="nav-btn next" id="btnNext" onclick="next()">›</button>`;buildDots();}else{cb.innerHTML=`<div class="follower-note" id="followNote"><span class="sync-dot"></span> Mengikuti pengajar</div><button class="unlock-btn" id="unlockBtn" onclick="toggleFollow()">Lihat bebas</button>`;}}
+function buildDots(){const dots=document.getElementById('dots');if(!dots)return;dots.innerHTML='';SLIDES.forEach((s,i)=>{const dp=document.createElement('div');dp.className='dot-p'+(i===current?' on':'')+(s.quiz?' quiz':'');dots.appendChild(dp);});}
+function updateControls(){if(role==='teacher'){document.querySelectorAll('.dot-p').forEach((d,i)=>d.classList.toggle('on',i===current));const pt=document.getElementById('posText');if(pt)pt.textContent=`${current+1} / ${SLIDES.length}`;const bp=document.getElementById('btnPrev'),bn=document.getElementById('btnNext');if(bp)bp.disabled=current===0;if(bn)bn.disabled=current===SLIDES.length-1;}}
+
+function goTo(idx){idx=Math.max(0,Math.min(SLIDES.length-1,idx));current=idx;document.querySelectorAll('.slide').forEach((s,i)=>{s.classList.toggle('active',i===idx);if(i===idx)s.scrollTop=0;});updateControls();if(SLIDES[idx].id==='score')computeScore();if(isQuiz(idx)&&reveals[idx])applyReveal(idx);if(role==='teacher')pushState();}
+function next(){if(current<SLIDES.length-1)goTo(current+1);}
+function prev(){if(current>0)goTo(current-1);}
+
+async function pushState(){if(role!=='teacher'||!fbRef)return;try{await fbRef.set({slide:current,reveals:reveals,ts:Date.now()});}catch(e){}}
+function startListening(){if(!fbRef)return;fbRef.on('value',snap=>{const data=snap.val();if(!data)return;
+  if(data.reveals){Object.keys(data.reveals).forEach(k=>{if(!reveals[k]){reveals[k]=true;if(parseInt(k)===current)applyReveal(parseInt(k));}});}
+  if(following&&data.slide!==current){goTo(data.slide);flashSync();}
+  window._latestTeacherSlide=data.slide;});}
+function flashSync(){const n=document.getElementById('followNote');if(n){n.style.color='var(--gold-light)';setTimeout(()=>n.style.color='',600);}}
+function toggleFollow(){following=!following;const note=document.getElementById('followNote'),btn=document.getElementById('unlockBtn');if(following){if(typeof window._latestTeacherSlide==='number')goTo(window._latestTeacherSlide);note.innerHTML='<span class="sync-dot"></span> Mengikuti pengajar';btn.textContent='Lihat bebas';btn.className='unlock-btn';toast('Kembali mengikuti pengajar');}else{note.innerHTML='<span style="color:var(--gold-dim)">Mode bebas — geser sendiri</span>';btn.textContent='↺ Ikuti lagi';btn.className='follow-back';toast('Anda bisa menggeser sendiri');}}
+
+/* quiz reveal */
+function revealAnswer(idx){if(role!=='teacher')return;reveals[idx]=true;applyReveal(idx);pushState();}
+function applyReveal(idx){
+  const q=SLIDES[idx].quiz;if(!q)return;
+  const optsWrap=document.querySelector(`.quiz-opts[data-opts="${idx}"]`);if(!optsWrap)return;
+  if(optsWrap.classList.contains('revealed'))return;
+  optsWrap.classList.add('revealed');
+  const opts=optsWrap.querySelectorAll('.quiz-opt');
+  const sel=mySelections[idx];
+  opts.forEach((o,k)=>{
+    if(k===q.correct){o.classList.add('correct');o.querySelector('.opt-mark').textContent='✓';}
+    else if(sel===k){o.classList.add('wrong');o.querySelector('.opt-mark').textContent='✗';}
+  });
+  const ex=document.querySelector(`.quiz-explain[data-explain="${idx}"]`);if(ex)ex.classList.add('show');
+  const rb=document.querySelector(`.reveal-btn[data-reveal="${idx}"]`);if(rb){rb.textContent='Jawaban terbuka ✓';rb.classList.add('done');}
+  const wh=document.querySelector(`.wait-hint[data-wait="${idx}"]`);if(wh)wh.classList.add('hidden');
+}
+
+function computeScore(){
+  let correct=0,answered=0;
+  SLIDES.forEach((s,i)=>{if(s.quiz){if(mySelections[i]!==undefined){answered++;if(mySelections[i]===s.quiz.correct)correct++;}}});
+  const sv=document.getElementById('scoreVal'),sl=document.getElementById('scoreLbl'),sm=document.getElementById('scoreMsg');
+  if(sv)sv.textContent=correct;
+  if(sl)sl.textContent=`dari ${totalQuiz} kuis`;
+  if(sm){
+    if(role==='teacher'){sm.innerHTML='Skor dihitung di HP masing-masing peserta.';}
+    else if(answered===0){sm.innerHTML='Anda belum menjawab kuis apa pun.';}
+    else{let m=correct===totalQuiz?'Sempurna! 🔥':correct>=totalQuiz*0.6?'Bagus sekali!':'Teruslah merenungkan firman.';sm.innerHTML=`${m}<br><span style="font-size:.85em;opacity:.7">${answered} dari ${totalQuiz} kuis Anda jawab</span>`;}
+  }
+}
+
+function wireInteractions(){
+  const chain=document.getElementById('chain');if(chain){chain.querySelectorAll('.chain-step').forEach(step=>{step.addEventListener('click',()=>{step.classList.add('lit');const hint=document.getElementById('chainHint');if([...chain.querySelectorAll('.chain-step')].every(s=>s.classList.contains('lit'))){if(hint)hint.style.display='none';}});});}
+  document.querySelectorAll('.place-row').forEach(row=>{const phase=row.dataset.phase;const detail=document.querySelector(`.place-detail[data-detail="${phase}"]`);row.querySelectorAll('.place-chip').forEach(chip=>{chip.addEventListener('click',()=>{const wasOpen=chip.classList.contains('open');row.querySelectorAll('.place-chip').forEach(c=>c.classList.remove('open'));if(wasOpen){detail.classList.remove('show');return;}chip.classList.add('open');detail.innerHTML=`<span class="pmean">${chip.textContent}</span> — ${chip.dataset.mean}`;detail.classList.add('show');});});});
+  document.querySelectorAll('.par-head').forEach(head=>{const i=head.dataset.par;const body=document.querySelector(`.par-body[data-body="${i}"]`);const caret=document.querySelector(`.par-caret[data-caret="${i}"]`);head.addEventListener('click',()=>{const open=body.classList.toggle('show');if(caret)caret.textContent=open?'▴ tutup':'▾ buka';});});
+  document.querySelectorAll('.quiz-opt').forEach(opt=>{opt.addEventListener('click',()=>{const idx=parseInt(opt.dataset.qz);if(reveals[idx])return;const k=parseInt(opt.dataset.opt);mySelections[idx]=k;document.querySelectorAll(`.quiz-opt[data-qz="${idx}"]`).forEach(o=>o.classList.remove('sel'));opt.classList.add('sel');});});
+}
+
+let toastTimer=null;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
+document.addEventListener('keydown',e=>{if(role==='teacher'||(role==='follower'&&!following)){if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();}});
+let touchX=null;
+document.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
+document.addEventListener('touchend',e=>{if(touchX===null)return;const dx=e.changedTouches[0].clientX-touchX;touchX=null;if(role==='follower'&&following)return;if(Math.abs(dx)<60)return;if(dx<0)next();else prev();},{passive:true});
+document.getElementById('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);});
+document.getElementById('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')joinSession();});
+document.getElementById('pinInput').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);});
+document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')startTeacher();});
+</script>
+</body>
+</html>
+
+<!--
+════════════════════════════════════════════════════════════════════
+  PANDUAN SETUP FIREBASE (sekali saja, ±5 menit)
+════════════════════════════════════════════════════════════════════
+
+  1. Buka https://console.firebase.google.com → "Add project"
+     (beri nama bebas, mis. "pelita"). Matikan Google Analytics
+     kalau ditanya (tidak perlu). Klik Create.
+
+  2. Di menu kiri: Build → Realtime Database → "Create Database".
+     - Pilih lokasi (mis. Singapore / asia-southeast1).
+     - Saat ditanya rules, pilih "Start in TEST MODE" lalu Enable.
+       (Test mode cukup untuk kelompok kecil. Lihat catatan keamanan
+        di bawah bila ingin lebih aman.)
+
+  3. Di menu kiri klik ikon gerigi (Project settings) → scroll ke
+     "Your apps" → klik ikon "</>" (Web) untuk daftarkan web app.
+     Beri nama bebas, klik Register app.
+
+  4. Firebase akan menampilkan sebuah objek "firebaseConfig = {...}".
+     SALIN nilai-nilainya, lalu TEMPEL ke FIREBASE_CONFIG di bagian
+     atas file ini (apiKey, authDomain, databaseURL, dst).
+     PENTING: pastikan "databaseURL" ada (kalau tidak muncul, ambil
+     dari halaman Realtime Database — bentuknya:
+     https://NAMA-default-rtdb.firebaseio.com atau ...asia-southeast1...)
+
+  5. Simpan file, upload ke GitHub, bagikan link via WA. Selesai.
+     Pengajar → "Saya pengajar" → PIN → dapat kode. Murid → "Gabung"
+     → masukkan kode. Sinkron sekarang berjalan realtime lintas HP.
+
+  ── Catatan keamanan (opsional) ─────────────────────────────────────
+  Test mode terbuka untuk siapa saja selama ±30 hari lalu menutup.
+  Untuk pemakaian rutin, ganti Rules (Realtime Database → Rules)
+  menjadi hanya izinkan cabang "pelita":
+
+      {
+        "rules": {
+          "pelita": { ".read": true, ".write": true }
+        }
+      }
+
+  Ini tetap terbuka (tanpa login) tapi terbatas pada data presentasi
+  ini — aman untuk kelompok kecil karena tidak ada data pribadi.
+════════════════════════════════════════════════════════════════════
+-->
