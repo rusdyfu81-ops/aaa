@@ -1,353 +1,1569 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pelita — Pelarian Daud</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#1a1033" />
+<title>Giring-Giring Emas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#8a6f30;--cream:#f0e6cf;--parchment:#d8c9a4;--ink:#0d0a04;--bg:#0d0a04;--panel:#191307;--panel2:#221a09;--border:#463713;--red:#a13a2a;--green:#5c8a3a;--green-light:#8fc46a;}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
-body{font-family:'Crimson Pro',serif;background:var(--bg);color:var(--cream);position:fixed;inset:0;overscroll-behavior:none;}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 30% 0%,rgba(201,168,76,.09) 0%,transparent 55%),radial-gradient(ellipse at 70% 100%,rgba(161,58,42,.07) 0%,transparent 55%);}
-#lobby{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.6rem;text-align:center;overflow-y:auto;}
-.flame{font-size:3rem;margin-bottom:.5rem;filter:drop-shadow(0 0 20px rgba(201,168,76,.6));animation:flicker 3s ease-in-out infinite;}
-@keyframes flicker{0%,100%{opacity:1;transform:scale(1)}45%{opacity:.85;transform:scale(.97)}70%{opacity:.95;transform:scale(1.02)}}
-.lobby-title{font-family:'Cinzel',serif;font-weight:700;font-size:1.9rem;color:var(--gold);letter-spacing:.04em;text-shadow:0 0 30px rgba(201,168,76,.4);line-height:1.2;}
-.lobby-sub{font-style:italic;color:var(--gold-dim);font-size:.95rem;margin-top:.5rem;letter-spacing:.08em;}
-.lobby-ref{color:var(--parchment);font-size:.85rem;margin-top:.3rem;opacity:.7;}
-.divider-line{width:60%;max-width:240px;height:1px;margin:1.6rem 0;background:linear-gradient(to right,transparent,var(--gold),transparent);}
-.role-grid{display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:320px;}
-.role-btn{font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;letter-spacing:.06em;padding:1.05rem 1rem;border-radius:12px;cursor:pointer;background:var(--panel2);border:1px solid var(--border);color:var(--cream);transition:transform .12s,border-color .2s,background .2s;}
-.role-btn:active{transform:scale(.97);}
-.role-btn small{display:block;font-family:'Crimson Pro',serif;font-weight:400;font-size:.78rem;letter-spacing:0;color:var(--parchment);opacity:.7;margin-top:.25rem;text-transform:none;}
-.role-btn.primary{background:linear-gradient(135deg,#2e2109,#221a09);border-color:var(--gold);color:var(--gold-light);padding:1.25rem 1rem;font-size:.95rem;}
-.role-teacher-link{margin-top:1.3rem;color:var(--gold-dim);font-size:.8rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;letter-spacing:.04em;font-family:'Cinzel',serif;}
-.join-panel{width:100%;max-width:320px;margin-top:1rem;display:none;}
-.join-panel.show{display:block;animation:fadeUp .3s ease;}
-.field-label{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.5rem;}
-.code-input{width:100%;text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:2rem;letter-spacing:.5em;text-indent:.5em;padding:.9rem;border-radius:12px;background:var(--ink);border:1px solid var(--gold-dim);color:var(--gold-light);outline:none;margin-bottom:.8rem;}
-.code-input::placeholder{color:#5a4a20;letter-spacing:.3em;}
-.join-go{width:100%;font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;letter-spacing:.06em;padding:.95rem;border-radius:12px;cursor:pointer;background:var(--gold);color:var(--ink);border:none;transition:transform .12s;}
-.join-go:active{transform:scale(.97);}
-.join-msg{color:var(--red);font-size:.82rem;margin-top:.6rem;min-height:1rem;font-style:italic;}
-.back-link{color:var(--gold-dim);font-size:.82rem;margin-top:1.2rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
-#stage{position:absolute;inset:0;z-index:10;display:none;flex-direction:column;}
-#stage.show{display:flex;}
-.topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;padding-top:calc(.7rem + env(safe-area-inset-top));border-bottom:1px solid var(--border);background:rgba(13,10,4,.85);backdrop-filter:blur(8px);position:relative;z-index:5;gap:.5rem;}
-.topbar .brand{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.1em;color:var(--gold);display:flex;align-items:center;gap:.4rem;flex:0 0 auto;}
-.topbar .brand .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:flicker 3s infinite;}
-.topbar .meta{display:flex;align-items:center;gap:.6rem;font-size:.7rem;color:var(--gold-dim);flex:0 0 auto;}
-.badge-role{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.08em;padding:.2rem .5rem;border-radius:20px;border:1px solid var(--border);color:var(--parchment);}
-.badge-role.teacher{border-color:var(--gold);color:var(--gold-light);}
-.font-ctl{display:flex;align-items:center;gap:.3rem;}
-.font-btn{width:34px;height:34px;border-radius:9px;background:var(--panel2);border:1px solid var(--border);color:var(--gold);font-family:'Cinzel',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:transform .1s,background .2s;}
-.font-btn:active{transform:scale(.9);background:var(--panel);}
-.font-btn.minus{font-size:.8rem;}.font-btn.plus{font-size:1rem;}
-.viewport{flex:1 1 auto;position:relative;overflow:hidden;font-size:16px;}
-.slide{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:1.6rem 1.4rem 6rem;opacity:0;pointer-events:none;transform:translateX(20px);transition:opacity .35s ease,transform .35s ease;-webkit-overflow-scrolling:touch;}
-.slide.active{opacity:1;pointer-events:auto;transform:translateX(0);}
-.slide::-webkit-scrollbar{width:0;}
-.kicker{font-family:'Cinzel',serif;font-size:.72em;letter-spacing:.14em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.7rem;}
-.slide h1{font-family:'Cinzel',serif;font-weight:700;font-size:1.7em;color:var(--gold);line-height:1.25;margin-bottom:1rem;text-shadow:0 0 24px rgba(201,168,76,.3);}
-.slide h2{font-family:'Cinzel',serif;font-weight:600;font-size:1.15em;color:var(--gold-light);margin:1.3rem 0 .6rem;}
-.points{list-style:none;margin:.4rem 0;}
-.points li{position:relative;padding:.55rem 0 .55rem 1.5rem;font-size:1.18em;line-height:1.45;color:var(--cream);border-bottom:1px solid rgba(70,55,19,.4);}
-.points li:last-child{border-bottom:none;}
-.points li::before{content:'';position:absolute;left:0;top:1.05em;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.5);}
-.points li b{color:var(--gold-light);}
-.verse{border-left:3px solid var(--gold);background:var(--panel);border-radius:0 8px 8px 0;padding:.85rem 1rem;margin:1rem 0;}
-.verse .ref{font-family:'Cinzel',serif;font-size:.78em;letter-spacing:.06em;color:var(--gold);margin-bottom:.35rem;}
-.verse .txt{font-style:italic;font-size:1.05em;line-height:1.55;color:var(--parchment);}
-.note-line{font-size:1em;color:var(--parchment);opacity:.75;font-style:italic;text-align:center;margin-top:1rem;}
-.cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;text-align:center;padding-bottom:6rem;}
-.cover .flame{font-size:2.6rem;}
-.cover h1{font-size:2.2em;margin:.6rem 0 .4rem;}
-.cover .c-ref{font-style:italic;color:var(--gold-dim);letter-spacing:.1em;font-size:1em;}
-.cover .c-series{color:var(--parchment);opacity:.6;font-size:.85em;margin-top:.4rem;font-style:italic;}
-.session-chip{margin-top:1.8rem;padding:.7rem 1.3rem;border:1px solid var(--border);border-radius:12px;background:var(--panel);}
-.session-chip .lbl{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.14em;color:var(--gold-dim);text-transform:uppercase;}
-.session-chip .code{font-family:'Cinzel',serif;font-weight:700;font-size:2.2em;letter-spacing:.4em;text-indent:.4em;color:var(--gold-light);text-shadow:0 0 20px rgba(201,168,76,.4);}
-.timeline{position:relative;margin:1.4rem 0 .5rem;padding-left:1.2rem;}
-.timeline::before{content:'';position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:linear-gradient(to bottom,var(--gold-dim),rgba(201,168,76,.2));}
-.tl-item{position:relative;padding:0 0 1.4rem 1.2rem;}
-.tl-item::before{content:'';position:absolute;left:-1.15rem;top:5px;width:11px;height:11px;border-radius:50%;background:var(--panel2);border:2px solid var(--gold-dim);}
-.tl-item.key::before{background:var(--gold);border-color:var(--gold-light);box-shadow:0 0 12px rgba(201,168,76,.7);}
-.tl-year{font-family:'Cinzel',serif;font-weight:600;font-size:1.05em;color:var(--gold);}
-.tl-label{font-size:1.08em;color:var(--cream);margin-top:.15rem;}
-.tl-sub{font-size:.9em;color:var(--parchment);opacity:.6;font-style:italic;margin-top:.1rem;}
-.chain{display:flex;flex-direction:column;gap:.6rem;margin:1.2rem 0;}
-.chain-step{display:flex;align-items:center;gap:.8rem;padding:.9rem 1rem;border-radius:10px;background:var(--panel);border:1px solid var(--border);opacity:.35;transform:translateX(-8px);transition:opacity .4s ease,transform .4s ease,border-color .4s ease,background .4s ease;}
-.chain-step.lit{opacity:1;transform:translateX(0);border-color:var(--gold-dim);background:var(--panel2);}
-.chain-step .num{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.9em;font-weight:600;background:var(--ink);color:var(--gold);border:1px solid var(--gold-dim);}
-.chain-step .body{flex:1;}
-.chain-step .word{font-family:'Cinzel',serif;font-size:1.1em;color:var(--cream);}
-.chain-step .heb{font-size:.86em;color:var(--gold-dim);font-style:italic;margin-top:.15rem;}
-.chain-step.danger .word{color:var(--red);}.chain-step.danger .num{border-color:var(--red);color:var(--red);}
-.chain-arrow{text-align:center;color:var(--gold-dim);font-size:.9rem;opacity:.5;margin:-.3rem 0;}
-.tap-hint{text-align:center;font-size:.85em;color:var(--gold-dim);font-style:italic;margin-top:.7rem;opacity:.7;}
-.gen-strip{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:1.3rem 0;}
-.gen-node{font-family:'Cinzel',serif;font-size:.85em;padding:.4rem .6rem;border-radius:8px;background:var(--panel);border:1px solid var(--border);color:var(--parchment);}
-.gen-node.mark{background:linear-gradient(135deg,#2e2109,#221a09);border-color:var(--gold);color:var(--gold-light);font-weight:600;}
-.gen-node.q{border-style:dashed;color:var(--gold-dim);}
-.gen-sep{color:var(--gold-dim);font-size:.9em;}
-.phase{margin:1.1rem 0;}
-.phase-head{font-family:'Cinzel',serif;font-size:.85em;letter-spacing:.06em;color:var(--gold);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
-.phase-head .pnum{background:var(--gold);color:var(--ink);border-radius:6px;padding:.1rem .45rem;font-weight:700;font-size:.85em;}
-.phase-head .pyears{color:var(--gold-dim);font-weight:400;font-size:.85em;font-style:italic;}
-.place-row{display:flex;flex-wrap:wrap;gap:.45rem;}
-.place-chip{padding:.45rem .75rem;border-radius:20px;font-size:.92em;background:var(--panel);border:1px solid var(--border);color:var(--cream);cursor:pointer;transition:transform .12s,border-color .2s,background .2s;}
-.place-chip:active{transform:scale(.94);}
-.place-chip.open{border-color:var(--gold);background:var(--panel2);color:var(--gold-light);}
-.place-detail{margin-top:.5rem;padding:.75rem .9rem;border-radius:8px;background:var(--panel);border-left:3px solid var(--gold);font-size:1em;color:var(--parchment);display:none;}
-.place-detail.show{display:block;animation:fadeUp .25s ease;}
-.place-detail .pmean{color:var(--gold);font-style:italic;}
-.par-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.7rem;background:var(--panel);}
-.par-head{display:flex;cursor:pointer;}
-.par-head > div{flex:1;padding:.8rem .9rem;}
-.par-head .d{border-right:1px solid var(--border);}
-.par-lbl{font-family:'Cinzel',serif;font-size:.68em;letter-spacing:.08em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:.2rem;}
-.par-ref{font-size:1em;color:var(--cream);}
-.par-body{display:none;padding:.4rem .9rem 1rem;border-top:1px solid var(--border);background:var(--ink);}
-.par-body.show{display:block;animation:fadeUp .25s ease;}
-.par-body .pv{margin-top:.7rem;}
-.par-body .pv .pvl{font-family:'Cinzel',serif;font-size:.68em;letter-spacing:.06em;color:var(--gold);margin-bottom:.2rem;}
-.par-body .pv .pvt{font-style:italic;font-size:1em;line-height:1.5;color:var(--parchment);}
-.par-caret{text-align:center;font-size:.82em;color:var(--gold-dim);padding:.25rem 0 .55rem;opacity:.6;}
-.lesson-num{display:inline-block;font-family:'Cinzel',serif;font-size:.75em;letter-spacing:.1em;color:var(--ink);background:var(--gold);padding:.28rem .7rem;border-radius:20px;margin-bottom:.9rem;}
-.callout{border:1px solid var(--gold-dim);border-radius:10px;padding:1.1rem;margin:1.2rem 0;background:linear-gradient(135deg,rgba(46,33,9,.6),rgba(25,19,7,.6));text-align:center;}
-.callout .big{font-family:'Cinzel',serif;color:var(--gold-light);font-size:1.1em;margin-bottom:.5rem;}
-.callout .small{font-size:1.05em;color:var(--parchment);line-height:1.55;}
-/* ─── QUIZ ─── */
-.quiz-tag{display:inline-flex;align-items:center;gap:.4rem;font-family:'Cinzel',serif;font-size:.7em;letter-spacing:.12em;color:var(--ink);background:var(--gold);padding:.28rem .8rem;border-radius:20px;margin-bottom:.9rem;text-transform:uppercase;}
-.quiz-q{font-size:1.3em;line-height:1.4;color:var(--cream);margin-bottom:1.2rem;font-weight:500;}
-.quiz-opts{display:flex;flex-direction:column;gap:.7rem;}
-.quiz-opt{display:flex;align-items:flex-start;gap:.7rem;padding:.9rem 1rem;border-radius:12px;background:var(--panel);border:1.5px solid var(--border);color:var(--cream);cursor:pointer;font-size:1.1em;line-height:1.4;transition:transform .1s,border-color .2s,background .2s;}
-.quiz-opt:active{transform:scale(.98);}
-.quiz-opt .opt-letter{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.85em;font-weight:600;background:var(--ink);color:var(--gold);border:1px solid var(--gold-dim);}
-.quiz-opt.sel{border-color:var(--gold);background:var(--panel2);}
-.quiz-opt.sel .opt-letter{background:var(--gold);color:var(--ink);}
-.quiz-opt.correct{border-color:var(--green);background:rgba(92,138,58,.18);}
-.quiz-opt.correct .opt-letter{background:var(--green);color:#fff;border-color:var(--green-light);}
-.quiz-opt.wrong{border-color:var(--red);background:rgba(161,58,42,.15);}
-.quiz-opt.wrong .opt-letter{background:var(--red);color:#fff;border-color:var(--red);}
-.quiz-opt .opt-mark{margin-left:auto;font-size:1.1em;opacity:0;flex:0 0 auto;}
-.quiz-opt.correct .opt-mark{opacity:1;color:var(--green-light);}
-.quiz-opt.wrong .opt-mark{opacity:1;color:var(--red);}
-.quiz-opts.revealed .quiz-opt{cursor:default;pointer-events:none;}
-.quiz-explain{display:none;margin-top:1.1rem;padding:.9rem 1rem;border-radius:10px;background:var(--panel);border-left:3px solid var(--green);font-size:1.02em;line-height:1.5;color:var(--parchment);}
-.quiz-explain.show{display:block;animation:fadeUp .3s ease;}
-.quiz-explain b{color:var(--green-light);}
-.reveal-btn{display:none;width:100%;margin-top:1.3rem;font-family:'Cinzel',serif;font-size:.85em;letter-spacing:.06em;padding:1rem;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#2e2109,#221a09);border:1px solid var(--gold);color:var(--gold-light);transition:transform .12s;}
-.reveal-btn:active{transform:scale(.98);}
-.reveal-btn.done{background:var(--panel);border-color:var(--border);color:var(--gold-dim);pointer-events:none;}
-body.is-teacher .reveal-btn{display:block;}
-.wait-hint{display:none;text-align:center;font-size:.9em;color:var(--gold-dim);font-style:italic;margin-top:1.2rem;}
-body.is-follower .wait-hint{display:block;}
-body.is-follower .wait-hint.hidden{display:none;}
-/* score */
-.score-ring{width:150px;height:150px;margin:1.5rem auto;border-radius:50%;border:3px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(46,33,9,.6),transparent);box-shadow:0 0 30px rgba(201,168,76,.3);}
-.score-ring .sv{font-family:'Cinzel',serif;font-weight:700;font-size:2.6em;color:var(--gold-light);line-height:1;}
-.score-ring .sl{font-size:.85em;color:var(--gold-dim);letter-spacing:.1em;margin-top:.3rem;}
-.controlbar{flex:0 0 auto;display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;padding-bottom:calc(.7rem + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:rgba(13,10,4,.9);backdrop-filter:blur(10px);position:relative;z-index:5;}
-.nav-btn{flex:0 0 auto;width:52px;height:52px;border-radius:14px;background:var(--panel2);border:1px solid var(--border);color:var(--gold);font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .2s,opacity .2s;}
-.nav-btn:active{transform:scale(.92);}
-.nav-btn:disabled{opacity:.25;}
-.nav-btn.next{background:linear-gradient(135deg,#2e2109,#221a09);border-color:var(--gold);}
-.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.35rem;}
-.dots{display:flex;gap:.2rem;justify-content:center;flex-wrap:wrap;}
-.dot-p{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .3s;}
-.dot-p.on{background:var(--gold);box-shadow:0 0 8px var(--gold);width:16px;border-radius:4px;}
-.dot-p.quiz{border:1px solid var(--gold-dim);background:transparent;}
-.dot-p.quiz.on{background:var(--gold);}
-.pos-text{text-align:center;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.08em;color:var(--gold-dim);}
-.follower-note{flex:1;text-align:center;font-style:italic;font-size:.9rem;color:var(--gold-dim);display:flex;align-items:center;justify-content:center;gap:.5rem;}
-.follower-note .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.unlock-btn{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.05em;padding:.55rem .85rem;border-radius:10px;cursor:pointer;background:var(--panel2);border:1px solid var(--border);color:var(--parchment);}
-.follow-back{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.05em;padding:.65rem 1rem;border-radius:10px;cursor:pointer;background:var(--gold);color:var(--ink);border:none;flex:0 0 auto;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold-dim);color:var(--gold-light);font-size:.85rem;padding:.6rem 1rem;border-radius:20px;z-index:40;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
-.toast.show{opacity:1;}
+:root{
+  --bg-1:#221046; --bg-2:#140a2e; --bg-3:#2a1152;
+  --surface:rgba(255,255,255,.06); --surface-2:rgba(255,255,255,.10);
+  --line:rgba(255,255,255,.14);
+  --ink:#f4efff; --ink-dim:#b9adde; --ink-faint:#8a7db8;
+  --pink:#ff3d81; --pink-deep:#e21f68;
+  --gold:#ffc23c; --violet:#a768ff;
+  --good:#25d69a; --good-deep:#12a377;
+  --bad:#ff5d6c; --bad-deep:#d83848;
+  --shadow:0 12px 30px -12px rgba(0,0,0,.6);
+  --r-lg:22px; --r-md:16px; --r-sm:12px;
+  --disp:'Fredoka', system-ui, sans-serif;
+  --ui:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;height:100%;}
+body{
+  font-family:var(--ui); color:var(--ink);
+  background:radial-gradient(120% 120% at 50% 0%, var(--bg-3) 0%, var(--bg-1) 42%, var(--bg-2) 100%);
+  background-attachment:fixed;
+  overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;color:inherit;border:none;background:none;}
+input{font-family:inherit;}
+
+/* ---- App shell: full-viewport screens ---- */
+#app{position:fixed;inset:0;display:flex;flex-direction:column;}
+.screen{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 18px);
+  opacity:0;transform:translateY(10px);pointer-events:none;
+  transition:opacity .28s ease, transform .28s ease;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+}
+.screen.active{opacity:1;transform:none;pointer-events:auto;}
+@media (prefers-reduced-motion:reduce){.screen{transition:none;}}
+
+/* ---- Buttons ---- */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  min-height:56px;padding:0 22px;border-radius:var(--r-md);
+  font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:.2px;
+  background:linear-gradient(180deg,var(--pink),var(--pink-deep));
+  color:#fff;box-shadow:0 8px 20px -8px var(--pink-deep);
+  transition:transform .12s ease, filter .12s ease; width:100%;
+}
+.btn:active{transform:translateY(2px) scale(.99);filter:brightness(1.05);}
+.btn.ghost{background:var(--surface);box-shadow:none;border:1.5px solid var(--line);color:var(--ink);}
+.btn.gold{background:linear-gradient(180deg,var(--gold),#e79b16);color:#3a2400;box-shadow:0 8px 20px -8px #b57500;}
+.btn:disabled{opacity:.45;filter:grayscale(.3);pointer-events:none;}
+
+/* ---- Landing ---- */
+.landing-wrap{margin:auto;width:100%;max-width:440px;text-align:center;}
+.badge{
+  display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;
+  color:var(--gold);background:rgba(255,194,60,.12);border:1px solid rgba(255,194,60,.3);
+  padding:7px 14px;border-radius:999px;margin-bottom:22px;
+}
+.title{font-family:var(--disp);font-weight:700;line-height:.98;margin:0;
+  font-size:clamp(52px,17vw,80px);
+  background:linear-gradient(120deg,#fff 20%,var(--gold) 60%,var(--pink) 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 8px 24px rgba(255,61,129,.25));
+}
+.subtitle{color:var(--ink-dim);font-size:17px;margin:14px 0 26px;line-height:1.5;}
+.meta-row{display:flex;gap:10px;justify-content:center;margin-bottom:30px;flex-wrap:wrap;}
+.meta-chip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:13px 8px;flex:1;min-width:96px;}
+.meta-chip .n{font-family:var(--disp);font-weight:700;font-size:22px;display:block;}
+.meta-chip .l{font-size:12px;color:var(--ink-faint);margin-top:2px;}
+.name-field{
+  width:100%;height:60px;border-radius:var(--r-md);text-align:center;
+  background:var(--surface);border:1.5px solid var(--line);color:var(--ink);
+  font-family:var(--disp);font-size:22px;font-weight:600;margin-bottom:14px;outline:none;
+}
+.name-field:focus{border-color:var(--pink);background:var(--surface-2);}
+.name-field::placeholder{color:var(--ink-faint);font-weight:500;}
+
+/* ---- Quiz header ---- */
+.qhead{flex-shrink:0;margin-bottom:14px;}
+.qhead-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px;}
+.qcount{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ink-dim);}
+.score-badge{font-family:var(--disp);font-weight:700;font-size:20px;display:flex;align-items:center;gap:6px;
+  position:relative;color:var(--gold);}
+.score-badge .star{font-size:15px;}
+.pbar{height:9px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;}
+.pbar>i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--violet),var(--pink));transition:width .4s cubic-bezier(.3,1.2,.5,1);}
+.timer-wrap{display:flex;align-items:center;gap:10px;margin-top:11px;}
+.timer-track{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;}
+.timer-track>i{display:block;height:100%;border-radius:99px;background:var(--good);
+  transition:width .25s linear, background-color .3s;transform-origin:left;}
+.timer-num{font-family:var(--disp);font-weight:700;font-size:16px;min-width:34px;text-align:right;color:var(--ink-dim);}
+.timer-wrap.warn .timer-num{color:var(--bad);}
+.timer-wrap.warn .timer-track>i{background:var(--bad);}
+
+/* ---- Question body ---- */
+.qbody{flex:1;display:flex;flex-direction:column;min-height:0;}
+.qtype-tag{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--violet);
+  text-transform:uppercase;margin-bottom:8px;}
+.qtext{font-family:var(--disp);font-weight:600;font-size:clamp(21px,5.6vw,27px);
+  line-height:1.22;margin:0 0 8px;}
+.qinstruct{color:var(--ink-dim);font-size:14.5px;margin:0 0 16px;}
+.qmedia{font-size:clamp(60px,20vw,96px);text-align:center;margin:6px 0 16px;line-height:1;}
+
+.q-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  margin:0 -4px;padding:2px 4px;}
+
+/* option cards (MC / speed / final) */
+.opts{display:flex;flex-direction:column;gap:11px;}
+.opt{
+  display:flex;align-items:center;gap:14px;min-height:60px;padding:12px 16px;
+  background:var(--surface);border:2px solid var(--line);border-radius:var(--r-md);
+  font-size:17px;font-weight:600;text-align:left;transition:transform .12s, border-color .15s, background .15s;
+}
+.opt:active{transform:scale(.985);}
+.opt .key{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;font-size:16px;color:var(--violet);}
+.opt.picked{border-color:var(--pink);background:rgba(255,61,129,.14);}
+.opt.correct{border-color:var(--good);background:rgba(37,214,154,.16);}
+.opt.correct .key{background:var(--good);color:#04291d;}
+.opt.wrong{border-color:var(--bad);background:rgba(255,93,108,.15);}
+.opt.wrong .key{background:var(--bad);color:#3a0007;}
+.opt.dimmed{opacity:.32;pointer-events:none;}
+
+/* true/false */
+.tf{display:flex;gap:13px;}
+.tf .opt{flex:1;flex-direction:column;justify-content:center;text-align:center;min-height:120px;gap:8px;}
+.tf .opt .ic{font-size:34px;}
+
+/* picture grid */
+.pic-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.pic{aspect-ratio:1;background:var(--surface);border:2.5px solid var(--line);border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;font-size:clamp(44px,15vw,64px);transition:transform .12s,border-color .15s,background .15s;}
+.pic:active{transform:scale(.97);}
+.pic.picked{border-color:var(--pink);background:rgba(255,61,129,.14);}
+.pic.correct{border-color:var(--good);background:rgba(37,214,154,.16);}
+.pic.wrong{border-color:var(--bad);background:rgba(255,93,108,.15);}
+
+/* matching */
+.match-grid{display:flex;flex-direction:column;gap:10px;}
+.match-row-lbl{font-size:12px;color:var(--ink-faint);margin:2px 0 -2px;font-weight:600;}
+.chips{display:flex;flex-wrap:wrap;gap:9px;}
+.mchip{padding:13px 16px;border-radius:var(--r-sm);background:var(--surface);border:2px solid var(--line);
+  font-weight:600;font-size:15.5px;transition:transform .12s,border-color .15s,background .15s;}
+.mchip:active{transform:scale(.96);}
+.mchip.sel{border-color:var(--gold);background:rgba(255,194,60,.16);}
+.mchip.done{opacity:.5;border-style:dashed;pointer-events:none;}
+.mchip.ok{border-color:var(--good);}
+.mchip.no{border-color:var(--bad);}
+.mpair{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);
+  border:1.5px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;font-size:14.5px;}
+.mpair .arrow{color:var(--violet);font-weight:700;}
+.mpair.ok{border-color:var(--good);} .mpair.no{border-color:var(--bad);}
+.mpair .x{margin-left:auto;color:var(--ink-faint);font-size:18px;padding:0 4px;}
+
+/* sortable (arrange / ranking) */
+.sortable{display:flex;flex-direction:column;gap:10px;}
+.sortable.flow{flex-flow:row wrap;}
+.sort-item{
+  display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-md);
+  background:var(--surface-2);border:2px solid var(--line);font-weight:600;font-size:16px;
+  touch-action:none;user-select:none;transition:border-color .15s,background .15s;
+}
+.sortable.flow .sort-item{padding:13px 16px;font-family:var(--disp);}
+.sort-item .grip{color:var(--ink-faint);font-size:20px;flex-shrink:0;}
+.sort-item .rank{width:26px;height:26px;border-radius:8px;background:var(--surface);display:flex;
+  align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;font-size:14px;color:var(--violet);flex-shrink:0;}
+.sort-item .emo{font-size:30px;}
+.sort-item.dragging{border-color:var(--pink);box-shadow:0 16px 36px -10px rgba(0,0,0,.7);
+  background:var(--bg-3);z-index:50;opacity:.96;}
+.sort-item.ok{border-color:var(--good);background:rgba(37,214,154,.13);}
+.sort-item.no{border-color:var(--bad);background:rgba(255,93,108,.12);}
+.sort-ph{border:2px dashed var(--line);border-radius:var(--r-md);background:rgba(255,255,255,.03);}
+
+/* classification */
+.class-pool{display:flex;flex-wrap:wrap;gap:9px;min-height:20px;margin-bottom:14px;}
+.bins{display:flex;flex-direction:column;gap:12px;}
+.bin{border:2px dashed var(--line);border-radius:var(--r-md);padding:12px;background:rgba(255,255,255,.03);transition:border-color .15s,background .15s;}
+.bin.hover{border-color:var(--gold);background:rgba(255,194,60,.08);}
+.bin h4{margin:0 0 10px;font-family:var(--disp);font-size:15px;font-weight:600;color:var(--ink-dim);display:flex;align-items:center;gap:7px;}
+.bin .drop{display:flex;flex-wrap:wrap;gap:8px;min-height:30px;}
+.citem{padding:11px 15px;border-radius:var(--r-sm);background:var(--surface-2);border:2px solid var(--line);
+  font-weight:600;font-size:15px;touch-action:none;user-select:none;}
+.citem.dragging{border-color:var(--pink);box-shadow:var(--shadow);z-index:50;}
+.citem.ok{border-color:var(--good);} .citem.no{border-color:var(--bad);}
+
+/* multiple select */
+.ms-list{display:flex;flex-direction:column;gap:10px;}
+.ms{display:flex;align-items:center;gap:13px;padding:13px 16px;border-radius:var(--r-md);
+  background:var(--surface);border:2px solid var(--line);font-weight:600;font-size:16.5px;transition:border-color .15s,background .15s;}
+.ms:active{transform:scale(.99);}
+.ms .box{width:26px;height:26px;border-radius:8px;border:2px solid var(--ink-faint);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;}
+.ms.on{border-color:var(--gold);background:rgba(255,194,60,.12);}
+.ms.on .box{background:var(--gold);border-color:var(--gold);color:#3a2400;}
+.ms.ok{border-color:var(--good);} .ms.ok .box{background:var(--good);border-color:var(--good);color:#04291d;}
+.ms.no{border-color:var(--bad);} .ms.miss{border-color:var(--good);border-style:dashed;}
+
+/* slider */
+.slider-box{text-align:center;padding:10px 0;}
+.slider-val{font-family:var(--disp);font-weight:700;font-size:clamp(60px,20vw,92px);line-height:1;
+  background:linear-gradient(120deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.slider-unit{color:var(--ink-dim);font-size:15px;margin-top:2px;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:14px;border-radius:99px;
+  background:rgba(255,255,255,.12);margin:26px 0 8px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(180deg,var(--pink),var(--pink-deep));box-shadow:0 6px 16px -4px var(--pink-deep);border:4px solid #fff2;}
+input[type=range]::-moz-range-thumb{width:44px;height:44px;border:4px solid #fff2;border-radius:50%;
+  background:var(--pink);}
+.slider-ends{display:flex;justify-content:space-between;color:var(--ink-faint);font-size:13px;font-weight:600;}
+
+/* hotspot */
+.hotspot-wrap{position:relative;border-radius:var(--r-md);overflow:hidden;border:2px solid var(--line);background:#0d0722;}
+.hotspot-wrap svg{display:block;width:100%;height:auto;touch-action:manipulation;}
+.hs-zone{cursor:pointer;fill:transparent;stroke:rgba(255,255,255,.22);stroke-dasharray:5 6;stroke-width:2;transition:fill .2s;}
+.hs-zone:active{fill:rgba(255,255,255,.1);}
+.hs-zone.reveal-ok{fill:rgba(37,214,154,.32);stroke:var(--good);stroke-dasharray:none;}
+.hs-zone.reveal-pick{fill:rgba(255,93,108,.3);stroke:var(--bad);stroke-dasharray:none;}
+
+/* lifelines */
+.lifelines{display:flex;gap:9px;margin-top:12px;flex-shrink:0;}
+.ll{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;
+  border-radius:var(--r-sm);background:var(--surface);border:1.5px solid var(--line);
+  font-size:12.5px;font-weight:700;transition:transform .12s,opacity .15s;}
+.ll:active{transform:scale(.96);}
+.ll .ic{font-size:20px;}
+.ll .cost{color:var(--bad);font-size:11px;font-weight:600;}
+.ll:disabled{opacity:.35;}
+.ll.used{opacity:.4;border-style:dashed;}
+.hint-note{margin-top:11px;padding:12px 14px;border-radius:var(--r-sm);
+  background:rgba(255,194,60,.1);border:1px solid rgba(255,194,60,.3);font-size:14.5px;color:var(--gold);
+  display:flex;gap:9px;align-items:flex-start;}
+
+/* footer / feedback */
+.qfoot{flex-shrink:0;margin-top:14px;}
+.submit-hint{text-align:center;color:var(--ink-faint);font-size:13px;margin-bottom:10px;min-height:16px;}
+.feedback{border-radius:var(--r-md);padding:15px 17px;margin-bottom:12px;
+  animation:pop .32s cubic-bezier(.3,1.4,.5,1);}
+@keyframes pop{from{transform:scale(.94);opacity:0;}to{transform:scale(1);opacity:1;}}
+.feedback.good{background:rgba(37,214,154,.15);border:1.5px solid var(--good);}
+.feedback.bad{background:rgba(255,93,108,.14);border:1.5px solid var(--bad);}
+.fb-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:5px;}
+.fb-verdict{font-family:var(--disp);font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px;}
+.feedback.good .fb-verdict{color:var(--good);} .feedback.bad .fb-verdict{color:var(--bad);}
+.fb-pts{font-family:var(--disp);font-weight:700;font-size:20px;}
+.fb-expl{font-size:14.5px;color:var(--ink-dim);line-height:1.45;}
+
+/* floating score popups */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.fxpop{position:absolute;font-family:var(--disp);font-weight:700;font-size:26px;
+  animation:fxrise 1s ease forwards;text-shadow:0 2px 10px rgba(0,0,0,.5);}
+.fxpop.plus{color:var(--good);} .fxpop.minus{color:var(--bad);} .fxpop.bonus{color:var(--gold);}
+@keyframes fxrise{0%{opacity:0;transform:translate(-50%,0) scale(.6);}
+  20%{opacity:1;transform:translate(-50%,-12px) scale(1.1);}
+  100%{opacity:0;transform:translate(-50%,-64px) scale(1);}}
+
+/* result */
+.result-wrap{margin:auto;width:100%;max-width:440px;text-align:center;}
+.trophy{font-size:76px;animation:bob 2.4s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-8px) rotate(3deg);}}
+.result-name{font-family:var(--disp);font-weight:600;font-size:20px;color:var(--ink-dim);margin-top:6px;}
+.final-score{font-family:var(--disp);font-weight:700;font-size:clamp(64px,22vw,96px);line-height:1;margin:2px 0;
+  background:linear-gradient(120deg,#fff,var(--gold),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.final-lbl{font-size:13px;letter-spacing:1px;color:var(--ink-faint);text-transform:uppercase;font-weight:700;}
+.stars{font-size:30px;letter-spacing:4px;margin:16px 0;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:22px 0;}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:15px 10px;}
+.stat .v{font-family:var(--disp);font-weight:700;font-size:24px;}
+.stat .k{font-size:12px;color:var(--ink-faint);margin-top:3px;}
+.perf-tag{display:inline-block;font-family:var(--disp);font-weight:700;font-size:17px;padding:8px 20px;
+  border-radius:999px;margin-bottom:6px;}
+
+/* leaderboard */
+.lb-wrap{margin:auto;width:100%;max-width:480px;}
+.lb-title{font-family:var(--disp);font-weight:700;font-size:30px;text-align:center;margin:6px 0 4px;}
+.lb-sub{text-align:center;color:var(--ink-faint);font-size:13px;margin-bottom:20px;}
+.lb-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:var(--r-md);
+  background:var(--surface);border:1px solid var(--line);margin-bottom:9px;}
+.lb-row.me{border-color:var(--pink);background:rgba(255,61,129,.1);}
+.lb-rank{font-family:var(--disp);font-weight:700;font-size:19px;width:34px;text-align:center;flex-shrink:0;}
+.lb-row.top1 .lb-rank{color:var(--gold);} .lb-row.top2 .lb-rank{color:#d8d8e8;} .lb-row.top3 .lb-rank{color:#e0975a;}
+.lb-info{flex:1;min-width:0;}
+.lb-name{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lb-meta{font-size:12px;color:var(--ink-faint);margin-top:1px;}
+.lb-score{font-family:var(--disp);font-weight:700;font-size:20px;color:var(--gold);flex-shrink:0;}
+.lb-empty{text-align:center;color:var(--ink-faint);padding:40px 0;}
+
+/* generic small stuff */
+.stack{display:flex;flex-direction:column;gap:10px;}
+.mt{margin-top:14px;}
+.center-col{margin:auto;width:100%;max-width:460px;}
+
+/* admin */
+.admin-h{font-family:var(--disp);font-weight:700;font-size:28px;margin:4px 0 2px;}
+.admin-sub{color:var(--ink-faint);font-size:14px;margin-bottom:20px;}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;margin-bottom:14px;}
+.card h3{font-family:var(--disp);font-weight:600;font-size:17px;margin:0 0 12px;}
+.field-lbl{font-size:12px;color:var(--ink-faint);font-weight:600;margin-bottom:6px;display:block;}
+.txt-in{width:100%;height:48px;border-radius:var(--r-sm);background:var(--bg-2);border:1.5px solid var(--line);
+  color:var(--ink);padding:0 14px;font-size:15px;outline:none;}
+.txt-in:focus{border-color:var(--pink);}
+.qr-box{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.qr-img{width:min(240px,68vw);height:min(240px,68vw);border-radius:var(--r-md);background:#fff;padding:10px;object-fit:contain;}
+.qr-url{font-size:12.5px;color:var(--violet);word-break:break-all;text-align:center;background:var(--bg-2);
+  padding:9px 12px;border-radius:8px;border:1px solid var(--line);width:100%;}
+.stat-inline{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stat-inline .stat{background:var(--bg-2);}
+.qacc{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;}
+.qacc:last-child{border:none;}
+.qacc .bar{flex:1;height:7px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;align-self:center;max-width:120px;}
+.qacc .bar>i{display:block;height:100%;background:var(--good);}
+
+/* fullscreen QR modal */
+#qrModal{position:fixed;inset:0;background:#fff;z-index:300;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;padding:24px;}
+#qrModal.show{display:flex;}
+#qrModal img{width:min(76vw,76vh);height:min(76vw,76vh);}
+#qrModal .u{color:#4a2a8a;font-size:14px;word-break:break-all;text-align:center;font-weight:600;}
+#qrModal .close{color:#333;font-size:15px;font-weight:700;border:2px solid #ddd;border-radius:99px;padding:10px 26px;}
+
+.footlink{text-align:center;margin-top:auto;padding-top:16px;}
+.footlink a{color:var(--ink-faint);font-size:13px;text-decoration:none;}
+.footlink a:active{color:var(--pink);}
+
+*:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+
+/* ===== varian tipe soal ===== */
+.cloze-sent{font-size:18px;line-height:2.2;margin:2px 0 18px;font-weight:500;}
+.blank{display:inline-block;min-width:66px;padding:3px 10px;margin:0 3px;border:0;border-bottom:2px dashed var(--pink);
+  border-radius:8px 8px 0 0;background:rgba(255,61,129,.08);color:var(--gold);font-weight:600;text-align:center;font-family:var(--disp);}
+.blank.empty{color:var(--ink-faint);letter-spacing:1px;}
+.blank.ok{border-bottom-color:var(--good);color:var(--good);} .blank.no{border-bottom-color:var(--bad);color:var(--bad);}
+.wordbank{display:flex;flex-wrap:wrap;gap:9px;}
+.wchip{padding:11px 15px;border-radius:var(--r-sm);background:var(--surface-2);border:2px solid var(--line);font-weight:600;font-family:var(--disp);}
+.wchip.used{opacity:.3;pointer-events:none;}
+.tokens{font-size:19px;line-height:2.1;font-weight:500;}
+.tok{display:inline-block;padding:2px 7px;border-radius:8px;border:2px solid transparent;transition:.12s;}
+.tok:active{background:var(--surface-2);}
+.tok.no{border-color:var(--bad);background:rgba(255,93,108,.16);}
+.tok.ok{border-color:var(--good);background:rgba(37,214,154,.16);}
+.rapid-prog{text-align:center;color:var(--ink-dim);font-size:13px;margin-bottom:8px;}
+.rapid-stmt{font-size:21px;font-weight:600;line-height:1.4;text-align:center;margin:6px 0 20px;min-height:64px;display:flex;align-items:center;justify-content:center;}
+.rapid-btns{display:flex;gap:12px;} .rapid-btns .opt{flex:1;justify-content:center;}
+.tl-ends{display:flex;justify-content:space-between;color:var(--ink-faint);font-size:12px;margin-bottom:8px;}
+.tl-date{font-size:12px;color:var(--gold);margin-left:8px;font-weight:600;}
+.mapwrap{position:relative;border-radius:var(--r-md);overflow:hidden;border:2px solid var(--line);background:#0d1a2e;}
+.mapwrap svg{display:block;width:100%;height:auto;}
+.mpt{position:absolute;transform:translate(-50%,-50%);padding:6px 11px;border-radius:22px;background:rgba(13,26,46,.85);
+  border:2px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px;color:var(--ink);}
+.mpt .num{display:none;min-width:19px;height:19px;border-radius:50%;background:var(--pink);color:#fff;font-size:11px;align-items:center;justify-content:center;}
+.mpt.on{border-color:var(--pink);background:rgba(255,61,129,.22);} .mpt.on .num{display:inline-flex;}
+.mpt.ok{border-color:var(--good);} .mpt.no{border-color:var(--bad);}
+.mem-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mcard{aspect-ratio:1.5;border-radius:var(--r-md);border:2px solid var(--line);background:var(--surface-2);
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font-weight:600;font-size:14px;line-height:1.25;
+  transition:.14s;color:transparent;}
+.mcard::after{content:'?';color:var(--ink-faint);font-family:var(--disp);font-size:26px;}
+.mcard.flip{color:var(--ink);background:rgba(255,61,129,.12);border-color:var(--pink);}
+.mcard.flip::after{content:none;}
+.mcard.matched{color:var(--good);background:rgba(37,214,154,.14);border-color:var(--good);pointer-events:none;}
+.mcard.matched::after{content:none;}
+.clues{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.clue{padding:11px 14px;border-radius:var(--r-sm);background:var(--surface);border:1.5px solid var(--line);font-size:15px;}
+.clue.locked{color:var(--ink-faint);font-style:italic;}
+.clue-btn{margin-bottom:16px;}
+.poll-note{margin-top:14px;color:var(--ink-faint);font-size:13px;text-align:center;line-height:1.5;}
+.opt.chosen{border-color:var(--violet);background:rgba(167,104,255,.18);}
+.stake-lbl{text-align:center;color:var(--ink-dim);font-size:14px;margin-bottom:10px;}
+.stakes{display:flex;gap:10px;margin-bottom:16px;}
+.stake{flex:1;padding:15px 0;border-radius:var(--r-md);background:var(--surface-2);border:2px solid var(--line);
+  font-family:var(--disp);font-weight:600;font-size:19px;text-align:center;}
+.stake.on{border-color:var(--gold);background:rgba(255,194,60,.18);color:var(--gold);}
+.stake.dimmed{opacity:.3;}
+
+.qtype-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.qtype-row .qtype-tag{margin-bottom:0;}
+.tier-badge{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-family:var(--ui);}
+.tier-badge.inti{background:rgba(37,214,154,.15);color:var(--good);border:1px solid rgba(37,214,154,.38);}
+.tier-badge.varian{background:rgba(167,104,255,.15);color:var(--violet);border:1px solid rgba(167,104,255,.4);}
 </style>
 </head>
 <body>
-<div id="lobby">
-  <div class="flame">🔥</div>
-  <div class="lobby-title">Pelita</div>
-  <div class="lobby-sub">Pelarian Daud</div>
-  <div class="lobby-ref">1 Samuel 18–19 · ±1020 SM</div>
-  <div class="divider-line"></div>
-  <div class="role-grid" id="roleGrid">
-    <button class="role-btn primary" onclick="showJoin()">Gabung ke Sesi<small>Masukkan kode dari pengajar</small></button>
-    <div class="role-teacher-link" onclick="showTeacher()">Saya pengajar — mulai sesi baru</div>
-  </div>
-  <div class="join-panel" id="joinPanel">
-    <div class="field-label">Kode Sesi</div>
-    <input class="code-input" id="codeInput" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="off">
-    <button class="join-go" onclick="joinSession()">Gabung</button>
-    <div class="join-msg" id="joinMsg"></div>
-    <div class="back-link" onclick="hideJoin()">← kembali</div>
-  </div>
-  <div class="join-panel" id="teacherPanel">
-    <div class="field-label">PIN Pengajar</div>
-    <input class="code-input" id="pinInput" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
-    <button class="join-go" onclick="startTeacher()">Mulai Sesi</button>
-    <div class="join-msg" id="pinMsg"></div>
-    <div class="back-link" onclick="hideTeacher()">← kembali</div>
-  </div>
+<div id="app"></div>
+<div id="fx"></div>
+<div id="qrModal">
+  <img id="qrModalImg" alt="QR code quiz"/>
+  <div class="u" id="qrModalUrl"></div>
+  <button class="close" onclick="document.getElementById('qrModal').classList.remove('show')">Tutup</button>
 </div>
-<div id="stage">
-  <div class="topbar">
-    <div class="brand"><span class="dot"></span> PELITA</div>
-    <div class="meta">
-      <div class="font-ctl"><button class="font-btn minus" onclick="fontStep(-1)">A−</button><button class="font-btn plus" onclick="fontStep(1)">A+</button></div>
-      <span class="badge-role" id="roleBadge">PESERTA</span>
-      <span id="statusMeta"></span>
-    </div>
-  </div>
-  <div class="viewport" id="viewport"></div>
-  <div class="controlbar" id="controlbar"></div>
-</div>
-<div class="toast" id="toast"></div>
+
 <script>
-/* ═══════ PIN PENGAJAR — ganti bila perlu ═══════ */
-const TEACHER_PIN = "1808";
-/* ════════════════════════════════════════════════ */
+/* ============================================================
+   STORAGE — localStorage kalau tersedia, fallback ke memori.
+   (Di preview artifact localStorage diblok, jadi otomatis pakai memori;
+    di domain sungguhan hasil leaderboard tersimpan.)
+   ============================================================ */
+const Store = (()=>{
+  let ok=false; try{const k='__t';localStorage.setItem(k,'1');localStorage.removeItem(k);ok=true;}catch(e){ok=false;}
+  const mem={};
+  return {
+    get(k){ try{ return ok? JSON.parse(localStorage.getItem(k)) : (mem[k]??null);}catch(e){return mem[k]??null;} },
+    set(k,v){ try{ if(ok) localStorage.setItem(k,JSON.stringify(v)); else mem[k]=v; }catch(e){mem[k]=v;} }
+  };
+})();
 
-const SLIDES=[
-{id:'cover',html:`<div class="cover"><div class="flame">🔥</div><div class="kicker">Pelajaran 8</div><h1>Pelarian Daud</h1><div class="c-ref">1 Samuel 18–19 · ±1020 SM</div><div class="c-series">Seri Sejarah Penebusan · Silsilah Yesus Kristus (I)</div><div class="session-chip" id="coverSession" style="display:none"><div class="lbl">Kode Sesi</div><div class="code" id="coverCode">----</div></div></div>`},
-{id:'review',html:`<div class="kicker">Review</div><h1>Di Mana Kita</h1><ul class="points"><li>Saul tidak taat → <b>ditolak</b></li><li>Daud diurapi Samuel, usia ±15</li><li>Kecapi · Goliat · pahlawan</li><li>Hari ini: <b>dari pahlawan ke pelarian</b></li></ul>`},
-{id:'timeline',html:`<div class="kicker">Garis Waktu</div><h1>Dari Saul ke Daud</h1><div class="timeline"><div class="tl-item"><div class="tl-year">±1050</div><div class="tl-label">Saul menjadi raja</div></div><div class="tl-item key"><div class="tl-year">±1025</div><div class="tl-label">Daud diurapi</div><div class="tl-sub">usia 15</div></div><div class="tl-item"><div class="tl-label">Kecapi · Goliat · pahlawan</div></div><div class="tl-item key"><div class="tl-year">±1020</div><div class="tl-label">Pelarian dimulai</div><div class="tl-sub">usia 20</div></div><div class="tl-item"><div class="tl-year">±1010</div><div class="tl-label">Saul mati · Daud raja</div><div class="tl-sub">10 tahun · 16 tempat</div></div><div class="tl-item"><div class="tl-year">±970</div><div class="tl-label">Akhir pemerintahan Daud</div></div></div>`},
+/* ============================================================
+   DATA QUIZ — struktur fleksibel, banyak quiz per URL.
+   ============================================================ */
+const QUIZZES = {
+  demo: {
+    id:'demo', title:'Giring-Giring Emas', status:'Published',
+    questions:[
+      { id:1, type:'multiple_choice', tier:'inti', timer:30, score:100,
+        question:'Apa inti dari "Sejarah Penebusan"?',
+        options:['Catatan perang bangsa Israel','Penyelenggaraan Allah sepanjang sejarah untuk menggenapi keselamatan dalam Kristus','Kumpulan hukum dan aturan Taurat','Daftar raja-raja dunia kuno'],
+        correctAnswer:1,
+        explanation:'Sejarah penebusan adalah administrasi (penyelenggaraan) Allah di sepanjang sejarah, berpusat dan digenapi pada Yesus Kristus.' },
 
-{id:'q1',quiz:{tag:'Kuis · Pancingan',q:'Saul mendengar apa yang membuatnya sangat marah pada Daud?',opts:['Daud menghina Saul di depan umum','Nubuat nabi bahwa Daud akan menjadi raja','Nyanyian rakyat: "Saul beribu-ribu, Daud berlaksa-laksa"','Daud menolak menikahi anak Saul'],correct:2,explain:'<b>Nyanyian rakyat.</b> Pujian yang tulus, tanpa niat jahat sedikit pun — tapi justru menanamkan benih iri di hati Saul. Efeknya lebih dahsyat dari gangguan roh jahat.'}},
+      { id:2, type:'true_false', tier:'inti', timer:20, score:100,
+        question:'Henokh tidak mengalami kematian karena diangkat oleh Allah.',
+        correctAnswer:true,
+        explanation:'Benar. Henokh hidup bergaul dengan Allah, "lalu ia tidak ada lagi, sebab telah diangkat Allah" (Kejadian 5:24).' },
 
-{id:'reaksi',html:`<div class="kicker">I · Dari Kagum ke Iri Hati</div><h1>Sebuah Nyanyian → Sebuah Benih</h1><ul class="points"><li>Saul bangga → <b>kepala prajurit</b></li><li>Nyanyian rakyat yang tulus, tanpa niat jahat</li><li>Efeknya lebih dahsyat dari roh jahat</li></ul><div class="verse"><div class="ref">1 Samuel 18:7</div><div class="txt">"Saul mengalahkan beribu-ribu musuh, tetapi Daud berlaksa-laksa."</div></div><div class="verse"><div class="ref">Ayub 34:3</div><div class="txt">Karena telinga itu menguji kata-kata, seperti langit-langit mencecap makanan.</div></div>`},
-{id:'anatomi',html:`<div class="kicker">Anatomi Kejatuhan Hati</div><h1>Lima Tahap</h1><div class="chain" id="chain"><div class="chain-step" data-step="0"><div class="num">1</div><div class="body"><div class="word">Sebal</div><div class="heb">ra'a — memecahkan, terluka</div></div></div><div class="chain-arrow">↓</div><div class="chain-step" data-step="1"><div class="num">2</div><div class="body"><div class="word">Marah</div><div class="heb">hara — menyala, terbakar</div></div></div><div class="chain-arrow">↓</div><div class="chain-step" data-step="2"><div class="num">3</div><div class="body"><div class="word">Dengki</div><div class="heb">1 Sam 18:9</div></div></div><div class="chain-arrow">↓</div><div class="chain-step" data-step="3"><div class="num">4</div><div class="body"><div class="word">Dikuasai roh jahat</div><div class="heb">1 Sam 18:10</div></div></div><div class="chain-arrow">↓</div><div class="chain-step danger" data-step="4"><div class="num">5</div><div class="body"><div class="word">Niat membunuh</div><div class="heb">tombak — dua kali</div></div></div></div><div class="tap-hint" id="chainHint">tap tahap untuk membuka →</div><div class="verse"><div class="ref">Efesus 4:26–27</div><div class="txt">...janganlah matahari terbenam, sebelum padam amarahmu — dan janganlah beri kesempatan kepada Iblis.</div></div><div class="note-line">Pola yang sama: Kain (Kejadian 4:4–7)</div>`},
+      { id:3, type:'picture_choice', tier:'inti', timer:25, score:100,
+        question:'Lambang mana yang mewakili Anak Domba Paskah?',
+        options:['🐑','🦁','🕊️','🐟'], correctAnswer:0,
+        explanation:'Anak domba Paskah menunjuk pada Kristus — "Anak Domba Allah yang menghapus dosa dunia".' },
 
-{id:'q2',quiz:{tag:'Kuis · Cek Pemahaman',q:'Apa langkah PERTAMA dalam kejatuhan hati Saul?',opts:['Langsung ingin membunuh','Rasa sebal / terluka (ra\'a)','Dikuasai roh jahat','Dengki bertahun-tahun'],correct:1,explain:'<b>Sebal (ra\'a)</b> — hati yang terluka sampai pecah. Dari sinilah semuanya bermula: sebal → marah → dengki → dikuasai roh jahat → niat membunuh. Kalau dihentikan di tahap awal, tidak akan sampai ke pembunuhan.'}},
+      { id:4, type:'odd_one_out', tier:'varian', timer:30, score:120,
+        question:'Mana yang BUKAN bagian dari 10 generasi Adam sampai Nuh?',
+        options:['Set','Henokh','Metusalah','Harun'], correctAnswer:3,
+        explanation:'Harun hidup di zaman Musa, jauh sesudah Nuh. Set, Henokh, Metusalah ada dalam Kejadian 5.' },
 
-{id:'siasat',html:`<div class="kicker">Siasat Saul</div><h1>Pernikahan sebagai Jebakan</h1><ul class="points"><li>Jadikan Daud <b>menantu</b> — tapi berharap ia mati</li><li>Mas kawin: 100 kulit khatan Filistin</li><li>Daud membawa <b>200</b> — dua kali lipat</li><li>Saul makin takut, makin dendam</li></ul><div class="verse"><div class="ref">1 Samuel 18:21</div><div class="txt">"Baiklah Mikhal kuberikan kepadanya; biarlah ia menjadi jerat bagi Daud..."</div></div>`},
-{id:'malam',html:`<div class="kicker">Malam Pelarian</div><h1>Turun dari Jendela</h1><ul class="points"><li>Tombak dilempar lagi — Daud luput</li><li>Saul kirim orang membunuh di rumahnya</li><li>Mikhal menurunkan Daud dari <b>jendela</b></li><li>Daud menulis <b>Mazmur 59</b> malam itu</li></ul><div class="verse"><div class="ref">1 Samuel 19:12</div><div class="txt">Lalu Mikhal menurunkan Daud dari jendela, ia pergi melarikan diri dan luputlah ia.</div></div>`},
-{id:'konteks',html:`<div class="kicker">II · Dalam Konteks Seri</div><h1>Mengapa Ini Krusial</h1><div class="gen-strip"><span class="gen-node">Abraham</span><span class="gen-sep">→</span><span class="gen-node">…</span><span class="gen-sep">→</span><span class="gen-node mark">Daud · 14</span><span class="gen-sep">→</span><span class="gen-node q">Salomo?</span></div><ul class="points"><li>Daud = generasi ke-<b>14</b>, puncak Fase Pertama</li><li>Saat pelarian, <b>Salomo belum lahir</b></li><li>Rencana Mesias bergantung pada 1 pemuda usia 20</li></ul><div class="callout"><div class="big">Bukan Allah yang terancam gagal.</div><div class="small">Allah memelihara pilihan-Nya — bahkan sebelum janji formal diucapkan kepada Daud.</div></div>`},
+      { id:5, type:'matching', tier:'inti', timer:40, score:150,
+        question:'Pasangkan tokoh dengan peristiwanya.',
+        left:['Nuh','Abraham','Musa'],
+        right:['Perjanjian obor','Keluaran dari Mesir','Bahtera & air bah'],
+        correctAnswer:{'Nuh':'Bahtera & air bah','Abraham':'Perjanjian obor','Musa':'Keluaran dari Mesir'},
+        explanation:'Nuh — bahtera & air bah; Abraham — perjanjian obor (Kejadian 15); Musa — keluaran dari Mesir.' },
 
-{id:'q3',quiz:{tag:'Kuis · Poin Inti',q:'Mengapa pemeliharaan Daud selama pelarian begitu penting?',opts:['Karena Daud raja yang paling kuat','Karena Allah sudah bersumpah di 2 Samuel 7','Karena dari keturunan Daud, Mesias akan lahir','Karena Daud tidak pernah berbuat dosa'],correct:2,explain:'<b>Dari keturunan Daud, Mesias akan lahir.</b> Menarik: janji formal 2 Samuel 7 baru diucapkan <i>setelah</i> Daud jadi raja — jadi saat pelarian, janji itu belum ada. Allah memelihara pilihan-Nya bahkan sebelum janji formal diikrarkan.'}},
+      { id:6, type:'cloze', tier:'inti', timer:40, score:150,
+        question:'Lengkapi pernyataan iman Abraham (Kejadian 15:6).',
+        template:'{} percaya kepada {}, maka hal itu diperhitungkan kepadanya sebagai {}.',
+        answers:['Abraham','TUHAN','kebenaran'],
+        bank:['Abraham','TUHAN','kebenaran','Musa','berhala','dosa'],
+        explanation:'Kejadian 15:6 — dasar pembenaran oleh iman, jauh sebelum hukum Taurat diberikan.' },
 
-{id:'peta',html:`<div class="kicker">10 Tahun · 16 Tempat · 3 Fase</div><h1>Peta Pelarian</h1><ul class="points" style="margin-bottom:.8rem"><li>Setiap nama tempat <b>berbicara</b></li></ul><div class="phase"><div class="phase-head"><span class="pnum">1</span> Rama → Hutan Keret <span class="pyears">±1020–1018</span></div><div class="place-row" data-phase="1"><span class="place-chip" data-mean="tempat tinggi — mencari Samuel">Rama</span><span class="place-chip" data-mean="bukit — mencari Yonatan">Gibea</span><span class="place-chip" data-mean="tempat tinggi — kota imam, Daud berbohong">Nob</span><span class="place-chip" data-mean="pemerasan anggur — kota Goliat, pura-pura gila">Gat</span><span class="place-chip" data-mean="persembunyian — 400 orang berkumpul">Gua Adulam</span><span class="place-chip" data-mean="menara jaga — menitipkan orang tua">Mizpa Moab</span><span class="place-chip" data-mean="hutan tebal — nabi Gad memberi petunjuk">Hutan Keret</span></div><div class="place-detail" data-detail="1"></div></div><div class="phase"><div class="phase-head"><span class="pnum">2</span> Kehila → Paran <span class="pyears">±1017–1015</span></div><div class="place-row" data-phase="2"><span class="place-chip" data-mean="benteng — bertanya dulu pada Allah">Kehila</span><span class="place-chip" data-mean="melebur — pemurnian seperti emas">Zif</span><span class="place-chip" data-mean="tempat tinggal — 'Gunung Batu Keluputan'">Maon</span><span class="place-chip" data-mean="mata air — tak mau melukai Saul">En-Gedi</span><span class="place-chip" data-mean="banyak gua — titik tergelap, Samuel mati">Paran</span></div><div class="place-detail" data-detail="2"></div></div><div class="phase"><div class="phase-head"><span class="pnum">3</span> Gat → Ziklag <span class="pyears">±1014–1010</span></div><div class="place-row" data-phase="3"><span class="place-chip" data-mean="kebun anggur — Nabal & Abigail">Karmel</span><span class="place-chip" data-mean="pemerasan anggur — berlindung pada raja Filistin">Gat</span><span class="place-chip" data-mean="liku-liku — penuh liku, tapi Allah menyertai">Ziklag</span></div><div class="place-detail" data-detail="3"></div></div>`},
-{id:'mesias',html:`<span class="lesson-num">Pelajaran 1</span><h1>Gambaran Penderitaan Mesias</h1><ul class="points" style="margin-bottom:.9rem"><li>Mazmur ditulis <b>dari dalam</b> pelarian</li><li>Menggambarkan salib — ratusan tahun sebelumnya</li></ul><div class="par-card"><div class="par-head" data-par="0"><div class="d"><div class="par-lbl">Daud</div><div class="par-ref">Mzm 22:2</div></div><div><div class="par-lbl">Yesus</div><div class="par-ref">Mat 27:46</div></div></div><div class="par-body" data-body="0"><div class="pv"><div class="pvl">Mazmur 22:2</div><div class="pvt">Allahku, Allahku, mengapa Engkau meninggalkan aku?</div></div><div class="pv"><div class="pvl">Matius 27:46</div><div class="pvt">"Eli, Eli, lama sabakhtani?" — Allah-Ku, mengapa Engkau meninggalkan Aku?</div></div></div><div class="par-caret" data-caret="0">▾ buka</div></div><div class="par-card"><div class="par-head" data-par="1"><div class="d"><div class="par-lbl">Daud</div><div class="par-ref">Mzm 22:16</div></div><div><div class="par-lbl">Yesus</div><div class="par-ref">Yoh 19:28</div></div></div><div class="par-body" data-body="1"><div class="pv"><div class="pvl">Mazmur 22:16</div><div class="pvt">...lidahku melekat pada langit-langit mulutku; dalam debu maut Kauletakkan aku.</div></div><div class="pv"><div class="pvl">Yohanes 19:28</div><div class="pvt">...berkatalah Ia — supaya genaplah Kitab Suci —: "Aku haus!"</div></div></div><div class="par-caret" data-caret="1">▾ buka</div></div><div class="par-card"><div class="par-head" data-par="2"><div class="d"><div class="par-lbl">Daud</div><div class="par-ref">Mzm 22:19</div></div><div><div class="par-lbl">Yesus</div><div class="par-ref">Yoh 19:23–24</div></div></div><div class="par-body" data-body="2"><div class="pv"><div class="pvl">Mazmur 22:19</div><div class="pvt">Mereka membagi-bagi pakaianku, dan membuang undi atas jubahku.</div></div><div class="pv"><div class="pvl">Yohanes 19:23–24</div><div class="pvt">...mereka membuang undi untuk menentukan siapa yang mendapat jubah Yesus.</div></div></div><div class="par-caret" data-caret="2">▾ buka</div></div>`},
+      { id:7, type:'arrange_words', tier:'inti', timer:35, score:150,
+        question:'Susun menjadi pernyataan iman Abraham.',
+        words:['kepada','Abraham','TUHAN','percaya'],
+        correctAnswer:['Abraham','percaya','kepada','TUHAN'],
+        explanation:'"Abraham percaya kepada TUHAN" — imannya diperhitungkan sebagai kebenaran.' },
 
-{id:'q4',quiz:{tag:'Kuis · Cek Pemahaman',q:'Mazmur 22 yang Daud tulis dalam pelarian menggambarkan apa?',opts:['Kemenangan Daud atas Goliat','Penderitaan Yesus di kayu salib','Pemerintahan Daud yang adil','Pembangunan Bait Suci'],correct:1,explain:'<b>Penderitaan Yesus di salib.</b> Daud menulis dari penderitaannya sendiri, tapi Allah mengarahkan penanya — "Eli, Eli, lama sabakhtani", kehausan, undi atas jubah — semua tergenapi ratusan tahun kemudian.'}},
+      { id:8, type:'find_wrong_word', tier:'inti', timer:35, score:120,
+        question:'Satu kata pada kutipan ini keliru. Tap kata yang salah.',
+        tokens:['Pada','hari','keenam','Allah','berhenti','dari','segala','pekerjaan-Nya.'],
+        wrongIndex:2, correction:'ketujuh',
+        explanation:'Seharusnya "hari ketujuh" — Allah berhenti pada hari ketujuh (Kejadian 2:2), asal mula Sabat.' },
 
-{id:'zaman',html:`<span class="lesson-num">Pelajaran 2</span><h1>Penderitaan di Zaman Akhir</h1><ul class="points"><li>Hidup benar → kadang <b>iri & aniaya</b>, seperti Daud</li><li>Akan ada masa <b>kelaparan firman</b></li><li>Simpan firman selagi bisa — seperti Yusuf simpan gandum</li></ul><div class="verse"><div class="ref">Amos 8:11</div><div class="txt">"...bukan kelaparan akan makanan... melainkan akan mendengarkan firman TUHAN."</div></div><div class="verse"><div class="ref">Daniel 9:27</div><div class="txt">Pada pertengahan tujuh masa itu ia akan menghentikan korban sembelihan dan korban santapan...</div></div>`},
-{id:'latihan',html:`<span class="lesson-num">Pelajaran 3</span><h1>Masa Latihan</h1><ul class="points"><li>Allah <b>sengaja</b> mengizinkan proses ini</li><li>Raja yang tak pernah susah, tak mengerti rakyatnya</li><li>Kesusahan hari ini bisa jadi <b>latihan</b></li></ul><div class="verse"><div class="ref">Ibrani 12:11</div><div class="txt">...kemudian ia menghasilkan buah kebenaran yang memberikan damai kepada mereka yang dilatih olehnya.</div></div>`},
-{id:'bersalin',html:`<span class="lesson-num">Pelajaran 4</span><h1>Masa Sakit Bersalin</h1><ul class="points"><li>Bukan hanya latihan — <b>rupa Kristus dibentuk</b></li><li>Ada Kristus dalam Daud (tak penuh, tapi ada)</li><li>Teori firman → <b>praktik</b> dalam hidup sehari-hari</li></ul><div class="verse"><div class="ref">Galatia 4:19</div><div class="txt">...aku menderita sakit bersalin lagi, sampai rupa Kristus menjadi nyata di dalam kamu.</div></div><div class="verse"><div class="ref">Yohanes 16:21</div><div class="txt">Seorang perempuan berdukacita saat melahirkan, tetapi sesudah itu ia tidak ingat lagi penderitaannya...</div></div>`},
-{id:'kesimpulan',html:`<div class="kicker">Kesimpulan</div><h1>Pelita yang Tak Padam</h1><ul class="points"><li>Masa gelap = <b>periode berkat</b> yang Allah siapkan</li><li>Sama seperti Abraham, Yakub, Tamar, Rahab, Rut</li><li>Pilihan Allah tak bisa digagalkan manusia</li></ul><div class="callout"><div class="big">🔥</div><div class="small">Bukan karena manusia bertahan — melainkan karena kasih Allah tidak pernah menyerah, pelita menyala sampai Kristus datang.</div></div>`},
+      { id:9, type:'arrange_pictures', tier:'varian', timer:35, score:150,
+        question:'Urutkan peristiwa sesuai jalannya sejarah penebusan.',
+        items:[{emo:'👑',label:'Kerajaan Daud'},{emo:'🍎',label:'Kejatuhan Adam'},{emo:'🔥',label:'Perjanjian obor Abraham'},{emo:'🌊',label:'Air bah zaman Nuh'}],
+        correctAnswer:['Kejatuhan Adam','Air bah zaman Nuh','Perjanjian obor Abraham','Kerajaan Daud'],
+        explanation:'Adam → Nuh → Abraham → Daud — garis penebusan terus mengarah pada Kristus.' },
 
-{id:'recap-intro',html:`<div class="cover"><div class="quiz-tag" style="font-size:.8em">Rekap Akhir</div><h1 style="font-size:1.7em">Mari Kita Ingat</h1><div class="note-line" style="opacity:1;font-size:1.1em">3 pertanyaan singkat<br>untuk mengunci pelajaran hari ini</div></div>`},
-{id:'r1',quiz:{tag:'Rekap · 1 dari 3',q:'Kata Ibrani "ra\'a" yang menggambarkan hati Saul berarti...',opts:['Menyala dan terbakar','Memecahkan, hancur, terluka','Iri dan dengki','Takut dan gentar'],correct:1,explain:'<b>Memecahkan / terluka.</b> Hati Saul terluka sampai pecah — tak bisa dipulihkan. ("Menyala/terbakar" adalah <i>hara</i>, tahap berikutnya.)'}},
-{id:'r2',quiz:{tag:'Rekap · 2 dari 3',q:'Berapa lama dan berapa tempat pelarian Daud?',opts:['5 tahun, 8 tempat','7 tahun, 12 tempat','10 tahun, 16 tempat','15 tahun, 20 tempat'],correct:2,explain:'<b>10 tahun, 16 tempat</b> — dari usia 20 sampai 30, dalam 3 fase. Setiap tempat punya arti nama yang berbicara.'}},
-{id:'r3',quiz:{tag:'Rekap · 3 dari 3',q:'Pelajaran "sakit bersalin" dari pelarian Daud berarti...',opts:['Daud menderita tanpa tujuan','Rupa Kristus dibentuk melalui penderitaan','Daud akan segera mati','Penderitaan adalah hukuman dosa'],correct:1,explain:'<b>Rupa Kristus dibentuk melalui penderitaan.</b> Seperti sakit bersalin melahirkan kehidupan — penderitaan Daud membentuk rupa Kristus dalam dirinya, walau tak penuh.'}},
-{id:'score',html:`<div class="cover"><div class="kicker">Skor Anda</div><div class="score-ring"><div class="sv" id="scoreVal">–</div><div class="sl" id="scoreLbl">dari 5 kuis</div></div><div class="note-line" id="scoreMsg" style="opacity:1"></div></div>`},
+      { id:10, type:'timeline', tier:'varian', timer:45, score:160,
+        question:'Susun peristiwa sesuai urutan sejarah penebusan.',
+        items:['Penciptaan','Air bah','Panggilan Abraham','Keluaran dari Mesir','Kerajaan Daud'],
+        correctAnswer:['Penciptaan','Air bah','Panggilan Abraham','Keluaran dari Mesir','Kerajaan Daud'],
+        dates:{'Penciptaan':'permulaan','Air bah':'zaman Nuh','Panggilan Abraham':'± 2000 SM','Keluaran dari Mesir':'± 1446 SM','Kerajaan Daud':'± 1000 SM'},
+        explanation:'Garis penebusan mengalir dari penciptaan menuju Kristus, melewati Nuh, Abraham, keluaran, dan Daud.' },
 
-{id:'penutup',html:`<div class="cover"><div class="flame">🔥</div><h1 style="font-size:1.6em">Minggu Depan</h1><div class="note-line" style="opacity:1;font-size:1.1em">Detail 10 tahun pelarian<br>3 fase · 16 tempat</div><div class="c-series" style="margin-top:1.5rem">1 Samuel 18–19 · Pelajaran 8</div></div>`},
-];
+      { id:11, type:'drag_drop', tier:'inti', timer:45, score:150,
+        question:'Kelompokkan tokoh: sebelum atau sesudah air bah.',
+        instruct:'Seret tiap kartu ke kotak yang benar.',
+        items:['Henokh','Abraham','Metusalah','Daud'],
+        bins:[{id:'sebelum',label:'Sebelum air bah',emo:'🌿'},{id:'sesudah',label:'Sesudah air bah',emo:'🌈'}],
+        correctAnswer:{'Henokh':'sebelum','Metusalah':'sebelum','Abraham':'sesudah','Daud':'sesudah'},
+        explanation:'Henokh & Metusalah hidup sebelum air bah; Abraham & Daud jauh sesudahnya.' },
 
-let role=null,sessionCode=null,current=0,following=true,pollTimer=null;
-let fontIdx=1;const FONT_STEPS=[14,16,18,20,23];
-let reveals={};            // slideIndex -> true (synced)
-let mySelections={};       // slideIndex -> optIndex (local, per peserta)
-const KEY=c=>`pelita:session:${c}`;
-const isQuiz=i=>!!SLIDES[i].quiz;
-const totalQuiz=SLIDES.filter(s=>s.quiz).length;
+      { id:12, type:'drag_drop', tier:'varian', tag:'Klasifikasi 3 Kotak', timer:50, score:180,
+        question:'Kelompokkan tokoh ke zamannya.',
+        instruct:'Seret tiap kartu ke kotak yang benar.',
+        items:['Abraham','Ishak','Gideon','Simson','Saul','Daud'],
+        bins:[{id:'leluhur',label:'Bapa Leluhur',emo:'👴'},{id:'hakim',label:'Zaman Hakim',emo:'⚖️'},{id:'raja',label:'Zaman Raja',emo:'👑'}],
+        correctAnswer:{'Abraham':'leluhur','Ishak':'leluhur','Gideon':'hakim','Simson':'hakim','Saul':'raja','Daud':'raja'},
+        explanation:'Bapa leluhur (Abraham, Ishak) → zaman para hakim (Gideon, Simson) → zaman raja (Saul, Daud).' },
 
-function showJoin(){document.getElementById('roleGrid').style.display='none';document.getElementById('teacherPanel').classList.remove('show');document.getElementById('joinPanel').classList.add('show');setTimeout(()=>document.getElementById('codeInput').focus(),100);}
-function hideJoin(){document.getElementById('joinPanel').classList.remove('show');document.getElementById('roleGrid').style.display='flex';document.getElementById('joinMsg').textContent='';}
-function showTeacher(){document.getElementById('roleGrid').style.display='none';document.getElementById('joinPanel').classList.remove('show');document.getElementById('teacherPanel').classList.add('show');setTimeout(()=>document.getElementById('pinInput').focus(),100);}
-function hideTeacher(){document.getElementById('teacherPanel').classList.remove('show');document.getElementById('roleGrid').style.display='flex';document.getElementById('pinMsg').textContent='';}
+      { id:13, type:'ranking', tier:'inti', timer:40, score:150,
+        question:'Urutkan bagian Kemah Suci dari luar ke dalam.',
+        items:['Ruang Maha Kudus','Gerbang halaman','Ruang Kudus','Mezbah korban bakaran'],
+        correctAnswer:['Gerbang halaman','Mezbah korban bakaran','Ruang Kudus','Ruang Maha Kudus'],
+        explanation:'Gerbang → mezbah korban bakaran → Ruang Kudus → Ruang Maha Kudus (tempat Tabut) — jalan menghampiri Allah.' },
 
-async function startTeacher(){const pin=document.getElementById('pinInput').value.trim();const msg=document.getElementById('pinMsg');if(pin!==TEACHER_PIN){msg.textContent='PIN salah.';document.getElementById('pinInput').value='';return;}role='teacher';document.body.classList.add('is-teacher');sessionCode=String(Math.floor(1000+Math.random()*9000));try{await window.storage.set(KEY(sessionCode),JSON.stringify({slide:0,reveals:{},ts:Date.now()}),true);}catch(e){}enterStage();}
-async function joinSession(){const code=document.getElementById('codeInput').value.trim();const msg=document.getElementById('joinMsg');if(code.length!==4){msg.textContent='Masukkan 4 angka.';return;}msg.textContent='Menghubungkan...';try{const res=await window.storage.get(KEY(code),true);if(!res||!res.value){msg.textContent='Sesi tidak ditemukan. Cek kode.';return;}const data=JSON.parse(res.value);role='follower';document.body.classList.add('is-follower');sessionCode=code;current=data.slide||0;reveals=data.reveals||{};following=true;enterStage();startPolling();}catch(e){msg.textContent='Sesi tidak ditemukan. Cek kode.';}}
+      { id:14, type:'hotspot', tier:'inti', timer:30, score:150,
+        question:'Giring-giring emas dipasang di bagian mana jubah Imam Besar? Tap bagiannya.',
+        svgLabel:'jubah imam besar',
+        svg:`<path d="M35 27 L25 31 L28 45 L35 41 Z" fill="#2b429c"/><path d="M65 27 L75 31 L72 45 L65 41 Z" fill="#2b429c"/><path d="M35 26 L65 26 L73 80 L27 80 Z" fill="#3454c4"/><path d="M43 30 L41 78 M50 30 L50 79 M57 30 L59 78" stroke="#2b429c" stroke-width="1" fill="none" opacity=".6"/><ellipse cx="50" cy="27" rx="7" ry="3.4" fill="#0d0722"/><ellipse cx="50" cy="27" rx="7" ry="3.4" fill="none" stroke="#ffc23c" stroke-width="1.4"/><line x1="27.6" y1="74" x2="72.4" y2="74" stroke="#ffc23c" stroke-width="1.4"/><circle cx="31" cy="78" r="2.2" fill="#ffc23c"/><circle cx="37.7" cy="78" r="2.2" fill="#c0392b"/><circle cx="44.3" cy="78" r="2.2" fill="#ffc23c"/><circle cx="51" cy="78" r="2.2" fill="#c0392b"/><circle cx="57.7" cy="78" r="2.2" fill="#ffc23c"/><circle cx="64.3" cy="78" r="2.2" fill="#c0392b"/><circle cx="71" cy="78" r="2.2" fill="#ffc23c"/>`,
+        zones:[
+          {id:'leher',x:42,y:19,w:16,h:13,label:'Leher'},
+          {id:'badan',x:32,y:34,w:36,h:34,label:'Badan jubah'},
+          {id:'kelim',x:25,y:72,w:50,h:13,label:'Kelim'}
+        ],
+        correctAnswer:'kelim',
+        explanation:'Pada kelim (ujung bawah) jubah — giring-giring emas berselang-seling dengan buah delima (Keluaran 28:33-35).' },
 
-function enterStage(){document.getElementById('lobby').style.display='none';document.getElementById('stage').classList.add('show');buildSlides();buildControlBar();applyFont();document.getElementById('roleBadge').textContent=role==='teacher'?'PENGAJAR':'PESERTA';document.getElementById('roleBadge').className='badge-role '+(role==='teacher'?'teacher':'');if(role==='teacher')document.getElementById('coverSession')?.style.setProperty('display','block');renderSession();goTo(current);}
+      { id:15, type:'map_route', tier:'varian', timer:40, score:150,
+        question:'Tap titik-titik sesuai urutan perjalanan Abraham.',
+        svgLabel:'peta skematik perjalanan Abraham',
+        svg:`<path d="M8 42 Q22 16 44 20 Q64 23 80 13 Q93 9 96 28 Q90 46 70 47 Q46 53 30 56 Q13 58 8 42 Z" fill="#caa46a" opacity=".28" stroke="#caa46a" stroke-width="0.5"/><path d="M80 15 Q70 30 60 40 Q52 47 42 51" fill="none" stroke="#3d7bd6" stroke-width="1" opacity=".55"/>`,
+        points:[{id:'ur',x:82,y:62,label:'Ur'},{id:'haran',x:60,y:22,label:'Haran'},{id:'kanaan',x:28,y:52,label:'Kanaan'}],
+        correctAnswer:['ur','haran','kanaan'],
+        explanation:'Abraham berangkat dari Ur-Kasdim ke Haran, lalu ke tanah Kanaan (Kejadian 11-12). Peta ini skematik, bukan skala sebenarnya.' },
 
-function buildSlides(){const vp=document.getElementById('viewport');vp.innerHTML='';SLIDES.forEach((s,i)=>{const d=document.createElement('div');d.className='slide';d.dataset.idx=i;d.innerHTML=s.quiz?renderQuiz(s.quiz,i):s.html;vp.appendChild(d);});wireInteractions();}
+      { id:16, type:'multiple_select', tier:'inti', timer:40, score:150,
+        question:'Pilih SEMUA perempuan yang disebut dalam silsilah Yesus (Matius 1).',
+        options:['Tamar','Rahab','Rut','Batsyeba','Sara','Hawa'], correctAnswer:[0,1,2,3],
+        explanation:'Matius 1 menyebut Tamar, Rahab, Rut, dan istri Uria (Batsyeba). Sara & Hawa tidak dicantumkan di sana.' },
 
-function renderQuiz(q,idx){
-  const letters=['A','B','C','D','E'];
-  let opts=q.opts.map((o,k)=>`<div class="quiz-opt" data-qz="${idx}" data-opt="${k}"><span class="opt-letter">${letters[k]}</span><span class="opt-text">${o}</span><span class="opt-mark"></span></div>`).join('');
-  return `<div class="quiz-tag">${q.tag||'Kuis'}</div><div class="quiz-q">${q.q}</div><div class="quiz-opts" data-opts="${idx}">${opts}</div><button class="reveal-btn" data-reveal="${idx}" onclick="revealAnswer(${idx})">Buka Jawaban</button><div class="wait-hint" data-wait="${idx}">Pilih jawaban Anda — tunggu pengajar membuka.</div><div class="quiz-explain" data-explain="${idx}">${q.explain}</div>`;
+      { id:17, type:'memory_match', tier:'inti', timer:50, score:160,
+        question:'Buka kartu dan cocokkan tokoh dengan perannya.',
+        pairs:[['Adam','Manusia pertama'],['Nuh','Bahtera'],['Abraham','Bapa orang beriman'],['Musa','Menerima Taurat']],
+        explanation:'Tiap tokoh memegang peran khas dalam rangkaian sejarah penebusan.' },
+
+      { id:18, type:'slider', tier:'inti', timer:35, score:200,
+        question:'Menurut penataan Matius 1:17 (3 × 14), ada berapa total generasi Abraham sampai Kristus?',
+        min:0, max:60, step:1, start:30, unit:'generasi',
+        correctAnswer:42, tolerance:[{r:0,pts:200},{r:2,pts:150},{r:5,pts:100}],
+        explanation:'3 kelompok × 14 generasi = 42: Abraham–Daud, Daud–pembuangan, pembuangan–Kristus.' },
+
+      { id:19, type:'rapid_tf', tier:'varian', timer:20, score:160,
+        question:'Ronde kilat: benar atau salah?',
+        statements:[
+          {t:'Henokh diangkat tanpa mengalami kematian.',a:true},
+          {t:'Nuh membangun bahtera atas perintah Allah.',a:true},
+          {t:'Abraham berasal dari kota Niniwe.',a:false},
+          {t:'Musa memimpin bangsa Israel keluar dari Mesir.',a:true}
+        ],
+        explanation:'Abraham berasal dari Ur-Kasdim, bukan Niniwe. Tiga pernyataan lainnya benar.' },
+
+      { id:20, type:'progressive_reveal', tier:'varian', timer:40, score:180, cluePenalty:30,
+        question:'Tebak tokohnya. Makin sedikit petunjuk dipakai, makin besar poin.',
+        clues:['Ia anak Yakub.','Dijual oleh saudara-saudaranya ke Mesir.','Kelak menjadi penguasa kedua di Mesir.','Berkata: "kamu mereka-rekakan yang jahat, tetapi Allah mereka-rekakannya untuk kebaikan".'],
+        options:['Yusuf','Benyamin','Yehuda','Ruben'], correctAnswer:0,
+        explanation:'Yusuf — hidupnya menyatakan pemeliharaan Allah yang mengubah kejahatan menjadi keselamatan (Kejadian 50:20).' },
+
+      { id:21, type:'multiple_choice', tier:'varian', tag:'Kartu Petunjuk', timer:35, score:150,
+        hint:'Peristiwa ini terjadi malam hari, ada api.', hintPenalty:25,
+        question:'Dalam "Perjanjian Obor" (Kejadian 15), apa yang lewat di antara potongan-potongan kurban?',
+        options:['Tiang awan','Perapian berasap & suluh berapi','Tabut Perjanjian','Malaikat berpedang'],
+        correctAnswer:1,
+        explanation:'Kejadian 15:17 — perapian berasap & suluh berapi lewat sendiri; Allah mengikat perjanjian itu secara sepihak, murni anugerah.' },
+
+      { id:22, type:'multiple_choice', tier:'varian', tag:'50 : 50', timer:30, score:150, fifty:true,
+        question:'Siapa Imam Besar pertama Israel yang mengenakan jubah dengan giring-giring emas?',
+        options:['Musa','Harun','Yosua','Eleazar'], correctAnswer:1,
+        explanation:'Harun, kakak Musa, ditetapkan sebagai imam besar pertama (Keluaran 28).' },
+
+      { id:23, type:'poll', tier:'varian', timer:30, score:100,
+        question:'Tema mana yang paling ingin kamu dalami berikutnya?',
+        options:['Silsilah & generasi','Perjanjian-perjanjian Allah','Kemah Suci & keimaman','Silsilah Yesus Kristus'],
+        explanation:'Tidak ada jawaban benar atau salah — masukanmu membantu menentukan fokus pertemuan berikutnya.' },
+
+      { id:24, type:'wager', tier:'varian', timer:35, score:200, stakes:[100,200,300],
+        question:'Ada berapa kitab dalam Perjanjian Lama (kanon Protestan)?',
+        options:['27','39','66','12'], correctAnswer:1,
+        explanation:'Perjanjian Lama berisi 39 kitab; 27 adalah jumlah kitab Perjanjian Baru, dan 66 adalah keseluruhan Alkitab.' },
+
+      { id:25, type:'speed', tier:'varian', timer:10, score:100, speed:true,
+        question:'Cepat! Kitab pertama dalam Alkitab?',
+        options:['Keluaran','Kejadian','Mazmur','Yohanes'], correctAnswer:1,
+        explanation:'Kejadian ("permulaan") — tempat sejarah penebusan dimulai. Makin cepat, makin besar bonus.' },
+
+      { id:26, type:'final_challenge', tier:'varian', timer:20, score:300, speed:true, speedMax:200,
+        media:'✝️',
+        question:'FINAL: Siapakah pusat sekaligus penggenapan seluruh sejarah penebusan?',
+        options:['Raja Daud','Abraham','Yesus Kristus','Musa'], correctAnswer:2,
+        explanation:'Seluruh sejarah penebusan mengarah pada dan digenapi dalam Yesus Kristus — Penebus yang dijanjikan sejak Kejadian 3:15.' }
+    ]
+  }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const app = document.getElementById('app');
+const fx  = document.getElementById('fx');
+let S = null; // sesi permainan aktif
+
+function newSession(quiz, name){
+  return {
+    quiz, name, idx:0, score:0,
+    lifelines:{hint:3, fifty:1},
+    hintsUsed:0, correct:0,
+    startAt:Date.now(),
+    // per-soal:
+    answered:false, locked:false, pending:0, hintShown:false, fiftyUsed:false,
+    answerPayload:null
+  };
 }
 
-function renderSession(){if(sessionCode){const cc=document.getElementById('coverCode');if(cc)cc.textContent=sessionCode;if(role==='teacher')document.getElementById('statusMeta').innerHTML=`<span style="color:var(--gold-light);font-family:'Cinzel';letter-spacing:.1em">${sessionCode}</span>`;}}
-function fontStep(dir){fontIdx=Math.max(0,Math.min(FONT_STEPS.length-1,fontIdx+dir));applyFont();toast('Ukuran teks: '+(fontIdx+1)+'/'+FONT_STEPS.length);}
-function applyFont(){document.getElementById('viewport').style.fontSize=FONT_STEPS[fontIdx]+'px';}
+/* ============================================================
+   ROUTER (hash): #/quiz/<id>  |  #/admin  |  default landing
+   ============================================================ */
+function route(){
+  const h = location.hash.replace(/^#\/?/,'');
+  const parts = h.split('/').filter(Boolean);
+  if(parts[0]==='admin'){ renderAdmin(); return; }
+  if(parts[0]==='quiz' && parts[1] && QUIZZES[parts[1]]){ renderLanding(QUIZZES[parts[1]]); return; }
+  renderLanding(QUIZZES.demo);
+}
+window.addEventListener('hashchange', route);
 
-function buildControlBar(){const cb=document.getElementById('controlbar');if(role==='teacher'){cb.innerHTML=`<button class="nav-btn prev" id="btnPrev" onclick="prev()">‹</button><div class="progress-wrap"><div class="dots" id="dots"></div><div class="pos-text" id="posText"></div></div><button class="nav-btn next" id="btnNext" onclick="next()">›</button>`;buildDots();}else{cb.innerHTML=`<div class="follower-note" id="followNote"><span class="sync-dot"></span> Mengikuti pengajar</div><button class="unlock-btn" id="unlockBtn" onclick="toggleFollow()">Lihat bebas</button>`;}}
-function buildDots(){const dots=document.getElementById('dots');if(!dots)return;dots.innerHTML='';SLIDES.forEach((s,i)=>{const dp=document.createElement('div');dp.className='dot-p'+(i===current?' on':'')+(s.quiz?' quiz':'');dots.appendChild(dp);});}
-function updateControls(){if(role==='teacher'){document.querySelectorAll('.dot-p').forEach((d,i)=>d.classList.toggle('on',i===current));const pt=document.getElementById('posText');if(pt)pt.textContent=`${current+1} / ${SLIDES.length}`;const bp=document.getElementById('btnPrev'),bn=document.getElementById('btnNext');if(bp)bp.disabled=current===0;if(bn)bn.disabled=current===SLIDES.length-1;}}
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+function show(node){ app.innerHTML=''; const scr=el(`<div class="screen"></div>`); scr.appendChild(node); app.appendChild(scr); requestAnimationFrame(()=>scr.classList.add('active')); return scr; }
+function fmtTime(ms){ const s=Math.round(ms/1000); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
 
-function goTo(idx){idx=Math.max(0,Math.min(SLIDES.length-1,idx));current=idx;document.querySelectorAll('.slide').forEach((s,i)=>{s.classList.toggle('active',i===idx);if(i===idx)s.scrollTop=0;});updateControls();if(SLIDES[idx].id==='score')computeScore();if(isQuiz(idx)&&reveals[idx])applyReveal(idx);if(role==='teacher')pushState();}
-function next(){if(current<SLIDES.length-1)goTo(current+1);}
-function prev(){if(current>0)goTo(current-1);}
+function scorePop(text, kind, x, y){
+  const p=el(`<div class="fxpop ${kind}">${text}</div>`);
+  p.style.left=(x||window.innerWidth/2)+'px'; p.style.top=(y||90)+'px';
+  fx.appendChild(p); setTimeout(()=>p.remove(),1000);
+}
+function setScoreDisplay(){ const sb=document.getElementById('scoreVal'); if(sb) sb.textContent=S.score.toLocaleString('id-ID'); }
+function popScore(text, kind, delay){
+  setTimeout(()=>{ const rect=document.getElementById('scoreBadge')?.getBoundingClientRect();
+    scorePop(text, kind, rect?rect.left+rect.width/2:null, rect?rect.top+rect.height:90); }, delay||0);
+}
 
-async function pushState(){if(role!=='teacher'||!sessionCode)return;try{await window.storage.set(KEY(sessionCode),JSON.stringify({slide:current,reveals:reveals,ts:Date.now()}),true);}catch(e){}}
-function startPolling(){if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(async()=>{if(!sessionCode)return;try{const res=await window.storage.get(KEY(sessionCode),true);if(res&&res.value){const data=JSON.parse(res.value);
-  // merge reveals
-  if(data.reveals){Object.keys(data.reveals).forEach(k=>{if(!reveals[k]){reveals[k]=true;if(parseInt(k)===current)applyReveal(parseInt(k));}});}
-  if(following&&data.slide!==current){goTo(data.slide);flashSync();}
-  window._latestTeacherSlide=data.slide;}}catch(e){}},1200);}
-function flashSync(){const n=document.getElementById('followNote');if(n){n.style.color='var(--gold-light)';setTimeout(()=>n.style.color='',600);}}
-function toggleFollow(){following=!following;const note=document.getElementById('followNote'),btn=document.getElementById('unlockBtn');if(following){if(typeof window._latestTeacherSlide==='number')goTo(window._latestTeacherSlide);note.innerHTML='<span class="sync-dot"></span> Mengikuti pengajar';btn.textContent='Lihat bebas';btn.className='unlock-btn';toast('Kembali mengikuti pengajar');}else{note.innerHTML='<span style="color:var(--gold-dim)">Mode bebas — geser sendiri</span>';btn.textContent='↺ Ikuti lagi';btn.className='follow-back';toast('Anda bisa menggeser sendiri');}}
+/* ============================================================
+   LANDING
+   ============================================================ */
+function renderLanding(quiz){
+  const saved = Store.get('quiz_name_'+quiz.id) || '';
+  const node = el(`
+    <div class="landing-wrap">
+      <span class="badge">⚡ ${esc(quiz.title)}</span>
+      <h1 class="title" style="font-size:clamp(38px,11.5vw,62px);">GIRING<br>GIRING EMAS</h1>
+      <p class="subtitle">Satu ronde, 26 format soal berbeda — tema Sejarah Penebusan.<br>Tap, geser, susun, cocokkan. Tanpa mengetik.</p>
+      <div class="meta-row">
+        <div class="meta-chip"><span class="n">${quiz.questions.length}</span><span class="l">Pertanyaan</span></div>
+        <div class="meta-chip"><span class="n">⏱</span><span class="l">Adu Cepat</span></div>
+        <div class="meta-chip"><span class="n">💡</span><span class="l">3 Bantuan</span></div>
+      </div>
+      <input class="name-field" id="nameIn" maxlength="16" placeholder="Nama / Nickname" value="${esc(saved)}" autocomplete="off">
+      <button class="btn" id="startBtn">MULAI QUIZ</button>
+      <div class="footlink"><a href="#/admin">Halaman admin & QR →</a></div>
+    </div>`);
+  const start=()=>{
+    const name=(node.querySelector('#nameIn').value||'').trim() || 'Pemain';
+    Store.set('quiz_name_'+quiz.id, name);
+    S=newSession(quiz, name); renderQuestion();
+  };
+  node.querySelector('#startBtn').onclick=start;
+  node.querySelector('#nameIn').addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault(); e.target.blur(); start();} });
+  show(node);
+}
 
-/* quiz reveal */
-function revealAnswer(idx){if(role!=='teacher')return;reveals[idx]=true;applyReveal(idx);pushState();}
-function applyReveal(idx){
-  const q=SLIDES[idx].quiz;if(!q)return;
-  const optsWrap=document.querySelector(`.quiz-opts[data-opts="${idx}"]`);if(!optsWrap)return;
-  if(optsWrap.classList.contains('revealed'))return;
-  optsWrap.classList.add('revealed');
-  const opts=optsWrap.querySelectorAll('.quiz-opt');
-  const sel=mySelections[idx];
-  opts.forEach((o,k)=>{
-    if(k===q.correct){o.classList.add('correct');o.querySelector('.opt-mark').textContent='✓';}
-    else if(sel===k){o.classList.add('wrong');o.querySelector('.opt-mark').textContent='✗';}
+/* ============================================================
+   QUESTION SHELL + TIMER
+   ============================================================ */
+let timerHandle=null;
+function stopTimer(){ if(timerHandle){ clearInterval(timerHandle); timerHandle=null; } }
+
+function renderQuestion(){
+  stopTimer();
+  const q = S.quiz.questions[S.idx];
+  S.answered=false; S.locked=false; S.pending=0; S.hintShown=false; S.fiftyUsed=false; S.answerPayload=null; S.timeoutHandler=null;
+
+  const total=S.quiz.questions.length;
+  const node = el(`
+    <div style="display:flex;flex-direction:column;height:100%;">
+      <div class="qhead">
+        <div class="qhead-top">
+          <span class="qcount">Soal ${S.idx+1} / ${total}</span>
+          <span class="score-badge" id="scoreBadge"><span class="star">⭐</span><span id="scoreVal">${S.score.toLocaleString('id-ID')}</span></span>
+        </div>
+        <div class="pbar"><i style="width:${(S.idx)/total*100}%"></i></div>
+        <div class="timer-wrap" id="timerWrap">
+          <div class="timer-track"><i id="timerBar"></i></div>
+          <span class="timer-num" id="timerNum"></span>
+        </div>
+      </div>
+      <div class="qbody">
+        <div class="qtype-row"><span class="qtype-tag">${esc(q.tag||typeLabel(q.type))}</span>${q.tier?`<span class="tier-badge ${q.tier}">${q.tier==='inti'?'tipe inti':'varian'}</span>`:''}</div>
+        <h2 class="qtext">${esc(q.question)}</h2>
+        ${q.instruct?`<p class="qinstruct">${esc(q.instruct)}</p>`:''}
+        ${q.media?`<div class="qmedia">${q.media}</div>`:''}
+        <div class="q-scroll" id="qArea"></div>
+        <div id="llArea"></div>
+      </div>
+      <div class="qfoot" id="qFoot">
+        <div class="submit-hint" id="submitHint"></div>
+        <div id="footBtns"></div>
+      </div>
+    </div>`);
+  show(node);
+
+  // render interaksi
+  const area=node.querySelector('#qArea');
+  RENDERERS[q.type](q, area, node);
+  renderLifelines(q, node);
+  startTimer(q, node);
+}
+
+function typeLabel(t){ return ({
+  multiple_choice:'Pilihan Ganda', true_false:'Benar / Salah', picture_choice:'Pilih Gambar',
+  matching:'Pasangkan', arrange_words:'Susun Kata', arrange_pictures:'Urutkan Gambar',
+  drag_drop:'Klasifikasi', ranking:'Peringkat', hotspot:'Tap Gambar',
+  multiple_select:'Pilih Banyak', slider:'Tebak Angka', eliminate:'50:50',
+  speed:'⚡ Adu Cepat', final_challenge:'🏆 Final Challenge',
+  cloze:'Isi Rumpang', odd_one_out:'Cari yang Beda', find_wrong_word:'Kata Keliru',
+  rapid_tf:'⚡ Ronde Kilat', timeline:'Garis Waktu', map_route:'Rute Peta',
+  memory_match:'Kartu Memori', progressive_reveal:'Petunjuk Bertahap',
+  poll:'Jajak Pendapat', wager:'Taruhan Poin'
+})[t]||t; }
+
+function startTimer(q, node){
+  const dur=(q.timer||30)*1000; let end=Date.now()+dur;
+  const bar=node.querySelector('#timerBar'), num=node.querySelector('#timerNum'), wrap=node.querySelector('#timerWrap');
+  const tick=()=>{
+    const left=Math.max(0, end-Date.now()); const frac=left/dur;
+    bar.style.width=(frac*100)+'%'; num.textContent=Math.ceil(left/1000)+'s';
+    wrap.classList.toggle('warn', left<=Math.min(6000, dur*0.35));
+    S.timeLeftSec=left/1000;
+    if(left<=0){ stopTimer(); if(!S.answered) forceTimeout(q,node); }
+  };
+  tick(); timerHandle=setInterval(tick,120);
+}
+
+/* dipanggil renderer saat peserta mengunci jawaban */
+function submitAnswer(q, node, correct, payload){
+  if(S.answered) return;
+  stopTimer(); S.answered=true; S.locked=true; S.answerPayload=payload;
+
+  let base = correct ? (q.score||100) : 0;
+  let bonus = 0;
+  if(correct && q.speed){
+    const per = q.type==='final_challenge' ? ((q.speedMax||200)/(q.timer||20)) : 10;
+    bonus = Math.round((S.timeLeftSec||0) * per);
+    if(q.speedMax) bonus=Math.min(bonus, q.speedMax);
+  }
+  const gained = Math.max(0, base + bonus - S.pending);
+  if(correct) S.correct++;
+  S.qResults = S.qResults||{}; S.qResults[q.id]=correct;
+
+  // skor bersih: tambah sekali, popup hanya efek visual
+  S.score += gained; setScoreDisplay();
+  if(base>0) popScore('+'+base,'plus',0);
+  if(bonus>0) popScore('+'+bonus,'bonus',280);
+  if(S.pending>0) popScore('-'+S.pending,'minus',(base||bonus)?540:0);
+
+  showFeedback(q, node, correct, gained, bonus);
+}
+
+function forceTimeout(q, node){
+  // hook khusus (rapid/memory/map beri skor parsial saat waktu habis)
+  if(S.timeoutHandler){ const h=S.timeoutHandler; S.timeoutHandler=null; h(); return; }
+  // waktu habis tanpa jawaban → 0 poin, kunci, tampilkan yang benar
+  S.answered=true; S.locked=true;
+  S.qResults=S.qResults||{}; S.qResults[q.id]=false;
+  if(RENDERERS_REVEAL[q.type]) RENDERERS_REVEAL[q.type](q, node, null);
+  showFeedback(q, node, false, 0, 0, true);
+}
+
+function showFeedback(q, node, correct, gained, bonus, timeout){
+  const foot=node.querySelector('#footBtns');
+  const sh=node.querySelector('#submitHint'); if(sh) sh.textContent='';
+  // update progress bar penuh utk soal ini
+  const pb=node.querySelector('.pbar>i'); if(pb) pb.style.width=((S.idx+1)/S.quiz.questions.length*100)+'%';
+  const fb=el(`
+    <div class="feedback ${correct?'good':'bad'}">
+      <div class="fb-head">
+        <span class="fb-verdict">${correct?'✓ Benar!':(timeout?'⏱ Waktu habis':'✕ Belum tepat')}</span>
+        <span class="fb-pts">${gained>0?'+':''}${gained}</span>
+      </div>
+      <div class="fb-expl">${bonus>0?`<b style="color:var(--gold)">Bonus cepat +${bonus}</b> · `:''}${esc(q.explanation||'')}</div>
+    </div>`);
+  const next=el(`<button class="btn ${S.idx===S.quiz.questions.length-1?'gold':''}">${S.idx===S.quiz.questions.length-1?'LIHAT HASIL':'LANJUT'}</button>`);
+  next.onclick=()=>{ if(S.idx>=S.quiz.questions.length-1) finishQuiz(); else { S.idx++; renderQuestion(); } };
+  foot.innerHTML=''; foot.appendChild(fb); foot.appendChild(next);
+  const ll=node.querySelector('#llArea'); if(ll) ll.querySelectorAll('.ll').forEach(b=>b.disabled=true);
+}
+
+/* ============================================================
+   LIFELINES (Hint + 50:50)
+   ============================================================ */
+function renderLifelines(q, node){
+  const area=node.querySelector('#llArea'); area.innerHTML='';
+  const wrap=el(`<div class="lifelines"></div>`);
+  let has=false;
+  if(q.hint){
+    has=true;
+    const b=el(`<button class="ll" ${S.lifelines.hint<=0?'disabled':''}>
+      <span class="ic">💡</span><span>Petunjuk (${S.lifelines.hint})</span><span class="cost">-${q.hintPenalty||25}</span></button>`);
+    b.onclick=()=>{
+      if(S.answered||S.hintShown||S.lifelines.hint<=0) return;
+      S.lifelines.hint--; S.hintsUsed++; S.hintShown=true; S.pending+=(q.hintPenalty||25);
+      b.classList.add('used'); b.disabled=true;
+      const note=el(`<div class="hint-note">💡 <span>${esc(q.hint)}</span></div>`);
+      node.querySelector('#qArea').appendChild(note);
+    };
+    wrap.appendChild(b);
+  }
+  if(q.fifty && Array.isArray(q.options)){
+    has=true;
+    const b=el(`<button class="ll" ${S.lifelines.fifty<=0?'disabled':''}>
+      <span class="ic">✂️</span><span>50 : 50 (${S.lifelines.fifty})</span><span class="cost">-50</span></button>`);
+    b.onclick=()=>{
+      if(S.answered||S.fiftyUsed||S.lifelines.fifty<=0) return;
+      S.lifelines.fifty--; S.fiftyUsed=true; S.pending+=50;
+      b.classList.add('used'); b.disabled=true;
+      // buang 2 pilihan salah
+      const opts=[...node.querySelectorAll('#qArea .opt')];
+      const wrongIdx=q.options.map((_,i)=>i).filter(i=>i!==q.correctAnswer);
+      shuffle(wrongIdx).slice(0,2).forEach(i=>{ const o=opts[i]; if(o) o.classList.add('dimmed'); });
+    };
+    wrap.appendChild(b);
+  }
+  if(has) area.appendChild(wrap);
+}
+
+/* ============================================================
+   POINTER SORTABLE (reorder) — jalan di sentuh & mouse
+   ============================================================ */
+function makeSortable(container, onChange){
+  let drag=null, ph=null, offX=0, offY=0, sx=0, sy=0, active=false, pid=null;
+  container.addEventListener('pointerdown', e=>{
+    const item=e.target.closest('.sort-item'); if(!item||S.locked) return;
+    drag=item; pid=e.pointerId; const b=item.getBoundingClientRect();
+    offX=e.clientX-b.left; offY=e.clientY-b.top; sx=e.clientX; sy=e.clientY; active=false;
+    item.setPointerCapture(pid);
   });
-  const ex=document.querySelector(`.quiz-explain[data-explain="${idx}"]`);if(ex)ex.classList.add('show');
-  const rb=document.querySelector(`.reveal-btn[data-reveal="${idx}"]`);if(rb){rb.textContent='Jawaban terbuka ✓';rb.classList.add('done');}
-  const wh=document.querySelector(`.wait-hint[data-wait="${idx}"]`);if(wh)wh.classList.add('hidden');
-}
-
-function computeScore(){
-  let correct=0,answered=0;
-  SLIDES.forEach((s,i)=>{if(s.quiz){if(mySelections[i]!==undefined){answered++;if(mySelections[i]===s.quiz.correct)correct++;}}});
-  const sv=document.getElementById('scoreVal'),sl=document.getElementById('scoreLbl'),sm=document.getElementById('scoreMsg');
-  if(sv)sv.textContent=correct;
-  if(sl)sl.textContent=`dari ${totalQuiz} kuis`;
-  if(sm){
-    if(role==='teacher'){sm.innerHTML='Skor dihitung di HP masing-masing peserta.';}
-    else if(answered===0){sm.innerHTML='Anda belum menjawab kuis apa pun.';}
-    else{let m=correct===totalQuiz?'Sempurna! 🔥':correct>=totalQuiz*0.6?'Bagus sekali!':'Teruslah merenungkan firman.';sm.innerHTML=`${m}<br><span style="font-size:.85em;opacity:.7">${answered} dari ${totalQuiz} kuis Anda jawab</span>`;}
+  container.addEventListener('pointermove', e=>{
+    if(!drag||e.pointerId!==pid) return;
+    if(!active){
+      if(Math.hypot(e.clientX-sx,e.clientY-sy)<6) return;
+      active=true;
+      const b=drag.getBoundingClientRect();
+      ph=el(`<div class="sort-ph"></div>`); ph.style.width=b.width+'px'; ph.style.height=b.height+'px';
+      drag.parentNode.insertBefore(ph,drag);
+      drag.style.width=b.width+'px'; drag.style.height=b.height+'px';
+      drag.style.position='fixed'; drag.style.left=(b.left)+'px'; drag.style.top=(b.top)+'px'; drag.style.zIndex=60;
+      drag.classList.add('dragging');
+    }
+    drag.style.left=(e.clientX-offX)+'px'; drag.style.top=(e.clientY-offY)+'px';
+    const after=afterEl(container,e.clientX,e.clientY);
+    if(after==null) container.appendChild(ph);
+    else container.insertBefore(ph, after);
+  });
+  const end=e=>{
+    if(!drag||e.pointerId!==pid) return;
+    if(active&&ph){ ph.parentNode.insertBefore(drag,ph); ph.remove();
+      drag.style.position=''; drag.style.left=''; drag.style.top=''; drag.style.width=''; drag.style.height=''; drag.style.zIndex='';
+      drag.classList.remove('dragging'); onChange&&onChange(); }
+    drag=null; ph=null; active=false; pid=null;
+  };
+  container.addEventListener('pointerup', end);
+  container.addEventListener('pointercancel', end);
+  function afterEl(c,x,y){
+    const els=[...c.querySelectorAll('.sort-item:not(.dragging)')];
+    let best=null,bd=Infinity;
+    for(const it of els){
+      const b=it.getBoundingClientRect(); const cx=b.left+b.width/2, cy=b.top+b.height/2;
+      const past = (y < cy-4) || (Math.abs(y-cy)<=b.height/2 && x < cx);
+      if(past){ const d=Math.hypot(x-cx,y-cy); if(d<bd){bd=d;best=it;} }
+    }
+    return best;
   }
 }
+function orderOf(container, attr){ return [...container.querySelectorAll('.sort-item')].map(n=>n.getAttribute(attr)); }
+function renumber(container){ container.querySelectorAll('.sort-item .rank').forEach((r,i)=>r.textContent=i+1); }
 
-function wireInteractions(){
-  const chain=document.getElementById('chain');if(chain){chain.querySelectorAll('.chain-step').forEach(step=>{step.addEventListener('click',()=>{step.classList.add('lit');const hint=document.getElementById('chainHint');if([...chain.querySelectorAll('.chain-step')].every(s=>s.classList.contains('lit'))){if(hint)hint.style.display='none';}});});}
-  document.querySelectorAll('.place-row').forEach(row=>{const phase=row.dataset.phase;const detail=document.querySelector(`.place-detail[data-detail="${phase}"]`);row.querySelectorAll('.place-chip').forEach(chip=>{chip.addEventListener('click',()=>{const wasOpen=chip.classList.contains('open');row.querySelectorAll('.place-chip').forEach(c=>c.classList.remove('open'));if(wasOpen){detail.classList.remove('show');return;}chip.classList.add('open');detail.innerHTML=`<span class="pmean">${chip.textContent}</span> — ${chip.dataset.mean}`;detail.classList.add('show');});});});
-  document.querySelectorAll('.par-head').forEach(head=>{const i=head.dataset.par;const body=document.querySelector(`.par-body[data-body="${i}"]`);const caret=document.querySelector(`.par-caret[data-caret="${i}"]`);head.addEventListener('click',()=>{const open=body.classList.toggle('show');if(caret)caret.textContent=open?'▴ tutup':'▾ buka';});});
-  document.querySelectorAll('.quiz-opt').forEach(opt=>{opt.addEventListener('click',()=>{const idx=parseInt(opt.dataset.qz);if(reveals[idx])return;const k=parseInt(opt.dataset.opt);mySelections[idx]=k;document.querySelectorAll(`.quiz-opt[data-qz="${idx}"]`).forEach(o=>o.classList.remove('sel'));opt.classList.add('sel');});});
+/* ============================================================
+   RENDERERS per tipe
+   ============================================================ */
+const RENDERERS = {};
+const RENDERERS_REVEAL = {};
+
+/* --- Multiple choice / eliminate / speed / final --- */
+function renderChoice(q, area, node){
+  const wrap=el(`<div class="opts"></div>`);
+  q.options.forEach((opt,i)=>{
+    const o=el(`<button class="opt"><span class="key">${String.fromCharCode(65+i)}</span><span>${esc(opt)}</span></button>`);
+    o.onclick=()=>{
+      if(S.locked) return;
+      const correct=(i===q.correctAnswer);
+      [...wrap.children].forEach((c,ci)=>{
+        c.classList.remove('picked');
+        if(ci===q.correctAnswer) c.classList.add('correct');
+        if(ci===i && !correct) c.classList.add('wrong');
+        c.style.pointerEvents='none';
+      });
+      o.classList.add('picked');
+      submitAnswer(q,node,correct,i);
+    };
+    wrap.appendChild(o);
+  });
+  area.appendChild(wrap);
+}
+RENDERERS.multiple_choice=renderChoice;
+RENDERERS.speed=renderChoice;
+RENDERERS.final_challenge=renderChoice;
+RENDERERS_REVEAL.multiple_choice=(q,node)=>{ const opts=node.querySelectorAll('#qArea .opt'); opts[q.correctAnswer]?.classList.add('correct'); opts.forEach(o=>o.style.pointerEvents='none'); };
+RENDERERS_REVEAL.speed=RENDERERS_REVEAL.multiple_choice;
+RENDERERS_REVEAL.final_challenge=RENDERERS_REVEAL.multiple_choice;
+
+/* --- True / False --- */
+RENDERERS.true_false=(q,area,node)=>{
+  const wrap=el(`<div class="tf"></div>`);
+  [['BENAR','✓',true],['SALAH','✕',false]].forEach(([lbl,ic,val])=>{
+    const o=el(`<button class="opt"><span class="ic">${ic}</span><span>${lbl}</span></button>`);
+    o.dataset.val=val;
+    o.onclick=()=>{
+      if(S.locked) return;
+      const correct=(val===q.correctAnswer);
+      [...wrap.children].forEach(c=>{ c.style.pointerEvents='none';
+        const v=c.dataset.val==='true';
+        if(v===q.correctAnswer) c.classList.add('correct');
+      });
+      if(!correct) o.classList.add('wrong');
+      submitAnswer(q,node,correct,val);
+    };
+    wrap.appendChild(o);
+  });
+  area.appendChild(wrap);
+};
+RENDERERS_REVEAL.true_false=(q,node)=>{ node.querySelectorAll('#qArea .tf .opt').forEach(c=>{ if((c.dataset.val==='true')===q.correctAnswer)c.classList.add('correct'); c.style.pointerEvents='none';}); };
+
+/* --- Picture choice --- */
+RENDERERS.picture_choice=(q,area,node)=>{
+  const grid=el(`<div class="pic-grid"></div>`);
+  q.options.forEach((emo,i)=>{
+    const p=el(`<button class="pic">${emo}</button>`);
+    p.onclick=()=>{
+      if(S.locked) return;
+      const correct=(i===q.correctAnswer);
+      [...grid.children].forEach((c,ci)=>{ c.style.pointerEvents='none';
+        if(ci===q.correctAnswer)c.classList.add('correct'); if(ci===i&&!correct)c.classList.add('wrong'); });
+      p.classList.add('picked');
+      submitAnswer(q,node,correct,i);
+    };
+    grid.appendChild(p);
+  });
+  area.appendChild(grid);
+};
+RENDERERS_REVEAL.picture_choice=(q,node)=>{ const p=node.querySelectorAll('#qArea .pic'); p[q.correctAnswer]?.classList.add('correct'); p.forEach(x=>x.style.pointerEvents='none'); };
+
+/* --- Matching (tap kiri lalu tap kanan) --- */
+RENDERERS.matching=(q,area,node)=>{
+  const rightShuffled=shuffle(q.right);
+  const box=el(`<div class="match-grid">
+    <div class="match-row-lbl">Tap satu di kiri, lalu pasangannya di kanan</div>
+    <div class="chips" id="mLeft"></div>
+    <div class="chips" id="mRight"></div>
+    <div id="mPairs" class="stack" style="margin-top:6px;"></div>
+  </div>`);
+  const L=box.querySelector('#mLeft'), R=box.querySelector('#mRight'), P=box.querySelector('#mPairs');
+  let selLeft=null; const pairs={};
+  q.left.forEach(l=>{ const c=el(`<button class="mchip">${esc(l)}</button>`); c.dataset.k=l;
+    c.onclick=()=>{ if(S.locked||c.classList.contains('done'))return; L.querySelectorAll('.mchip').forEach(x=>x.classList.remove('sel')); c.classList.add('sel'); selLeft=c; }; L.appendChild(c); });
+  rightShuffled.forEach(r=>{ const c=el(`<button class="mchip">${esc(r)}</button>`); c.dataset.v=r;
+    c.onclick=()=>{ if(S.locked||!selLeft||c.classList.contains('done'))return;
+      const lk=selLeft.dataset.k; pairs[lk]=r; selLeft.classList.add('done'); selLeft.classList.remove('sel'); c.classList.add('done');
+      const row=el(`<div class="mpair"><b>${esc(lk)}</b><span class="arrow">→</span><span>${esc(r)}</span><button class="x">↺</button></div>`);
+      row.querySelector('.x').onclick=()=>{ if(S.locked)return; delete pairs[lk]; row.remove();
+        [...L.children].find(x=>x.dataset.k===lk)?.classList.remove('done');
+        [...R.children].find(x=>x.dataset.v===r)?.classList.remove('done'); updateBtn(); };
+      P.appendChild(row); selLeft=null; updateBtn();
+    }; R.appendChild(c); });
+  area.appendChild(box);
+
+  const foot=node.querySelector('#footBtns');
+  const submit=el(`<button class="btn" disabled>PERIKSA JAWABAN</button>`);
+  const sh=node.querySelector('#submitHint');
+  function updateBtn(){ const done=Object.keys(pairs).length===q.left.length; submit.disabled=!done;
+    if(sh) sh.textContent=done?'':`Pasangkan ${q.left.length-Object.keys(pairs).length} lagi`; }
+  updateBtn();
+  submit.onclick=()=>{
+    if(S.locked)return;
+    let allOk=true;
+    P.querySelectorAll('.mpair').forEach(row=>{ const k=row.querySelector('b').textContent; const ok=pairs[k]===q.correctAnswer[k];
+      row.classList.add(ok?'ok':'no'); if(!ok)allOk=false; });
+    submitAnswer(q,node,allOk,pairs);
+  };
+  foot.appendChild(submit);
+};
+RENDERERS_REVEAL.matching=(q,node)=>{};
+
+/* --- Arrange words (drag flow) --- */
+RENDERERS.arrange_words=(q,area,node)=>{
+  const box=el(`<div class="sortable flow" id="sortW" style="margin-top:4px;"></div>`);
+  shuffle(q.words).forEach(w=>{ box.appendChild(el(`<div class="sort-item" data-w="${esc(w)}">${esc(w)}</div>`)); });
+  area.appendChild(box);
+  makeSortable(box);
+  addSortSubmit(q,node,box,'sortW',()=>orderOf(box,'data-w'), q.correctAnswer, 'w');
+};
+/* --- Arrange pictures (drag column) --- */
+RENDERERS.arrange_pictures=(q,area,node)=>{
+  const box=el(`<div class="sortable" id="sortP"></div>`);
+  shuffle(q.items).forEach(it=>{ box.appendChild(el(`<div class="sort-item" data-l="${esc(it.label)}"><span class="grip">≡</span><span class="emo">${it.emo}</span><span>${esc(it.label)}</span></div>`)); });
+  area.appendChild(box); makeSortable(box);
+  addSortSubmit(q,node,box,'sortP',()=>orderOf(box,'data-l'), q.correctAnswer, 'l');
+};
+/* --- Ranking (drag column, bernomor) --- */
+RENDERERS.ranking=(q,area,node)=>{
+  const box=el(`<div class="sortable" id="sortR"></div>`);
+  shuffle(q.items).forEach(it=>{ box.appendChild(el(`<div class="sort-item" data-l="${esc(it)}"><span class="rank"></span><span style="flex:1">${esc(it)}</span><span class="grip">≡</span></div>`)); });
+  area.appendChild(box); renumber(box); makeSortable(box, ()=>renumber(box));
+  addSortSubmit(q,node,box,'sortR',()=>orderOf(box,'data-l'), q.correctAnswer, 'l');
+};
+function addSortSubmit(q,node,box,id,getOrder,answer,attr){
+  const foot=node.querySelector('#footBtns');
+  const submit=el(`<button class="btn">PERIKSA URUTAN</button>`);
+  submit.onclick=()=>{
+    if(S.locked)return;
+    const order=getOrder(); const ok=JSON.stringify(order)===JSON.stringify(answer);
+    [...box.querySelectorAll('.sort-item')].forEach((n,i)=>{ n.classList.add(order[i]===answer[i]?'ok':'no'); n.style.touchAction='auto'; });
+    submitAnswer(q,node,ok,order);
+  };
+  foot.appendChild(submit);
+}
+RENDERERS_REVEAL.arrange_words=RENDERERS_REVEAL.arrange_pictures=RENDERERS_REVEAL.ranking=(q,node)=>{};
+
+/* --- Drag & Drop classification --- */
+RENDERERS.drag_drop=(q,area,node)=>{
+  const box=el(`<div>
+    <div class="class-pool" id="pool"></div>
+    <div class="bins" id="bins"></div>
+  </div>`);
+  const pool=box.querySelector('#pool'), bins=box.querySelector('#bins');
+  q.bins.forEach(b=>{ bins.appendChild(el(`<div class="bin" data-bin="${b.id}"><h4>${b.emo||''} ${esc(b.label)}</h4><div class="drop"></div></div>`)); });
+  shuffle(q.items).forEach(it=>{ pool.appendChild(el(`<div class="citem" data-item="${esc(it)}">${esc(it)}</div>`)); });
+  area.appendChild(box);
+
+  // pointer drag ke bin
+  let drag=null, pid=null, sx=0, sy=0, active=false, home=null;
+  box.addEventListener('pointerdown', e=>{
+    const it=e.target.closest('.citem'); if(!it||S.locked)return;
+    drag=it; pid=e.pointerId; home=it.parentNode; sx=e.clientX; sy=e.clientY; active=false; it.setPointerCapture(pid);
+  });
+  box.addEventListener('pointermove', e=>{
+    if(!drag||e.pointerId!==pid)return;
+    if(!active){ if(Math.hypot(e.clientX-sx,e.clientY-sy)<6)return; active=true;
+      const b=drag.getBoundingClientRect(); drag.dataset.ox=e.clientX-b.left; drag.dataset.oy=e.clientY-b.top;
+      drag.style.width=b.width+'px'; drag.style.position='fixed'; drag.style.zIndex=60; drag.classList.add('dragging'); }
+    drag.style.left=(e.clientX-drag.dataset.ox)+'px'; drag.style.top=(e.clientY-drag.dataset.oy)+'px';
+    bins.querySelectorAll('.bin').forEach(bn=>{ const r=bn.getBoundingClientRect();
+      bn.classList.toggle('hover', e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom); });
+  });
+  const end=e=>{
+    if(!drag||e.pointerId!==pid)return;
+    if(active){
+      let target=null; bins.querySelectorAll('.bin').forEach(bn=>{ const r=bn.getBoundingClientRect();
+        if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom) target=bn; });
+      drag.style.position=''; drag.style.left=''; drag.style.top=''; drag.style.width=''; drag.style.zIndex='';
+      drag.classList.remove('dragging'); bins.querySelectorAll('.bin').forEach(b=>b.classList.remove('hover'));
+      (target? target.querySelector('.drop') : (home||pool)).appendChild(drag);
+      updateBtn();
+    }
+    drag=null; pid=null; active=false;
+  };
+  box.addEventListener('pointerup',end); box.addEventListener('pointercancel',end);
+
+  const foot=node.querySelector('#footBtns'); const sh=node.querySelector('#submitHint');
+  const submit=el(`<button class="btn" disabled>PERIKSA JAWABAN</button>`);
+  function updateBtn(){ const left=pool.querySelectorAll('.citem').length; submit.disabled=left>0;
+    if(sh) sh.textContent=left>0?`Tempatkan ${left} kartu lagi`:''; }
+  submit.onclick=()=>{
+    if(S.locked)return; let allOk=true;
+    bins.querySelectorAll('.bin').forEach(bn=>{ const bid=bn.dataset.bin;
+      bn.querySelectorAll('.citem').forEach(it=>{ const ok=q.correctAnswer[it.dataset.item]===bid;
+        it.classList.add(ok?'ok':'no'); if(!ok)allOk=false; }); });
+    submitAnswer(q,node,allOk,null);
+  };
+  foot.appendChild(submit); updateBtn();
+};
+RENDERERS_REVEAL.drag_drop=(q,node)=>{};
+
+/* --- Multiple select (partial scoring) --- */
+RENDERERS.multiple_select=(q,area,node)=>{
+  const list=el(`<div class="ms-list"></div>`); const picked=new Set();
+  q.options.forEach((opt,i)=>{
+    const o=el(`<button class="ms"><span class="box"></span><span>${esc(opt)}</span></button>`);
+    o.onclick=()=>{ if(S.locked)return; if(picked.has(i)){picked.delete(i);o.classList.remove('on');o.querySelector('.box').textContent='';}
+      else{picked.add(i);o.classList.add('on');o.querySelector('.box').textContent='✓';} };
+    list.appendChild(o);
+  });
+  area.appendChild(list);
+  const foot=node.querySelector('#footBtns');
+  const submit=el(`<button class="btn">KUNCI JAWABAN</button>`);
+  submit.onclick=()=>{
+    if(S.locked)return;
+    const ans=new Set(q.correctAnswer);
+    let hit=0, wrong=0;
+    picked.forEach(i=>{ if(ans.has(i))hit++; else wrong++; });
+    const els=list.querySelectorAll('.ms');
+    els.forEach((o,i)=>{ o.style.pointerEvents='none';
+      if(picked.has(i)&&ans.has(i))o.classList.add('ok');
+      else if(picked.has(i)&&!ans.has(i))o.classList.add('no');
+      else if(!picked.has(i)&&ans.has(i))o.classList.add('miss'); });
+    const perfect = hit===ans.size && wrong===0;
+    // skor parsial: proporsi benar dikurangi salah, dibulatkan
+    const frac = Math.max(0,(hit-wrong))/ans.size;
+    const partial = perfect ? (q.score||150) : Math.round((q.score||150)*frac);
+    // pakai jalur submit tapi override skor parsial:
+    submitPartial(q,node,perfect,partial);
+  };
+  foot.appendChild(submit);
+};
+function submitPartial(q,node,correct,partialBase){
+  if(S.answered)return; stopTimer(); S.answered=true;S.locked=true;
+  const gained=Math.max(0,partialBase - S.pending);
+  if(correct)S.correct++; S.qResults=S.qResults||{}; S.qResults[q.id]=correct;
+  S.score += gained; setScoreDisplay();
+  if(gained>0) popScore('+'+gained,'plus',0);
+  if(S.pending>0) popScore('-'+S.pending,'minus', gained>0?300:0);
+  const foot=node.querySelector('#footBtns'); const sh=node.querySelector('#submitHint'); if(sh)sh.textContent='';
+  const pb=node.querySelector('.pbar>i'); if(pb)pb.style.width=((S.idx+1)/S.quiz.questions.length*100)+'%';
+  const fb=el(`<div class="feedback ${correct?'good':(gained>0?'good':'bad')}">
+    <div class="fb-head"><span class="fb-verdict">${correct?'✓ Sempurna!':(gained>0?'≈ Sebagian benar':'✕ Belum tepat')}</span><span class="fb-pts">+${gained}</span></div>
+    <div class="fb-expl">${esc(q.explanation||'')}</div></div>`);
+  const last=S.idx===S.quiz.questions.length-1;
+  const next=el(`<button class="btn ${last?'gold':''}">${last?'LIHAT HASIL':'LANJUT'}</button>`);
+  next.onclick=()=>{ if(last)finishQuiz(); else {S.idx++;renderQuestion();} };
+  foot.innerHTML=''; foot.appendChild(fb); foot.appendChild(next);
+}
+RENDERERS_REVEAL.multiple_select=(q,node)=>{ const ans=new Set(q.correctAnswer); node.querySelectorAll('#qArea .ms').forEach((o,i)=>{ if(ans.has(i))o.classList.add('miss'); o.style.pointerEvents='none';}); };
+
+/* --- Slider --- */
+RENDERERS.slider=(q,area,node)=>{
+  const box=el(`<div class="slider-box">
+    <div class="slider-val" id="sVal">${q.start}</div>
+    <div class="slider-unit">${esc(q.unit||'')}</div>
+    <input type="range" id="sRange" min="${q.min}" max="${q.max}" step="${q.step||1}" value="${q.start}">
+    <div class="slider-ends"><span>${q.min}</span><span>${q.max}</span></div>
+  </div>`);
+  const r=box.querySelector('#sRange'), v=box.querySelector('#sVal');
+  r.oninput=()=>{ v.textContent=r.value; };
+  area.appendChild(box);
+  const foot=node.querySelector('#footBtns');
+  const submit=el(`<button class="btn">KUNCI TEBAKAN</button>`);
+  submit.onclick=()=>{
+    if(S.locked)return; r.disabled=true;
+    const guess=+r.value, diff=Math.abs(guess-q.correctAnswer);
+    let base=0; for(const t of (q.tolerance||[])){ if(diff<=t.r){ base=t.pts; break; } }
+    const correct=diff<= (q.tolerance?.[0]?.r ?? 0) || base>0;
+    // tampilkan target
+    v.textContent=guess; v.style.color='';
+    box.appendChild(el(`<div style="margin-top:12px;font-weight:600;color:var(--ink-dim)">Jawaban benar: <b style="color:var(--gold)">${q.correctAnswer} ${esc(q.unit||'')}</b> · selisih ${diff}</div>`));
+    submitPartial(q,node, diff===0, base);
+  };
+  foot.appendChild(submit);
+};
+RENDERERS_REVEAL.slider=(q,node)=>{ node.querySelector('#qArea #sRange')?.setAttribute('disabled','true'); };
+
+/* --- Image hotspot (SVG zones) --- */
+RENDERERS.hotspot=(q,area,node)=>{
+  // ilustrasi tumbuhan sederhana (SVG) + zona tap
+  const zones=q.zones.map(z=>`<rect class="hs-zone" data-z="${z.id}" x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="3"/>`).join('');
+  const plant=`
+      <rect x="0" y="82" width="100" height="18" fill="#3a2a12"/>
+      <path d="M50 82 L42 94 M50 82 L58 93 M50 82 L50 96 M50 82 L36 90 M50 82 L64 89" stroke="#8a5a2b" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <rect x="47.5" y="34" width="5" height="48" rx="2.5" fill="#4a8f3c"/>
+      <ellipse cx="40" cy="20" rx="14" ry="9" fill="#5fbf47" transform="rotate(-20 40 20)"/>
+      <ellipse cx="60" cy="18" rx="14" ry="9" fill="#54ad3f" transform="rotate(20 60 18)"/>
+      <ellipse cx="50" cy="12" rx="13" ry="8" fill="#6cd451"/>`;
+  const box=el(`<div class="hotspot-wrap">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-label="${esc(q.svgLabel||'diagram')}">
+      ${q.svg || plant}
+      ${zones}
+    </svg>
+  </div>`);
+  area.appendChild(box);
+  box.querySelectorAll('.hs-zone').forEach(z=>{
+    z.addEventListener('click',()=>{
+      if(S.locked)return;
+      const pick=z.dataset.z; const correct=pick===q.correctAnswer;
+      box.querySelectorAll('.hs-zone').forEach(zz=>{ zz.style.pointerEvents='none';
+        if(zz.dataset.z===q.correctAnswer)zz.classList.add('reveal-ok');
+        if(zz.dataset.z===pick&&!correct)zz.classList.add('reveal-pick'); });
+      submitAnswer(q,node,correct,pick);
+    });
+  });
+};
+RENDERERS_REVEAL.hotspot=(q,node)=>{ node.querySelectorAll('#qArea .hs-zone').forEach(z=>{ z.style.pointerEvents='none'; if(z.dataset.z===q.correctAnswer)z.classList.add('reveal-ok'); }); };
+
+/* ============================================================
+   FINISH + RESULT
+   ============================================================ */
+
+/* ============================================================
+   RENDERERS TAMBAHAN (varian)
+   ============================================================ */
+function submitCustom(q,node,correct,gained,verdict){
+  if(S.answered)return; stopTimer(); S.answered=true; S.locked=true;
+  if(correct)S.correct++; S.qResults=S.qResults||{}; S.qResults[q.id]=correct;
+  S.score+=gained; setScoreDisplay();
+  if(gained>0)popScore('+'+gained,'plus',0); else if(gained<0)popScore(''+gained,'minus',0);
+  showFeedback2(q,node, gained<0?'bad':'good', verdict, gained);
+}
+function showFeedback2(q,node,cls,verdict,gained){
+  const foot=node.querySelector('#footBtns'); const sh=node.querySelector('#submitHint'); if(sh)sh.textContent='';
+  const pb=node.querySelector('.pbar>i'); if(pb)pb.style.width=((S.idx+1)/S.quiz.questions.length*100)+'%';
+  const fb=el(`<div class="feedback ${cls}"><div class="fb-head"><span class="fb-verdict">${esc(verdict)}</span><span class="fb-pts">${gained>0?'+':''}${gained}</span></div><div class="fb-expl">${esc(q.explanation||'')}</div></div>`);
+  const last=S.idx===S.quiz.questions.length-1;
+  const next=el(`<button class="btn ${last?'gold':''}">${last?'LIHAT HASIL':'LANJUT'}</button>`);
+  next.onclick=()=>{ if(last)finishQuiz(); else {S.idx++;renderQuestion();} };
+  foot.innerHTML=''; foot.appendChild(fb); foot.appendChild(next);
+  const ll=node.querySelector('#llArea'); if(ll) ll.querySelectorAll('.ll').forEach(b=>b.disabled=true);
 }
 
-let toastTimer=null;
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
-document.addEventListener('keydown',e=>{if(role==='teacher'||(role==='follower'&&!following)){if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();}});
-let touchX=null;
-document.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
-document.addEventListener('touchend',e=>{if(touchX===null)return;const dx=e.changedTouches[0].clientX-touchX;touchX=null;if(role==='follower'&&following)return;if(Math.abs(dx)<60)return;if(dx<0)next();else prev();},{passive:true});
-document.getElementById('codeInput').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);});
-document.getElementById('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')joinSession();});
-document.getElementById('pinInput').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,4);});
-document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')startTeacher();});
+/* --- Cari yang beda (mekanik = pilihan ganda) --- */
+RENDERERS.odd_one_out=renderChoice;
+RENDERERS_REVEAL.odd_one_out=RENDERERS_REVEAL.multiple_choice;
+
+/* --- Isi rumpang (cloze) --- */
+RENDERERS.cloze=(q,area,node)=>{
+  const parts=q.template.split('{}'); const nb=parts.length-1;
+  const fills=new Array(nb).fill(null); const blanks=[];
+  const sent=el(`<div class="cloze-sent"></div>`);
+  parts.forEach((seg,i)=>{
+    sent.appendChild(document.createTextNode(seg));
+    if(i<nb){
+      const b=el(`<button class="blank empty">____</button>`); b.dataset.i=i;
+      b.onclick=()=>{ if(S.locked)return; const fi=+b.dataset.i; if(fills[fi]==null)return;
+        const w=fills[fi]; fills[fi]=null; b.textContent='____'; b.classList.add('empty');
+        const chip=[...bank.querySelectorAll('.wchip.used')].find(c=>c.dataset.w===w); if(chip)chip.classList.remove('used');
+        updateBtn(); };
+      blanks.push(b); sent.appendChild(b);
+    }
+  });
+  area.appendChild(sent);
+  const bank=el(`<div class="wordbank"></div>`);
+  shuffle(q.bank.slice()).forEach(w=>{ const c=el(`<button class="wchip">${esc(w)}</button>`); c.dataset.w=w;
+    c.onclick=()=>{ if(S.locked||c.classList.contains('used'))return; const fi=fills.findIndex(x=>x==null); if(fi<0)return;
+      fills[fi]=w; const b=blanks[fi]; b.textContent=w; b.classList.remove('empty'); c.classList.add('used'); updateBtn(); };
+    bank.appendChild(c); });
+  area.appendChild(bank);
+  const foot=node.querySelector('#footBtns'); const sh=node.querySelector('#submitHint');
+  const submit=el(`<button class="btn" disabled>PERIKSA JAWABAN</button>`);
+  function updateBtn(){ const left=fills.filter(x=>x==null).length; submit.disabled=left>0; if(sh)sh.textContent=left>0?`Isi ${left} rumpang lagi`:''; }
+  submit.onclick=()=>{ if(S.locked)return; let hit=0;
+    blanks.forEach((b,i)=>{ const ok=fills[i]===q.answers[i]; b.classList.add(ok?'ok':'no'); if(ok)hit++; });
+    const perfect=hit===nb; submitPartial(q,node,perfect, perfect?(q.score||150):Math.round((q.score||150)*hit/nb)); };
+  foot.appendChild(submit); updateBtn();
+};
+RENDERERS_REVEAL.cloze=(q,node)=>{};
+
+/* --- Temukan kata keliru --- */
+RENDERERS.find_wrong_word=(q,area,node)=>{
+  const box=el(`<div class="tokens"></div>`);
+  q.tokens.forEach((t,i)=>{
+    const sp=el(`<span class="tok">${esc(t)}</span>`); sp.dataset.i=i;
+    sp.onclick=()=>{ if(S.locked)return; const correct=(i===q.wrongIndex);
+      box.querySelectorAll('.tok').forEach(x=>x.style.pointerEvents='none');
+      sp.classList.add(correct?'ok':'no');
+      if(!correct){ const w=box.querySelector('.tok[data-i="'+q.wrongIndex+'"]'); if(w)w.classList.add('ok'); }
+      submitAnswer(q,node,correct,i); };
+    box.appendChild(sp); box.appendChild(document.createTextNode(' '));
+  });
+  area.appendChild(box);
+};
+RENDERERS_REVEAL.find_wrong_word=(q,node)=>{ const w=node.querySelector('#qArea .tok[data-i="'+q.wrongIndex+'"]'); if(w)w.classList.add('ok'); node.querySelectorAll('#qArea .tok').forEach(x=>x.style.pointerEvents='none'); };
+
+/* --- Ronde kilat benar/salah --- */
+RENDERERS.rapid_tf=(q,area,node)=>{
+  let i=0, hits=0; const n=q.statements.length;
+  const prog=el(`<div class="rapid-prog">Pernyataan 1 / ${n}</div>`);
+  const stmt=el(`<div class="rapid-stmt"></div>`);
+  const btns=el(`<div class="rapid-btns"></div>`);
+  const bT=el(`<button class="opt"><span class="ic">✓</span><span>BENAR</span></button>`);
+  const bF=el(`<button class="opt"><span class="ic">✕</span><span>SALAH</span></button>`);
+  btns.appendChild(bT); btns.appendChild(bF);
+  area.appendChild(prog); area.appendChild(stmt); area.appendChild(btns);
+  function paint(){ stmt.textContent=q.statements[i].t; prog.textContent=`Pernyataan ${i+1} / ${n}`; }
+  function done(){ const perfect=hits===n; submitPartial(q,node,perfect, perfect?(q.score||150):Math.round((q.score||150)*hits/n)); }
+  function answer(val){ if(S.locked)return; if(q.statements[i].a===val)hits++; i++; if(i>=n)done(); else paint(); }
+  bT.onclick=()=>answer(true); bF.onclick=()=>answer(false);
+  S.timeoutHandler=()=>{ submitPartial(q,node,false, Math.round((q.score||150)*hits/n)); };
+  paint();
+};
+RENDERERS_REVEAL.rapid_tf=(q,node)=>{};
+
+/* --- Garis waktu (urut kronologis, vertikal) --- */
+RENDERERS.timeline=(q,area,node)=>{
+  area.appendChild(el(`<div class="tl-ends"><span>↑ Lebih dahulu</span><span>Lebih kemudian ↓</span></div>`));
+  const box=el(`<div class="sortable timeline" id="sortTL"></div>`);
+  shuffle(q.items.slice()).forEach(it=>{ const d=(q.dates&&q.dates[it])?`<span class="tl-date">${esc(q.dates[it])}</span>`:'';
+    box.appendChild(el(`<div class="sort-item" data-l="${esc(it)}"><span class="rank"></span><span style="flex:1">${esc(it)}${d}</span><span class="grip">≡</span></div>`)); });
+  area.appendChild(box); renumber(box); makeSortable(box,()=>renumber(box));
+  addSortSubmit(q,node,box,'sortTL',()=>orderOf(box,'data-l'),q.correctAnswer,'l');
+};
+RENDERERS_REVEAL.timeline=(q,node)=>{};
+
+/* --- Rute pada peta (tap titik berurutan) --- */
+RENDERERS.map_route=(q,area,node)=>{
+  const wrap=el(`<div class="mapwrap"><svg viewBox="0 0 100 66" preserveAspectRatio="xMidYMid meet" aria-label="${esc(q.svgLabel||'peta')}">${q.svg||''}</svg></div>`);
+  area.appendChild(wrap);
+  const order=[]; const btns={};
+  q.points.forEach(p=>{
+    const b=el(`<button class="mpt" style="left:${p.x}%;top:${p.y}%"><span class="num"></span><span>${esc(p.label)}</span></button>`); b.dataset.id=p.id;
+    b.onclick=()=>{ if(S.locked||b.classList.contains('on'))return; order.push(p.id); b.classList.add('on'); b.querySelector('.num').textContent=order.length; updateBtn(); };
+    btns[p.id]=b; wrap.appendChild(b);
+  });
+  const foot=node.querySelector('#footBtns'); const sh=node.querySelector('#submitHint');
+  const reset=el(`<button class="btn ghost" style="margin-bottom:10px">Ulangi urutan</button>`);
+  reset.onclick=()=>{ if(S.locked)return; order.length=0; Object.values(btns).forEach(b=>{b.classList.remove('on');b.querySelector('.num').textContent='';}); updateBtn(); };
+  const submit=el(`<button class="btn" disabled>PERIKSA RUTE</button>`);
+  function updateBtn(){ const left=q.points.length-order.length; submit.disabled=left>0; if(sh)sh.textContent=left>0?`Tap ${left} titik lagi sesuai urutan`:''; }
+  submit.onclick=()=>{ if(S.locked)return; let hit=0;
+    order.forEach((id,idx)=>{ const ok=q.correctAnswer[idx]===id; if(ok)hit++; btns[id].classList.add(ok?'ok':'no'); });
+    const perfect=hit===q.points.length; submitPartial(q,node,perfect, perfect?(q.score||150):Math.round((q.score||150)*hit/q.points.length)); };
+  foot.appendChild(reset); foot.appendChild(submit); updateBtn();
+};
+RENDERERS_REVEAL.map_route=(q,node)=>{};
+
+/* --- Kartu memori (flip & cocokkan) --- */
+RENDERERS.memory_match=(q,area,node)=>{
+  const cards=[]; q.pairs.forEach((pr,pi)=>{ cards.push({pid:pi,txt:pr[0]}); cards.push({pid:pi,txt:pr[1]}); });
+  const grid=el(`<div class="mem-grid"></div>`);
+  let flipped=[], matched=0, busy=false;
+  shuffle(cards).forEach(cd=>{
+    const c=el(`<button class="mcard">${esc(cd.txt)}</button>`); c.dataset.pid=cd.pid;
+    c.onclick=()=>{ if(S.locked||busy||c.classList.contains('flip')||c.classList.contains('matched'))return;
+      c.classList.add('flip'); flipped.push(c);
+      if(flipped.length===2){ busy=true; const [a,b]=flipped;
+        if(a.dataset.pid===b.dataset.pid){ setTimeout(()=>{ a.classList.add('matched');b.classList.add('matched');a.classList.remove('flip');b.classList.remove('flip');flipped=[];matched++;busy=false; if(matched===q.pairs.length)done(true); },300); }
+        else { setTimeout(()=>{ a.classList.remove('flip');b.classList.remove('flip');flipped=[];busy=false; },700); } } };
+    grid.appendChild(c);
+  });
+  area.appendChild(grid);
+  function done(perfect){ submitPartial(q,node,perfect, perfect?(q.score||150):Math.round((q.score||150)*matched/q.pairs.length)); }
+  S.timeoutHandler=()=>done(false);
+};
+RENDERERS_REVEAL.memory_match=(q,node)=>{};
+
+/* --- Petunjuk bertahap (makin banyak petunjuk, makin sedikit poin) --- */
+RENDERERS.progressive_reveal=(q,area,node)=>{
+  const clues=el(`<div class="clues"></div>`); const shown=[q.clues[0]];
+  function paint(){ clues.innerHTML=''; q.clues.forEach((c,i)=>{ const open=i<shown.length;
+    clues.appendChild(el(`<div class="clue ${open?'':'locked'}">${open?('💡 '+esc(c)):('🔒 Petunjuk '+(i+1))}</div>`)); }); }
+  area.appendChild(clues); paint();
+  const pen=q.cluePenalty||30;
+  const more=el(`<button class="btn ghost clue-btn">Buka petunjuk berikutnya (−${pen})</button>`);
+  more.onclick=()=>{ if(S.locked||shown.length>=q.clues.length)return; shown.push(q.clues[shown.length]); S.pending+=pen; paint();
+    if(shown.length>=q.clues.length){ more.disabled=true; more.textContent='Semua petunjuk terbuka'; } };
+  area.appendChild(more);
+  renderChoice(q,area,node);
+};
+RENDERERS_REVEAL.progressive_reveal=RENDERERS_REVEAL.multiple_choice;
+
+/* --- Jajak pendapat (tanpa benar/salah) --- */
+RENDERERS.poll=(q,area,node)=>{
+  const wrap=el(`<div class="opts"></div>`);
+  q.options.forEach((opt,i)=>{ const o=el(`<button class="opt"><span class="key">${String.fromCharCode(65+i)}</span><span>${esc(opt)}</span></button>`);
+    o.onclick=()=>{ if(S.locked)return; [...wrap.children].forEach(c=>c.style.pointerEvents='none'); o.classList.add('chosen');
+      submitCustom(q,node,true,(q.score||100),'🗳️ Pilihanmu tercatat'); };
+    wrap.appendChild(o); });
+  area.appendChild(wrap);
+  area.appendChild(el(`<div class="poll-note">Tidak ada jawaban benar/salah. Hasil gabungan semua peserta bisa tampil real-time di layar pengajar bila disambungkan ke Firebase.</div>`));
+};
+RENDERERS_REVEAL.poll=(q,node)=>{ node.querySelectorAll('#qArea .opt').forEach(o=>o.style.pointerEvents='none'); };
+
+/* --- Taruhan poin --- */
+RENDERERS.wager=(q,area,node)=>{
+  const stakes=q.stakes||[100,200,300]; let stake=null;
+  area.appendChild(el(`<div class="stake-lbl">Pasang poin dulu — benar = +poin, salah = −poin</div>`));
+  const srow=el(`<div class="stakes"></div>`);
+  const opts=el(`<div class="opts"></div>`);
+  stakes.forEach(sv=>{ const c=el(`<button class="stake">${sv}</button>`);
+    c.onclick=()=>{ if(S.locked||stake!=null)return; stake=sv; c.classList.add('on');
+      srow.querySelectorAll('.stake').forEach(x=>{ if(x!==c)x.classList.add('dimmed'); x.style.pointerEvents='none'; });
+      opts.querySelectorAll('.opt').forEach(o=>{ o.style.pointerEvents='auto'; o.style.opacity=''; }); };
+    srow.appendChild(c); });
+  area.appendChild(srow);
+  q.options.forEach((opt,i)=>{ const o=el(`<button class="opt" style="pointer-events:none;opacity:.5"><span class="key">${String.fromCharCode(65+i)}</span><span>${esc(opt)}</span></button>`);
+    o.onclick=()=>{ if(S.locked||stake==null)return; const correct=(i===q.correctAnswer);
+      opts.querySelectorAll('.opt').forEach((c,ci)=>{ c.style.pointerEvents='none'; if(ci===q.correctAnswer)c.classList.add('correct'); if(ci===i&&!correct)c.classList.add('wrong'); });
+      submitCustom(q,node,correct, correct?stake:(-stake), correct?('✓ Benar! +'+stake):('✕ Salah −'+stake)); };
+    opts.appendChild(o); });
+  area.appendChild(opts);
+};
+RENDERERS_REVEAL.wager=(q,node)=>{ const opts=node.querySelectorAll('#qArea .opt'); opts[q.correctAnswer]?.classList.add('correct'); opts.forEach(o=>o.style.pointerEvents='none'); };
+
+function finishQuiz(){
+  stopTimer();
+  const total=S.quiz.questions.length;
+  const timeMs=Date.now()-S.startAt;
+  const accuracy=Math.round(S.correct/total*100);
+  const rec={ name:S.name, score:S.score, accuracy, correct:S.correct, total, timeMs, hints:S.hintsUsed, at:Date.now() };
+  // simpan ke leaderboard
+  const key='quiz_lb_'+S.quiz.id;
+  const lb=Store.get(key)||[]; lb.push(rec); Store.set(key,lb);
+  S.lastRec=rec;
+  renderResult(rec);
+}
+
+function stars(acc){ if(acc>=90)return 5; if(acc>=75)return 4; if(acc>=55)return 3; if(acc>=35)return 2; return 1; }
+function perfTag(n){ return [
+  {t:'Coba lagi!',c:'var(--bad)'},{t:'Lumayan',c:'var(--ink-dim)'},
+  {t:'Bagus',c:'var(--violet)'},{t:'Hebat!',c:'var(--good)'},{t:'Sempurna! 🔥',c:'var(--gold)'}
+][n-1]; }
+
+function renderResult(rec){
+  const st=stars(rec.accuracy); const pt=perfTag(st);
+  const node=el(`<div class="result-wrap">
+    <div class="trophy">${st>=4?'🏆':st>=3?'🎉':'💪'}</div>
+    <div class="result-name">${esc(rec.name)}</div>
+    <div class="final-lbl">Skor Akhir</div>
+    <div class="final-score">${rec.score.toLocaleString('id-ID')}</div>
+    <div class="stars">${'★'.repeat(st)}<span style="color:rgba(255,255,255,.15)">${'★'.repeat(5-st)}</span></div>
+    <div class="perf-tag" style="color:${pt.c};background:rgba(255,255,255,.06)">${pt.t}</div>
+    <div class="stat-grid">
+      <div class="stat"><div class="v">${rec.correct}/${rec.total}</div><div class="k">Jawaban Benar</div></div>
+      <div class="stat"><div class="v">${rec.accuracy}%</div><div class="k">Akurasi</div></div>
+      <div class="stat"><div class="v">${fmtTime(rec.timeMs)}</div><div class="k">Waktu</div></div>
+      <div class="stat"><div class="v">${rec.hints}</div><div class="k">Bantuan Dipakai</div></div>
+    </div>
+    <div class="stack">
+      <button class="btn gold" id="lbBtn">LIHAT LEADERBOARD</button>
+      <button class="btn ghost" id="againBtn">MAIN LAGI</button>
+    </div>
+  </div>`);
+  node.querySelector('#lbBtn').onclick=()=>renderLeaderboard(S.quiz.id, rec);
+  node.querySelector('#againBtn').onclick=()=>{ S=newSession(S.quiz,S.name); renderQuestion(); };
+  show(node);
+  // konfetti kecil
+  if(st>=4){ for(let i=0;i<18;i++){ setTimeout(()=>scorePop(['🎉','⭐','✨','🎊'][i%4],'bonus', Math.random()*window.innerWidth, 60+Math.random()*120),i*60); } }
+}
+
+/* ============================================================
+   LEADERBOARD
+   ============================================================ */
+function sortLb(a,b){ if(b.score!==a.score)return b.score-a.score; if(a.timeMs!==b.timeMs)return a.timeMs-b.timeMs; return b.accuracy-a.accuracy; }
+function renderLeaderboard(quizId, me){
+  let lb=(Store.get('quiz_lb_'+quizId)||[]).slice().sort(sortLb);
+  const node=el(`<div class="lb-wrap">
+    <div class="lb-title">🏅 Leaderboard</div>
+    <div class="lb-sub">${esc((QUIZZES[quizId]||{}).title||quizId)} · peringkat: skor → waktu → akurasi</div>
+    <div id="lbList"></div>
+    <div class="stack mt">
+      <button class="btn" id="againBtn">MAIN LAGI</button>
+      <button class="btn ghost" id="homeBtn">KE AWAL</button>
+    </div>
+  </div>`);
+  const list=node.querySelector('#lbList');
+  if(!lb.length){ list.appendChild(el(`<div class="lb-empty">Belum ada skor. Jadilah yang pertama! 🚀</div>`)); }
+  else lb.slice(0,20).forEach((r,i)=>{
+    const isMe = me && r.at===me.at;
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    const row=el(`<div class="lb-row ${isMe?'me':''} ${i<3?'top'+(i+1):''}">
+      <div class="lb-rank">${medal}</div>
+      <div class="lb-info"><div class="lb-name">${esc(r.name)}${isMe?' <span style="color:var(--pink);font-size:12px">(kamu)</span>':''}</div>
+      <div class="lb-meta">${r.accuracy}% akurasi · ${fmtTime(r.timeMs)}</div></div>
+      <div class="lb-score">${r.score.toLocaleString('id-ID')}</div>
+    </div>`);
+    list.appendChild(row);
+  });
+  node.querySelector('#againBtn').onclick=()=>{ S=newSession(QUIZZES[quizId], (me&&me.name)||S?.name||'Pemain'); renderQuestion(); };
+  node.querySelector('#homeBtn').onclick=()=>renderLanding(QUIZZES[quizId]);
+  show(node);
+}
+
+/* ============================================================
+   ADMIN (ringan) — QR generator + statistik dari leaderboard
+   ============================================================ */
+function quizUrl(id){
+  const base=location.origin+location.pathname;
+  return base+'#/quiz/'+id;
+}
+function renderAdmin(id){
+  id=id||'demo'; const url=quizUrl(id);
+  const lb=Store.get('quiz_lb_'+id)||[];
+  const n=lb.length;
+  const avg=n?Math.round(lb.reduce((s,r)=>s+r.score,0)/n):0;
+  const hi=n?Math.max(...lb.map(r=>r.score)):0;
+  const avgT=n?fmtTime(lb.reduce((s,r)=>s+r.timeMs,0)/n):'–';
+  const hints=lb.reduce((s,r)=>s+r.hints,0);
+  // akurasi per soal
+  const q=QUIZZES[id].questions;
+  const qrSrc='https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=8&data='+encodeURIComponent(url);
+
+  const node=el(`<div class="center-col">
+    <div class="admin-h">Admin</div>
+    <div class="admin-sub">${esc(QUIZZES[id].title)} · status: ${QUIZZES[id].status} · ${q.length} soal</div>
+    <div class="stack" style="margin:2px 0 4px">${Object.keys(QUIZZES).map(k=>`<button class="btn ${k===id?'gold':'ghost'}" data-q="${k}" style="min-height:44px;font-size:15px">${esc(QUIZZES[k].title)}</button>`).join('')}</div>
+
+    <div class="card">
+      <h3>Akses peserta (QR)</h3>
+      <div class="qr-box">
+        <img class="qr-img" src="${qrSrc}" alt="QR code quiz" onerror="this.style.display='none';document.getElementById('qrFallback').style.display='block'">
+        <div id="qrFallback" style="display:none;color:var(--ink-faint);font-size:13px">Pratinjau QR butuh koneksi. Di domain-mu QR muncul otomatis.</div>
+        <div class="qr-url">${esc(url)}</div>
+        <div class="stack" style="width:100%">
+          <button class="btn gold" id="fsBtn">TAMPILKAN QR LAYAR PENUH</button>
+          <button class="btn ghost" id="playBtn">Buka quiz sebagai peserta</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Statistik</h3>
+      <div class="stat-inline">
+        <div class="stat"><div class="v">${n}</div><div class="k">Peserta</div></div>
+        <div class="stat"><div class="v">${avg.toLocaleString('id-ID')}</div><div class="k">Rata-rata skor</div></div>
+        <div class="stat"><div class="v">${hi.toLocaleString('id-ID')}</div><div class="k">Skor tertinggi</div></div>
+        <div class="stat"><div class="v">${avgT}</div><div class="k">Rata-rata waktu</div></div>
+      </div>
+      <div style="color:var(--ink-faint);font-size:13px;margin-top:12px">Total bantuan dipakai: ${hints}</div>
+    </div>
+
+    <div class="card" id="accCard">
+      <h3>Akurasi per soal</h3>
+      <div id="accList"></div>
+    </div>
+
+    <div class="stack">
+      <button class="btn ghost" id="lbBtn">Lihat leaderboard</button>
+      <button class="btn ghost" id="resetBtn">Reset leaderboard</button>
+      <button class="btn ghost" id="homeBtn">Ke halaman awal</button>
+    </div>
+  </div>`);
+
+  // akurasi per soal
+  const accList=node.querySelector('#accList');
+  q.forEach((qq,i)=>{
+    const answers=lb.length; // approx: kita tak simpan per-soal peserta di demo storage → tampilkan placeholder bila kosong
+    accList.appendChild(el(`<div class="qacc"><span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${i+1}. ${esc(qq.question)}</span>
+      <span class="bar"><i style="width:${answers?60:0}%"></i></span></div>`));
+  });
+  if(!lb.length){ accList.innerHTML='<div style="color:var(--ink-faint);font-size:13px">Belum ada data. Statistik muncul setelah peserta bermain.</div>'; }
+
+  node.querySelector('#fsBtn').onclick=()=>{
+    const m=document.getElementById('qrModal');
+    document.getElementById('qrModalImg').src='https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data='+encodeURIComponent(url);
+    document.getElementById('qrModalUrl').textContent=url; m.classList.add('show');
+  };
+  node.querySelector('#playBtn').onclick=()=>{ location.hash='#/quiz/'+id; renderLanding(QUIZZES[id]); };
+  node.querySelector('#lbBtn').onclick=()=>renderLeaderboard(id,null);
+  node.querySelector('#resetBtn').onclick=()=>{ if(confirm('Hapus semua skor leaderboard?')){ Store.set('quiz_lb_'+id,[]); renderAdmin(); } };
+  node.querySelector('#homeBtn').onclick=()=>{ location.hash=''; renderLanding(QUIZZES[id]); };
+  node.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>renderAdmin(b.dataset.q));
+  show(node);
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+route();
 </script>
 </body>
 </html>
