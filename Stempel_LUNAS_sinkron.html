@@ -1,0 +1,1527 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Stempel LUNAS · sinkron</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Asap:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body>
+<style>
+  :root{
+    --kertas:#EDEFF1;
+    --kartu:#FCFCFA;
+    --kartu-2:#F3F4F1;
+    --tinta:#151B2E;
+    --tinta-2:#5C6879;
+    --garis:#D2D7DD;
+    --garis-kuat:#B6BEC8;
+    --stempel:#BE2A25;
+    --lunas:#1A7052;
+    --emas:#9A6B10;
+    --emas-bg:#F6EBCF;
+    --lunas-bg:#E2F0EA;
+    --stempel-bg:#F8E5E3;
+    --radius:10px;
+    --shadow:0 1px 0 var(--garis), 0 6px 18px -12px rgba(21,27,46,.35);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --kertas:#0D1220;
+      --kartu:#171E30;
+      --kartu-2:#1E263A;
+      --tinta:#E8EBF1;
+      --tinta-2:#95A0B5;
+      --garis:#2A3349;
+      --garis-kuat:#3C476180;
+      --stempel:#EC5C55;
+      --lunas:#43AE86;
+      --emas:#DCAE49;
+      --emas-bg:#2E2718;
+      --lunas-bg:#16302A;
+      --stempel-bg:#331A1A;
+      --shadow:0 1px 0 var(--garis), 0 8px 22px -14px #000;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --kertas:#0D1220;
+    --kartu:#171E30;
+    --kartu-2:#1E263A;
+    --tinta:#E8EBF1;
+    --tinta-2:#95A0B5;
+    --garis:#2A3349;
+    --garis-kuat:#3C476180;
+    --stempel:#EC5C55;
+    --lunas:#43AE86;
+    --emas:#DCAE49;
+    --emas-bg:#2E2718;
+    --lunas-bg:#16302A;
+    --stempel-bg:#331A1A;
+    --shadow:0 1px 0 var(--garis), 0 8px 22px -14px #000;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--kertas);
+    color:var(--tinta);
+    font-family:"Asap","Segoe UI",system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:540px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
+
+  /* ---------- bar atas ---------- */
+  .bar{
+    position:sticky;top:0;z-index:20;
+    background:var(--kertas);
+    border-bottom:1px solid var(--garis);
+    padding-block:10px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .bar-merek{
+    font-family:"Archivo Black",Impact,sans-serif;
+    font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--stempel);
+    line-height:1;
+  }
+  .dots{display:flex;gap:5px;margin-left:auto}
+  .dot{width:9px;height:9px;border:1.5px solid var(--garis-kuat);border-radius:2px;background:transparent}
+  .dot.on{background:var(--lunas);border-color:var(--lunas)}
+  .dot.now{border-color:var(--stempel);background:var(--stempel)}
+  .skor{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:14px;
+    background:var(--emas-bg);color:var(--emas);
+    border:1px solid var(--emas);
+    padding:2px 8px;border-radius:3px;
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+
+  /* ---------- teks ---------- */
+  h1,h2,h3{font-family:"Archivo Black",Impact,sans-serif;font-weight:400;text-wrap:balance;margin:0}
+  h1{font-size:clamp(28px,8vw,38px);line-height:1.02;letter-spacing:-.01em}
+  h2{font-size:22px;line-height:1.15;margin-bottom:6px}
+  h3{font-size:15px;letter-spacing:.02em}
+  p{margin:0 0 12px}
+  .eyebrow{
+    font-family:"Courier Prime",monospace;font-weight:700;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--tinta-2);margin-bottom:10px;
+  }
+  .kecil{font-size:14px;color:var(--tinta-2)}
+  .ayat{
+    font-family:"Courier Prime",monospace;font-size:14.5px;line-height:1.6;
+    background:var(--kartu-2);
+    border-left:3px solid var(--stempel);
+    padding:12px 14px;margin:0 0 14px;
+  }
+  .ayat b{color:var(--stempel)}
+  .rujukan{display:block;margin-top:6px;font-weight:700;letter-spacing:.06em;font-size:12px;text-transform:uppercase;color:var(--tinta-2)}
+
+  /* ---------- kartu ---------- */
+  .kartu{
+    background:var(--kartu);
+    border:1px solid var(--garis);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .perf{border-top:2px dashed var(--garis-kuat);margin-top:14px;padding-top:14px}
+
+  /* ---------- tombol ---------- */
+  button{font-family:inherit;font-size:16px;cursor:pointer}
+  .tbl{
+    display:block;width:100%;
+    background:var(--tinta);color:var(--kertas);
+    border:none;border-radius:6px;
+    padding:14px 16px;
+    font-weight:700;letter-spacing:.02em;
+    transition:transform .08s ease, filter .15s ease;
+  }
+  .tbl:hover{filter:brightness(1.15)}
+  .tbl:active{transform:translateY(1px)}
+  .tbl.merah{background:var(--stempel);color:#fff}
+  .tbl.garis{background:transparent;color:var(--tinta);border:1.5px solid var(--garis-kuat);font-weight:600}
+  .tbl[disabled]{opacity:.45;cursor:not-allowed}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tbl-kecil{
+    background:transparent;border:1.5px solid var(--garis-kuat);color:var(--tinta);
+    border-radius:5px;padding:7px 12px;font-size:14px;font-weight:600;
+  }
+  a{color:var(--stempel)}
+  :focus-visible{outline:2.5px solid var(--stempel);outline-offset:2px}
+
+  /* ---------- angka & kwitansi ---------- */
+  .rp{font-family:"Courier Prime",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+  .baris{
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    font-family:"Courier Prime",monospace;font-size:14px;
+    padding:5px 0;border-bottom:1px dotted var(--garis);
+  }
+  .baris span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}
+  .bar-progres{height:14px;background:var(--kartu-2);border:1px solid var(--garis-kuat);border-radius:2px;overflow:hidden;margin:10px 0 6px}
+  .bar-progres div{height:100%;background:var(--stempel);width:0%;transition:width .2s ease}
+
+  /* ---------- stempel ---------- */
+  .stempel{
+    display:inline-block;
+    font-family:"Archivo Black",Impact,sans-serif;
+    color:var(--stempel);
+    border:4px solid var(--stempel);
+    border-radius:6px;
+    padding:6px 18px 4px;
+    font-size:clamp(30px,10vw,46px);
+    letter-spacing:.1em;
+    transform:rotate(-8deg);
+    opacity:.92;
+    line-height:1;
+  }
+  .stempel-wrap{text-align:center;padding:18px 0 22px}
+  .cap{
+    display:inline-block;font-family:"Archivo Black",Impact,sans-serif;font-size:11px;
+    letter-spacing:.12em;padding:3px 8px;border:2px solid currentColor;border-radius:3px;
+    transform:rotate(-4deg);
+  }
+  .cap.rugi{color:var(--stempel)}
+  .cap.untung{color:var(--lunas)}
+  @media (prefers-reduced-motion: no-preference){
+    .stempel{animation:cap .45s cubic-bezier(.2,1.5,.4,1) both}
+    @keyframes cap{from{transform:rotate(-8deg) scale(2.6);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:.92}}
+  }
+
+  /* ---------- kuis & sortir ---------- */
+  .pil{
+    display:block;width:100%;text-align:left;
+    background:var(--kartu-2);border:1.5px solid var(--garis);
+    border-radius:6px;padding:12px 14px;margin-bottom:8px;
+    color:var(--tinta);font-size:15px;line-height:1.4;
+  }
+  .pil:hover{border-color:var(--garis-kuat)}
+  .pil.benar{background:var(--lunas-bg);border-color:var(--lunas);color:var(--lunas);font-weight:600}
+  .pil.salah{background:var(--stempel-bg);border-color:var(--stempel);color:var(--stempel)}
+  .skenario{
+    font-size:17px;line-height:1.45;min-height:5.2em;
+    display:flex;align-items:center;
+    background:var(--kartu-2);border:1px solid var(--garis);
+    border-radius:8px;padding:16px;margin-bottom:14px;
+  }
+  .umpan{border-radius:6px;padding:11px 13px;font-size:14.5px;margin-bottom:12px;line-height:1.45}
+  .umpan.ok{background:var(--lunas-bg);border:1px solid var(--lunas);color:var(--lunas)}
+  .umpan.no{background:var(--stempel-bg);border:1px solid var(--stempel);color:var(--stempel)}
+  .umpan b{font-family:"Archivo Black",Impact,sans-serif;letter-spacing:.04em}
+
+  /* ---------- babak 1: ayat rumpang ---------- */
+  .rumpang{font-size:18px;line-height:2.1}
+  .slot{
+    display:inline-block;min-width:110px;text-align:center;
+    border-bottom:2.5px solid var(--garis-kuat);
+    padding:1px 8px;margin:0 2px;
+    font-weight:700;color:var(--tinta-2);cursor:pointer;
+  }
+  .slot.aktif{border-bottom-color:var(--stempel);background:var(--stempel-bg)}
+  .slot.isi{color:var(--tinta);border-bottom-color:var(--tinta)}
+  .slot.hadiah{color:var(--emas);border-bottom-color:var(--emas);background:var(--emas-bg)}
+  .kantong{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .kata{
+    background:var(--kartu-2);border:1.5px solid var(--garis-kuat);
+    border-radius:20px;padding:6px 13px;font-size:14.5px;color:var(--tinta);
+  }
+  .kata.pakai{opacity:.3;text-decoration:line-through;pointer-events:none}
+
+  /* ---------- babak 4: tiga tahap ---------- */
+  .tiga{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .tiga button{
+    background:var(--kartu-2);border:1.5px solid var(--garis);border-radius:6px;
+    padding:12px 4px;color:var(--tinta);font-weight:700;font-size:13px;line-height:1.2;
+  }
+  .tiga button small{display:block;font-weight:400;font-size:10.5px;color:var(--tinta-2);margin-top:3px;letter-spacing:.04em}
+
+  /* ---------- babak 5: lelang ---------- */
+  .lelang-baris{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--garis)}
+  .lelang-baris .nama{flex:1;font-size:15px;line-height:1.3}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{
+    width:34px;height:34px;border-radius:5px;border:1.5px solid var(--garis-kuat);
+    background:var(--kartu-2);color:var(--tinta);font-size:19px;font-weight:700;line-height:1;
+  }
+  .stepper output{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:16px;
+    min-width:34px;text-align:center;font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- daftar babak di beranda ---------- */
+  .daftar{display:flex;flex-direction:column;gap:0}
+  .item{
+    display:flex;gap:12px;align-items:flex-start;
+    padding:13px 0;border-bottom:1px solid var(--garis);
+    text-align:left;width:100%;background:none;border-left:0;border-right:0;border-top:0;
+    color:var(--tinta);
+  }
+  .item:last-child{border-bottom:0}
+  .nomor{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:13px;
+    border:1.5px solid var(--garis-kuat);border-radius:3px;
+    width:26px;height:26px;display:grid;place-items:center;flex:none;margin-top:1px;
+    color:var(--tinta-2);
+  }
+  .item.beres .nomor{background:var(--lunas);border-color:var(--lunas);color:#fff}
+  .item .judul{display:block;font-weight:700;font-size:15.5px;line-height:1.25}
+  .item .ket{display:block;font-size:13.5px;color:var(--tinta-2);line-height:1.35;margin-top:1px}
+
+  input[type=text],textarea{
+    width:100%;font-family:inherit;font-size:16px;color:var(--tinta);
+    background:var(--kartu-2);border:1.5px solid var(--garis);border-radius:6px;
+    padding:11px 12px;
+  }
+  textarea{resize:vertical;min-height:70px}
+  label{display:block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:5px}
+  .medan{margin-bottom:14px}
+
+  .guru-blok{border-top:1px solid var(--garis);padding-top:14px;margin-top:14px}
+  .guru-blok h3{color:var(--stempel);margin-bottom:6px}
+  .guru-blok ul{margin:0 0 10px;padding-left:18px;font-size:14.5px}
+  .guru-blok li{margin-bottom:5px}
+  .waktu{font-family:"Courier Prime",monospace;font-weight:700;font-size:12.5px;color:var(--tinta-2);letter-spacing:.04em}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td{padding:6px 8px 6px 0;border-bottom:1px solid var(--garis);vertical-align:top}
+  td:first-child{font-family:"Courier Prime",monospace;font-weight:700;white-space:nowrap;color:var(--tinta-2)}
+  .gulir{overflow-x:auto}
+
+  /* ---------- tambahan v2 ---------- */
+  .skor.lunas{background:var(--lunas-bg);color:var(--lunas);border-color:var(--lunas);font-family:"Archivo Black",Impact,sans-serif;font-weight:400;letter-spacing:.08em}
+  .bar-merek{cursor:default;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;padding:6px 0}
+  .baris.teks span:first-child{flex:none}
+  .baris.teks span:last-child{flex:1;white-space:normal;text-align:right}
+  .coret{text-decoration:line-through;text-decoration-thickness:2px;color:var(--tinta-2)}
+  .umpan.emas{background:var(--emas-bg);border:1px solid var(--emas);color:var(--tinta)}
+  .rahasia{margin-top:14px;padding:14px;border:1.5px dashed var(--garis-kuat);border-radius:8px;background:var(--kartu-2)}
+  .rahasia textarea{background:var(--kartu)}
+  .pengakuan{font-size:17px;line-height:1.5;overflow-wrap:anywhere}
+  h2{overflow-wrap:anywhere}
+  button.slot{font:inherit;font-weight:700;background:transparent;border:0;border-bottom:2.5px solid var(--garis-kuat);border-radius:0;min-height:1.6em;vertical-align:baseline}
+  button.slot.aktif{border-bottom-color:var(--stempel);background:var(--stempel-bg)}
+  button.slot.isi{color:var(--tinta);border-bottom-color:var(--tinta)}
+  .item.penutup .nomor{border-style:dashed}
+  .item.penutup.beres .nomor{border-style:solid}
+  .stempel.diam{animation:none}
+  .stempel-wrap{overflow-x:clip;overflow-y:visible}
+  .wrap{overflow-x:clip}
+
+  /* ---------- tambahan v3: sinkron ---------- */
+  #banner{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--emas-bg);border:1px solid var(--emas);font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .tunggu{display:flex;gap:12px;align-items:center;padding:14px;border:1.5px dashed var(--garis-kuat);border-radius:8px;font-size:15px;line-height:1.4;margin-top:4px}
+  .denyut{flex:none;width:12px;height:12px;border-radius:50%;background:var(--lunas)}
+  @media (prefers-reduced-motion: no-preference){
+    .denyut{animation:denyut 1.6s ease-in-out infinite}
+    @keyframes denyut{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+  }
+  .skor.guru{background:var(--kartu-2);color:var(--tinta);border-color:var(--garis-kuat)}
+  .angka-besar{font-family:"Archivo Black",Impact,sans-serif;font-size:44px;line-height:1;margin:4px 0 10px}
+  .angka-besar span{font-family:"Asap",system-ui,sans-serif;font-size:16px;color:var(--tinta-2);margin-left:6px;font-weight:600}
+  .minta{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px;border-radius:6px;background:var(--emas-bg);border:1px solid var(--emas);font-size:15px}
+  .tbl-kecil.merah{background:var(--stempel);border-color:var(--stempel);color:#fff}
+  .baris.benar-g{color:var(--lunas);font-weight:700}
+  .tabel-anak td{padding:8px 6px 8px 0;font-family:inherit;font-weight:400;color:var(--tinta);vertical-align:middle}
+  .tabel-anak td:first-child{font-family:inherit;font-weight:700;color:var(--tinta)}
+  .tabel-anak td.st{color:var(--tinta-2);font-size:13px}
+  .tabel-anak td.sk{text-align:right;font-family:"Courier Prime",monospace;font-weight:700;white-space:nowrap}
+  .on-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--lunas);margin-right:8px;vertical-align:middle}
+  .on-dot.mati{background:var(--garis-kuat)}
+  .lunas-teks{color:var(--lunas);font-family:"Archivo Black",Impact,sans-serif;font-weight:400;letter-spacing:.06em}
+  .hapus{background:none;border:0;color:var(--tinta-2);font-size:20px;line-height:1;padding:4px 8px}
+  .lompatan{display:flex;flex-wrap:wrap;gap:6px}
+  .lompat{background:var(--kartu-2);border:1.5px solid var(--garis);border-radius:5px;padding:7px 10px;font-size:13.5px;color:var(--tinta);font-weight:600}
+  .lompat.kini{border-color:var(--stempel);color:var(--stempel)}
+  .panduan summary{cursor:pointer;list-style:none}
+  .panduan summary::-webkit-details-marker{display:none}
+  .panduan summary h3{display:inline}
+  .panduan summary::after{content:" +";color:var(--tinta-2);font-weight:700}
+  .panduan[open] summary::after{content:" −"}
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="bar-merek" id="merek">Lunas</div>
+    <div class="dots" id="dots"></div>
+    <div class="skor" id="skor">0 pts</div>
+  </header>
+  <div id="banner" hidden></div>
+  <main id="app"></main>
+</div>
+
+<script>
+"use strict";
+/* =========================================================
+   PENGATURAN — ubah di sini
+   ========================================================= */
+var CONFIG = {
+  // Sama dengan databaseURL di project Pelita. Boleh juga tempel seluruh firebaseConfig.
+  firebase: {
+    databaseURL: "https://test-7157e-default-rtdb.asia-southeast1.firebasedatabase.app"
+  },
+  kelas: "cg9",   // bisa ditimpa lewat link: ?kelas=cg10
+  PIN: "0909"     // PIN panel guru — GANTI sebelum dipakai
+};
+
+var Q = new URLSearchParams(location.search);
+var KELAS = (Q.get("kelas") || CONFIG.kelas).replace(/[^a-z0-9_-]/gi, "").toLowerCase() || "cg9";
+var ROOT = "lunas/" + KELAS;
+var MODE_GURU = location.hash === "#guru" || Q.has("guru");
+
+/* =========================================================
+   LAPISAN DATABASE: Firebase, atau "demo" (antar-tab, untuk uji coba)
+   ========================================================= */
+var DB = (function(){
+  if(!Q.has("demo") && window.firebase && firebase.initializeApp){
+    try{
+      firebase.initializeApp(CONFIG.firebase);
+      var db = firebase.database();
+      return {
+        mode:"fb",
+        on:function(p, cb){ db.ref(p).on("value", function(s){ cb(s.val()); }); },
+        set:function(p, v){ return db.ref(p).set(v); },
+        update:function(p, o){ return db.ref(p).update(o); },
+        remove:function(p){ return db.ref(p).remove(); },
+        hadir:function(p){
+          db.ref(".info/connected").on("value", function(s){
+            if(s.val()){ db.ref(p).onDisconnect().set(false); db.ref(p).set(true); }
+          });
+        },
+        koneksi:function(cb){ db.ref(".info/connected").on("value", function(s){ cb(!!s.val()); }); }
+      };
+    }catch(e){ console.error(e); }
+  }
+  if(!Q.has("demo")) return {mode:"putus", on:function(){}, set:tolak, update:tolak, remove:tolak, hadir:function(){}, koneksi:function(cb){ cb(false); }};
+  function tolak(){ return Promise.resolve(); }
+
+  /* Data demo disimpan per "shard" (ctrl, dan tiap anak terpisah) supaya tab-tab tidak saling menimpa. */
+  var KEY = "lunas-demo|";
+  var bc = ("BroadcastChannel" in window) ? new BroadcastChannel("lunas-demo") : null;
+  var dengar = [];
+  function jalur(p){ return p.split("/").filter(Boolean); }
+  function dalamShard(s){ return s[2] === "anak" ? 4 : 3; }
+  function baca(){
+    var t = {};
+    for(var i=0;i<localStorage.length;i++){
+      var k = localStorage.key(i);
+      if(k.indexOf(KEY) !== 0) continue;
+      try{ pasang(t, k.slice(KEY.length), JSON.parse(localStorage.getItem(k))); }catch(e){}
+    }
+    return t;
+  }
+  function ambil(t, p){ var s = jalur(p); for(var i=0;i<s.length;i++){ if(t == null || typeof t !== "object") return null; t = t[s[i]]; } return t === undefined ? null : t; }
+  function pasang(t, p, v){
+    var s = jalur(p), o = t;
+    if(!s.length) return v;
+    for(var i=0;i<s.length-1;i++){ if(typeof o[s[i]] !== "object" || o[s[i]] === null) o[s[i]] = {}; o = o[s[i]]; }
+    if(v === null || v === undefined) delete o[s[s.length-1]]; else o[s[s.length-1]] = v;
+    return t;
+  }
+  function tulisJalur(p, v){
+    var s = jalur(p), d = dalamShard(s);
+    if(s.length < d){
+      var awalan = KEY + s.join("/");
+      var hapus = [];
+      for(var i=0;i<localStorage.length;i++){ var k = localStorage.key(i); if(k === awalan || k.indexOf(awalan + "/") === 0) hapus.push(k); }
+      hapus.forEach(function(k){ localStorage.removeItem(k); });
+      if(v !== null && v !== undefined){
+        if(s.length === d - 1 && typeof v === "object"){ for(var c in v) tulisJalur(p + "/" + c, v[c]); }
+        else localStorage.setItem(awalan, JSON.stringify(v));
+      }
+      return;
+    }
+    var kunciShard = KEY + s.slice(0, d).join("/"), sisa = s.slice(d).join("/");
+    var isi = null;
+    try{ isi = JSON.parse(localStorage.getItem(kunciShard)); }catch(e){}
+    if(sisa){ if(typeof isi !== "object" || isi === null) isi = {}; isi = pasang(isi, sisa, v); }
+    else isi = v;
+    if(isi === null || isi === undefined) localStorage.removeItem(kunciShard);
+    else localStorage.setItem(kunciShard, JSON.stringify(isi));
+  }
+  function selesai(){ if(bc) bc.postMessage(1); setTimeout(kabari, 0); }
+  function kabari(){
+    var t = baca();
+    for(var i=0;i<dengar.length;i++){
+      var l = dengar[i], v = ambil(t, l.p), j = JSON.stringify(v);
+      if(j !== l.j){ l.j = j; l.cb(v == null ? null : JSON.parse(j)); }
+    }
+  }
+  // Hanya dengar sinyal "selesai menulis" supaya tidak pernah membaca keadaan setengah jadi (meniru update atomik Firebase).
+  if(bc) bc.onmessage = kabari;
+  else window.addEventListener("storage", kabari);
+  return {
+    mode:"demo",
+    on:function(p, cb){ dengar.push({p:p, cb:cb, j:undefined}); setTimeout(kabari, 0); },
+    set:function(p, v){ tulisJalur(p, JSON.parse(JSON.stringify(v))); selesai(); return Promise.resolve(); },
+    update:function(p, o){ for(var k in o) tulisJalur(p + "/" + k, JSON.parse(JSON.stringify(o[k]))); selesai(); return Promise.resolve(); },
+    remove:function(p){ tulisJalur(p, null); selesai(); return Promise.resolve(); },
+    hadir:function(p){ this.set(p, true); },
+    koneksi:function(cb){ setTimeout(function(){ cb(true); }, 0); }
+  };
+})();
+
+/* =========================================================
+   STATE ANAK (tersimpan di HP)
+   ========================================================= */
+var KUNCI = "lunas-" + KELAS + "-v3" + (DB.mode === "demo" && Q.get("slot") ? "-" + Q.get("slot").replace(/\W/g, "") : "");
+function idBaru(){ return "a" + Math.random().toString(36).slice(2, 10); }
+function progresBaru(){ return {skor:0, beres:{}, jawab:{}, dapat:{}, uang:0, lelang:null, lunas:false, ditolak:false, minta:false, akuan:{tinggal:"", iman:""}}; }
+var S = Object.assign({id:idBaru(), nama:"", sesi:0}, progresBaru());
+try{ var m = localStorage.getItem(KUNCI); if(m) S = Object.assign(S, JSON.parse(m)); }catch(e){}
+function simpan(){ try{ localStorage.setItem(KUNCI, JSON.stringify(S)); }catch(e){} }
+simpan();
+
+var MANDIRI = Q.has("mandiri");
+var CTRL = {tahap: MANDIRI ? "beranda" : "lobi", soal:0, buka:false};
+var kirimTerakhir = 0;
+function kirim(){
+  if(MANDIRI || MODE_GURU || !S.nama) return;
+  kirimTerakhir = Date.now();
+  DB.update(ROOT + "/anak/" + S.id, {
+    nama:S.nama, skor:S.skor, beres:S.beres, jawab:S.jawab, uang:S.uang,
+    lunas:S.lunas, ditolak:S.ditolak, minta:S.minta, online:true
+  });
+}
+function poin(n){ S.skor += n; simpan(); gambarBar(); kirim(); }
+function tandai(id){ S.beres[id] = true; simpan(); gambarBar(); kirim(); }
+function esc(t){
+  return String(t == null ? "" : t).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function rupiahPenuh(n){ return "Rp " + Math.round(n).toLocaleString("id-ID"); }
+function rupiah(n){
+  if(n >= 1e12) return "Rp " + (n/1e12).toLocaleString("id-ID",{maximumFractionDigits:2}) + " triliun";
+  return "Rp " + Math.round(n).toLocaleString("id-ID");
+}
+
+var BABAK = [
+  {id:"b1", judul:"Puzzle yang Mustahil", ket:"Susun ayat yang tidak mungkin kamu selesaikan sendiri."},
+  {id:"b2", judul:"Uang Tebusan", ket:"Kumpulkan harga satu nyawa. Sampai kamu menyerah."},
+  {id:"b3", judul:"Tobat atau Cuma Nyesel?", ket:"12 kejadian sehari-hari. Pilih yang benar."},
+  {id:"b4", judul:"Tiga Tahap", ket:"Justifikasi, Pengudusan, Pemuliaan: taruh di tempatnya."},
+  {id:"b5", judul:"Lelang Nilai Hidup", ket:"100 poin. Belanjakan. Lalu lihat kwitansi Paulus."},
+  {id:"b6", judul:"Kuis Ayat", ket:"10 soal cepat. Ayat-ayat keselamatan."}
+];
+var URUTAN = ["lobi","b1","b2","b3","b4","b5","b6","akhir","kartu"];
+var NAMA_TAHAP = {lobi:"Ruang tunggu", b1:"Babak 1 · Puzzle", b2:"Babak 2 · Uang Tebusan", b3:"Babak 3 · Tobat/Nyesel",
+  b4:"Babak 4 · Tiga Tahap", b5:"Babak 5 · Lelang", b6:"Babak 6 · Kuis Ayat", akhir:"Tagihan Akhir", kartu:"Kartu Pengakuan"};
+var TARGET = 9e12;
+
+var app = document.getElementById("app");
+var jamB6 = null;
+
+function gambarBar(){
+  var sk = document.getElementById("skor");
+  if(MODE_GURU){ sk.textContent = "GURU"; sk.classList.add("guru"); document.getElementById("dots").innerHTML = ""; return; }
+  if(S.lunas){ sk.textContent = "LUNAS"; sk.classList.add("lunas"); }
+  else { sk.textContent = S.skor + " pts"; sk.classList.remove("lunas"); }
+  var d = "";
+  for(var i=0;i<BABAK.length;i++){
+    var k = "dot";
+    if(S.beres[BABAK[i].id]) k += " on";
+    else if(CTRL.tahap === BABAK[i].id) k += " now";
+    d += '<span class="' + k + '"></span>';
+  }
+  document.getElementById("dots").innerHTML = d;
+}
+function tombol(teks, aksi, kelas){ return '<button class="tbl ' + (kelas || "") + '" data-aksi="' + aksi + '">' + teks + '</button>'; }
+function jarak(){ return '<div style="height:10px"></div>'; }
+
+/* =========================================================
+   DATA BABAK
+   ========================================================= */
+var KARTU3 = [
+  {t:"Aku ketahuan nyontek. Aku nangis seharian karena takut dimarahi mama.", j:"nyesel",
+   a:"Sedih karena akibatnya, bukan karena dosanya. Arah hidupnya belum berubah."},
+  {t:"Aku nyontek minggu lalu dan nggak ada yang tahu. Aku ngaku sendiri ke guru, lalu mulai belajar sungguhan.", j:"tobat",
+   a:"Mengaku walau tidak terpaksa, lalu berbalik arah. Itu pertobatan."},
+  {t:"Aku nge-bully anak di chat grup. Aku hapus chatnya biar nggak ada bukti.", j:"nyesel",
+   a:"Menghapus jejak bukan berbalik arah. Itu menutupi dosa, bukan meninggalkannya."},
+  {t:"Aku minta maaf langsung ke anak yang aku bully, lalu aku keluar dari grup itu.", j:"tobat",
+   a:"Minta maaf dan menjauhi tempat yang menjatuhkan. Berbalik arah yang nyata."},
+  {t:"Yudas menyesal sudah menjual Yesus dan mengembalikan 30 uang perak. Tapi dia pergi menjauh dan tidak pernah kembali kepada Yesus.", j:"nyesel",
+   a:"Yudas sungguh-sungguh menyesal, tetapi dia tidak berbalik kepada Allah (Mat 27:3-5)."},
+  {t:"Petrus menyangkal Yesus tiga kali, menangis dengan sedih, lalu kembali dan memberitakan Yesus.", j:"tobat",
+   a:"Yudas dan Petrus dua-duanya menyesal. Bedanya arah: satu menjauh, satu kembali."},
+  {t:"Aku bohong ke papa soal uang. Aku ceritakan semuanya dan aku ganti uangnya dari tabunganku.", j:"tobat",
+   a:"Mengaku dan memperbaiki. Buah pertobatan kelihatan."},
+  {t:"Aku merasa jahat banget habis marah ke mama. Aku diam di kamar tiga hari, tapi nggak minta maaf.", j:"nyesel",
+   a:"Menghukum diri sendiri bukan pertobatan. Pertobatan berbalik kepada Allah dan kepada orangnya."},
+  {t:"Tiap malam aku janji 'aku nggak akan gitu lagi', tapi aku nggak pernah minta tolong Tuhan dan kebiasaannya nggak aku ubah.", j:"nyesel",
+   a:"Janji berulang tanpa perubahan arah cuma penyesalan. Pertobatan pun anugerah, jadi harus diminta dari Allah."},
+  {t:"Aku sering ketinggalan ibadah karena main game sampai subuh. Sekarang aku matikan game tiap Sabtu malam supaya siap ibadah.", j:"tobat",
+   a:"Bertobat berarti menyingkirkan hal yang menjatuhkan, bukan cuma menyesalinya."},
+  {t:"Aku sedih berat setelah orang tahu dosaku. Yang aku pikirkan cuma nama baikku yang rusak.", j:"nyesel",
+   a:"Yang dipikirkan citra diri, bukan Allah yang dilukai."},
+  {t:"Aku sadar aku sombong ke teman sekelasku. Aku minta Tuhan ubah hatiku, dan aku mulai duduk bareng anak yang biasa aku jauhi.", j:"tobat",
+   a:"Minta Allah mengubah hati, lalu langkah nyata yang kelihatan orang lain."}
+];
+var TAHAP = {
+  J:{nama:"Justifikasi", ket:"dibenarkan"},
+  P:{nama:"Pengudusan", ket:"dikuduskan"},
+  G:{nama:"Pemuliaan", ket:"dimuliakan"}
+};
+var SOAL4 = [
+  {t:"Terjadi sekali saja, seketika, waktu pertama kali aku percaya kepada Yesus.", j:"J",
+   a:"Dibenarkan terjadi satu kali, saat percaya. Tidak perlu diulang tiap minggu."},
+  {t:"Berlangsung seumur hidupku, sedikit demi sedikit.", j:"P",
+   a:"Pengudusan itu seperti bertumbuh: berjalan terus, tidak selesai dalam sehari."},
+  {t:"Aku dinyatakan benar di hadapan Allah. Utangku dicap LUNAS.", j:"J",
+   a:"Justifikasi mengubah statusmu di hadapan Allah, karena utangmu sudah dibayar Kristus."},
+  {t:"Lewat membaca dan mendengar Firman, dan berdoa setiap hari (1 Tim 4:5).", j:"P",
+   a:"Firman dan doa adalah alat yang Allah pakai untuk menguduskan kita."},
+  {t:"Terjadi nanti, waktu Kristus datang kembali.", j:"G",
+   a:"Pemuliaan menunggu kedatangan Kristus yang kedua kali."},
+  {t:"Gambar Allah dipulihkan penuh di dalam aku, dengan seluruh kemuliaan-Nya.", j:"G",
+   a:"Sekarang gambar Allah dalam kita sedang dipulihkan. Penuhnya nanti, saat pemuliaan."},
+  {t:"Tahap yang sedang aku jalani sekarang, hari ini.", j:"P",
+   a:"Kalau kamu sudah percaya, kamu sudah dibenarkan tetapi belum dimuliakan. Berarti sekarang: pengudusan."},
+  {t:"Kalau aku mati sebelum Kristus datang, aku dibangkitkan lebih dulu, lalu ini terjadi.", j:"G",
+   a:"Orang percaya yang sudah meninggal dibangkitkan lebih dulu (1 Tes 4:16)."},
+  {t:"Kalau aku masih hidup waktu Kristus datang, aku diubah dalam sekejap, lalu ini terjadi.", j:"G",
+   a:"Yang masih hidup akan diubah dalam sekejap mata (1 Kor 15:51-52)."}
+];
+var BARANG = [
+  "HP model terbaru, dan selalu yang terbaru",
+  "1 juta followers",
+  "Juara 1 paralel sampai lulus",
+  "Dikenal paling rajin ibadah dan pelayanan di gereja",
+  "Uang Rp 100 juta sekarang",
+  "Disukai semua orang di sekolah",
+  "Mengenal Kristus Yesus"
+];
+var KUIS = [
+  {t:"&ldquo;Sebab upah dosa ialah ____, tetapi karunia Allah ialah hidup yang kekal dalam Kristus Yesus.&rdquo; (Rm 6:23)",
+   p:["maut","sakit penyakit","kemiskinan","rasa bersalah"], b:0},
+  {t:"Menurut Efesus 2:8-9, kita diselamatkan oleh kasih karunia melalui&hellip;",
+   p:["perbuatan baik kita","iman","rajin beribadah","usaha kita menghindari dosa"], b:1},
+  {t:"&ldquo;Sesungguhnya jika seorang tidak ____, ia tidak dapat melihat Kerajaan Allah.&rdquo; (Yoh 3:3)",
+   p:["rajin berdoa","dibaptis di gereja besar","dilahirkan kembali","menghafal seluruh Alkitab"], b:2},
+  {t:"&ldquo;Dilahirkan kembali&rdquo; artinya&hellip;",
+   p:["kita lahir lagi secara fisik","jiwa yang mati karena dosa dihidupkan kembali","kita pindah agama","kita jadi anak kecil lagi"], b:1},
+  {t:"Apa jawaban Paulus dan Silas kepada kepala penjara Filipi? (Kis 16:31)",
+   p:["&ldquo;Perbaiki dulu hidupmu.&rdquo;","&ldquo;Bayar dulu utangmu.&rdquo;","&ldquo;Percayalah kepada Tuhan Yesus, maka engkau akan diselamatkan.&rdquo;","&ldquo;Belajar dulu tiga tahun.&rdquo;"], b:2},
+  {t:"Roma 10:9-10 menyebut dua hal. Apa itu?",
+   p:["Percaya dalam hati dan mengaku dengan mulut","Berpuasa dan memberi persembahan","Menghafal dan mengajar","Dibaptis dan dikonfirmasi"], b:0},
+  {t:"Apa bedanya penebusan dengan keselamatan?",
+   p:["Tidak ada bedanya sama sekali","Penebusan hanya untuk orang Israel","Pada penebusan ada harga atau uang tebusan yang dibayar","Keselamatan terjadi setelah kita mati"], b:2},
+  {t:"Mengapa hanya Yesus yang bisa mati untuk kita?",
+   p:["Karena Dia paling kuat","Karena hanya orang tanpa dosa yang bisa mati untuk orang lain","Karena Dia laki-laki","Karena Dia punya banyak murid"], b:1},
+  {t:"&ldquo;Jadi siapa yang ada di dalam Kristus, ia adalah ____; yang lama sudah berlalu.&rdquo; (2 Kor 5:17)",
+   p:["orang hebat","ciptaan baru","hamba hukum Taurat","orang kaya"], b:1},
+  {t:"Menurut Roma 10:10, iman yang dipercaya dalam hati perlu&hellip;",
+   p:["disimpan sendiri supaya aman","diakui dengan mulut, diceritakan ke orang lain","ditunda sampai dewasa","dibuktikan dengan nilai rapor"], b:1}
+];
+
+
+var B1 = {
+  bagian: ["Sebab karena ", 0, " kamu diselamatkan oleh ", 1, "; itu bukan hasil ", 2, ", tetapi ", 3, " Allah."],
+  jawab: ["kasih karunia", "iman", "usahamu", "pemberian"],
+  kantong: ["iman", "usahamu", "perbuatan baik", "rajin ibadah", "hafalan ayat", "uang persembahan"]
+};
+var IDX_RELIGI = 3, IDX_KRISTUS = 6;
+var DETIK = 20;
+
+/* Babak serempak: guru memegang soal. */
+var LOCK = {
+  b3:{
+    data:KARTU3, jenis:"duo",
+    teks:function(i){ return "&ldquo;" + KARTU3[i].t + "&rdquo;"; },
+    pilihan:function(){ return [{v:"nyesel", l:"Cuma Nyesel"}, {v:"tobat", l:"Pertobatan"}]; },
+    benar:function(i){ return KARTU3[i].j; },
+    penjelasan:function(i){ var k = KARTU3[i]; return 'Ini ' + (k.j === "tobat" ? "<b>pertobatan</b>" : "<b>penyesalan</b>") + '. ' + k.a; },
+    catatan:'<p class="kecil" style="text-align:center"><b>Pertobatan</b> = berbalik arah. <b>Penyesalan</b> = cuma perasaan.</p>'
+  },
+  b4:{
+    data:SOAL4, jenis:"tiga",
+    teks:function(i){ return SOAL4[i].t; },
+    pilihan:function(){ return [{v:"J", l:"JUSTI&shy;FIKASI<small>dibenarkan</small>"}, {v:"P", l:"PENGU&shy;DUSAN<small>dikuduskan</small>"}, {v:"G", l:"PEMU&shy;LIAAN<small>dimuliakan</small>"}]; },
+    benar:function(i){ return SOAL4[i].j; },
+    penjelasan:function(i){ var s = SOAL4[i]; return 'Ini <b>' + TAHAP[s.j].nama.toLowerCase() + '</b>. ' + s.a; },
+    catatan:""
+  },
+  b6:{
+    data:KUIS, jenis:"pil",
+    teks:function(i){ return KUIS[i].t; },
+    pilihan:function(i){ return KUIS[i].p.map(function(t, x){ return {v:x, l:t}; }); },
+    benar:function(i){ return KUIS[i].b; },
+    penjelasan:function(i){ return 'Jawabannya: <b>' + KUIS[i].p[KUIS[i].b] + '</b>.'; },
+    catatan:""
+  }
+};
+function labelPilihan(id, i, v){
+  if(v === -1 || v === undefined || v === null) return "tidak menjawab";
+  var p = LOCK[id].pilihan(i);
+  for(var x=0;x<p.length;x++) if(p[x].v === v) return p[x].l.replace(/<small>.*<\/small>/, "").replace(/&shy;/g, "");
+  return String(v);
+}
+
+/* =========================================================
+   ROUTER ANAK
+   ========================================================= */
+var kunciLayar = "";
+function render(paksa){
+  var belumNama = !S.nama && !MANDIRI;
+  var k = (belumNama ? "nama" : CTRL.tahap) + "|" + CTRL.soal + "|" + !!CTRL.buka;
+  if(!paksa && k === kunciLayar) return;
+  kunciLayar = k;
+  clearInterval(jamB6);
+  window.scrollTo(0, 0);
+  var t = belumNama ? "lobi" : CTRL.tahap;
+  if(t === "beranda") layarBeranda();
+  else if(t === "lobi") layarLobi();
+  else if(t === "b1") layarB1();
+  else if(t === "b2") layarB2();
+  else if(t === "b5") layarB5();
+  else if(LOCK[t]) layarSoal(t);
+  else if(t === "akhir") layarAkhir();
+  else if(t === "kartu") layarKartu();
+  else layarLobi();
+  gambarBar();
+}
+/* tombol navigasi (event delegation) */
+app.addEventListener("click", function(e){
+  var b = e.target.closest("[data-aksi]");
+  if(!b || MODE_GURU || !MANDIRI) return;
+  var a = b.getAttribute("data-aksi");
+  if(a.indexOf("ke:") === 0){ CTRL = {tahap:a.slice(3), soal:0, buka:false}; render(true); }
+});
+function pindahMandiri(t){ return tombol(t === "beranda" ? "Kembali ke daftar" : "Lanjut: " + NAMA_TAHAP[t].replace(/^Babak \d · /, ""), "ke:" + t, t === "beranda" ? "garis" : ""); }
+
+var TUGAS = {
+  b1:"Sambil menunggu: baca lagi Efesus 2:8-9 di atas, lalu tutup layar dan coba ucapkan dari ingatan.",
+  b2:"Sambil menunggu: pikirkan, kenapa orang berdosa tidak bisa mati menggantikan orang lain?",
+  b3:"Sambil menunggu: karang satu kejadian tobat atau nyesel buatanmu sendiri. Guru mungkin memintamu membacakannya.",
+  b4:"Sambil menunggu: kamu sekarang di tahap mana? Apa satu hal yang bisa kamu lakukan besok di tahap itu?",
+  b5:"Sambil menunggu: barang mana di lelang tadi yang paling susah kamu lepaskan? Simpan jawabannya di kepala.",
+  b6:"Sambil menunggu: dari 10 ayat tadi, ayat mana yang paling mau kamu hafalkan?"
+};
+function kakiBebas(t, lanjut){
+  if(MANDIRI) return pindahMandiri(lanjut) + jarak() + pindahMandiri("beranda");
+  return '<div class="tunggu"><span class="denyut"></span><div><b>Tunggu teman-teman.</b> Guru akan membuka babak berikutnya.</div></div>'
+    + '<p class="kecil" style="margin-top:10px">' + TUGAS[t] + '</p>';
+}
+
+/* ---------- beranda (hanya mode mandiri) ---------- */
+function layarBeranda(){
+  var daftar = "";
+  for(var i=0;i<BABAK.length;i++){
+    var b = BABAK[i];
+    daftar += '<button class="item ' + (S.beres[b.id] ? "beres" : "") + '" data-aksi="ke:' + b.id + '">'
+      + '<span class="nomor">' + (S.beres[b.id] ? "&#10003;" : (i+1)) + '</span>'
+      + '<span><span class="judul">' + b.judul + '</span><span class="ket">' + b.ket + '</span></span></button>';
+  }
+  daftar += '<button class="item penutup ' + (S.lunas ? "beres" : "") + '" data-aksi="ke:akhir">'
+    + '<span class="nomor">' + (S.lunas ? "&#10003;" : "&#9733;") + '</span>'
+    + '<span><span class="judul">Tagihan Akhir</span><span class="ket">Buka hanya kalau guru sudah bilang.</span></span></button>';
+  app.innerHTML =
+    '<div style="padding-block:26px 18px">'
+    + '<p class="eyebrow" style="margin-bottom:14px">Mode mandiri &middot; tanpa sinkron</p>'
+    + '<h1>Utangmu<br>tidak bisa<br>kamu bayar.</h1>'
+    + '<p class="kecil" style="margin-top:14px">Enam babak tentang keselamatan dan penebusan. Guru memandu urutannya.</p>'
+    + '</div>'
+    + '<div class="kartu"><div class="daftar">' + daftar + '</div></div>'
+    + tombol("Kartu Pengakuan", "ke:kartu", "garis");
+}
+
+/* ---------- lobi ---------- */
+function layarLobi(){
+  if(!S.nama){
+    app.innerHTML =
+      '<div style="padding-block:26px 18px">'
+      + '<p class="eyebrow" style="margin-bottom:14px">Cell Group 9 &middot; Keselamatan bagian 1</p>'
+      + '<h1>Utangmu<br>tidak bisa<br>kamu bayar.</h1>'
+      + '</div>'
+      + '<div class="kartu">'
+      + '<div class="medan"><label for="nm">Namamu</label><input type="text" id="nm" maxlength="24" autocomplete="given-name" placeholder="nama panggilan"></div>'
+      + '<button class="tbl merah" id="masuk">Masuk</button>'
+      + '<p class="kecil" id="salahNama" style="margin:10px 0 0"></p>'
+      + '</div>';
+    var nm = document.getElementById("nm");
+    function masuk(){
+      var v = nm.value.trim();
+      if(!v){ document.getElementById("salahNama").textContent = "Tulis namamu dulu."; nm.focus(); return; }
+      S.nama = v; simpan(); kirim(); DB.hadir(ROOT + "/anak/" + S.id + "/online"); render(true);
+    }
+    document.getElementById("masuk").addEventListener("click", masuk);
+    nm.addEventListener("keydown", function(e){ if(e.key === "Enter") masuk(); });
+    return;
+  }
+  app.innerHTML =
+    '<div style="padding-block:26px 18px">'
+    + '<p class="eyebrow" style="margin-bottom:14px">Cell Group 9 &middot; Keselamatan bagian 1</p>'
+    + '<h1>Halo, ' + esc(S.nama) + '.</h1>'
+    + '<p style="margin-top:14px">Kamu sudah masuk. Taruh HP-mu tengkurap di meja. Layar ini akan berganti sendiri waktu guru memulai.</p>'
+    + '</div>'
+    + '<div class="tunggu"><span class="denyut"></span><div>Menunggu guru&hellip;</div></div>'
+    + '<div style="height:18px"></div>'
+    + '<button class="tbl-kecil" id="ganti">Bukan ' + esc(S.nama) + '? Ganti nama</button>';
+  document.getElementById("ganti").addEventListener("click", function(){
+    if(MANDIRI) { S.nama = ""; simpan(); render(true); return; }
+    DB.remove(ROOT + "/anak/" + S.id);
+    S.id = idBaru(); S.nama = ""; simpan(); render(true);
+  });
+}
+
+/* ---------- BABAK 1 (tempo bebas) ---------- */
+function layarB1(){
+  if(S.beres.b1) return selesaiB1();
+  var isi = ["", "", "", ""], aktif = -1, cekKe = 0, minta = S.minta;
+  if(minta) cekKe = 2;
+  function gambar(){
+    var t = "";
+    for(var i=0;i<B1.bagian.length;i++){
+      var p = B1.bagian[i];
+      if(typeof p === "string"){ t += p; }
+      else {
+        var kls = "slot";
+        if(isi[p]) kls += " isi";
+        if(aktif === p) kls += " aktif";
+        t += '<button class="' + kls + '" data-slot="' + p + '" aria-label="garis kosong ' + (p+1) + '">' + (isi[p] || "&nbsp;") + '</button>';
+      }
+    }
+    var kant = "";
+    for(var j=0;j<B1.kantong.length;j++){
+      var dipakai = isi.indexOf(B1.kantong[j]) > -1;
+      kant += '<button class="kata ' + (dipakai ? "pakai" : "") + '" data-kata="' + B1.kantong[j] + '">' + B1.kantong[j] + '</button>';
+    }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">Babak 1 dari 6</p>'
+      + '<h2>Puzzle yang Mustahil</h2>'
+      + '<p class="kecil">Lengkapi Efesus 2:8-9. Ketuk garis kosong, lalu ketuk kata yang benar. Ketuk garis yang sudah terisi untuk mengosongkannya.</p>'
+      + '<div class="perf rumpang">' + t + '</div>'
+      + '<div class="kantong">' + kant + '</div>'
+      + '</div>'
+      + '<div id="aksi1"></div>';
+    var slots = app.querySelectorAll("[data-slot]");
+    for(var a=0;a<slots.length;a++){
+      slots[a].addEventListener("click", function(){
+        var n = +this.getAttribute("data-slot");
+        if(isi[n]) isi[n] = "";
+        aktif = n; gambar();
+      });
+    }
+    var kata = app.querySelectorAll("[data-kata]");
+    for(var b=0;b<kata.length;b++){
+      kata[b].addEventListener("click", function(){
+        if(aktif < 0){ pesan("Ketuk dulu garis kosong yang mau kamu isi."); return; }
+        isi[aktif] = this.getAttribute("data-kata");
+        aktif = isi.indexOf("");
+        gambar();
+      });
+    }
+    aksi("");
+  }
+  function pesan(t){ aksi('<div class="umpan no">' + t + '</div>'); }
+  function aksi(umpan){
+    var h = umpan + '<button class="tbl" id="cek">Periksa jawabanku</button>';
+    if(cekKe >= 2){
+      h += jarak();
+      if(!minta){
+        h += '<button class="tbl garis" id="minta">Aku tidak bisa menyelesaikannya</button>';
+      } else {
+        h += '<div class="umpan emas"><b>Angkat tanganmu.</b> Bilang ke guru: &ldquo;Saya tidak bisa.&rdquo; '
+          + (MANDIRI ? 'Lalu serahkan HP-mu.' : 'Guru akan memberikannya dari HP guru.') + '</div>'
+          + (MANDIRI ? '<button class="tbl merah" id="beri">Guru: berikan kata yang hilang</button>'
+                     : '<button class="tbl-kecil" id="beri">Guru: berikan langsung di HP ini</button>');
+      }
+    }
+    document.getElementById("aksi1").innerHTML = h;
+    document.getElementById("cek").addEventListener("click", periksa);
+    var mi = document.getElementById("minta");
+    if(mi) mi.addEventListener("click", function(){ minta = true; S.minta = true; simpan(); kirim(); aksi(""); });
+    var be = document.getElementById("beri");
+    if(be) be.addEventListener("click", menangB1);
+  }
+  function periksa(){
+    cekKe++;
+    var kosong = 0, salah = 0;
+    for(var i=0;i<4;i++){ if(!isi[i]) kosong++; else if(isi[i] !== B1.jawab[i]) salah++; }
+    if(salah > 0 && kosong > 0) pesan("<b>Belum tepat.</b> Ada " + salah + " kata yang salah tempat, dan " + kosong + " garis masih kosong.");
+    else if(salah > 0) pesan("<b>Belum tepat.</b> Ada " + salah + " kata yang salah tempat. Coba lagi.");
+    else if(kosong > 0) pesan("<b>Masih ada " + kosong + " garis kosong.</b> Coba cari lagi di kantongmu.");
+    else menangB1();
+  }
+  gambar();
+}
+function menangB1(){
+  if(S.beres.b1) return;
+  poin(30); tandai("b1");
+  if(CTRL.tahap === "b1") selesaiB1();
+}
+function selesaiB1(){
+  var t = "";
+  for(var i=0;i<B1.bagian.length;i++){
+    var p = B1.bagian[i];
+    if(typeof p === "string") t += p;
+    else t += '<span class="slot ' + ((p === 0 || p === 3) ? "hadiah" : "isi") + '">' + B1.jawab[p] + '</span>';
+  }
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Babak 1 &middot; selesai</p>'
+    + '<div class="rumpang">' + t + '</div>'
+    + '<div class="perf">'
+    + '<p><b>Dua kata yang kuning tidak pernah ada di kantongmu.</b> Kamu bukan gagal karena kurang usaha. Bagian itu memang cuma bisa <i>diberi</i>.</p>'
+    + '<p class="ayat">Sebab karena <b>kasih karunia</b> kamu diselamatkan oleh <b>iman</b>; itu bukan hasil usahamu, tetapi <b>pemberian Allah</b>, itu bukan hasil pekerjaanmu: jangan ada orang yang memegahkan diri.<span class="rujukan">Efesus 2:8-9</span></p>'
+    + '<div class="umpan ok"><b>+30 poin.</b> Perhatikan: poin ini diberikan, bukan kamu menangkan.</div>'
+    + '</div></div>'
+    + kakiBebas("b1", "b2");
+}
+
+/* ---------- BABAK 2 (tempo bebas) ---------- */
+function layarB2(){
+  if(S.beres.b2) return selesaiB2();
+  var kumpul = S.uang || 0, ketuk = 0, mulai = 0;
+  function gambar(){
+    var persen = kumpul / TARGET * 100;
+    var lama = mulai ? (Date.now() - mulai) / 1000 : 0;
+    var laju = (lama > 0.5) ? kumpul / lama : 0;
+    var tahun = laju > 0 ? (TARGET - kumpul) / laju / 31557600 : 0;
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">Babak 2 dari 6</p>'
+      + '<h2>Uang Tebusan</h2>'
+      + '<p class="kecil">Di depanmu ada satu tagihan: harga tebusan untuk <b>satu nyawa manusia</b> di hadapan Allah. Ketuk untuk mengumpulkan uang. Kumpulkan sebanyak mungkin.</p>'
+      + '<div class="perf">'
+      + '<div class="baris"><span>Harga tebusan 1 nyawa</span><span>' + rupiah(TARGET) + '</span></div>'
+      + '<div class="baris"><span>Sudah kamu kumpulkan</span><span>' + rupiah(kumpul) + '</span></div>'
+      + '<div class="baris"><span>Kekurangan</span><span style="color:var(--stempel)">' + rupiahPenuh(TARGET - kumpul) + '</span></div>'
+      + '<div class="bar-progres"><div style="width:' + Math.min(100, persen) + '%"></div></div>'
+      + '<p class="kecil rp" style="margin:0">Kamu baru mencapai ' + persen.toFixed(7).replace(".", ",") + '%'
+      + (ketuk >= 8 ? '. Dengan kecepatan ini kamu butuh ' + Math.round(tahun).toLocaleString("id-ID") + ' tahun lagi.' : '')
+      + '</p></div>'
+      + '<div style="height:14px"></div>'
+      + '<button class="tbl" id="kumpul" style="padding-block:22px;font-size:18px">Ketuk: kumpulkan uang</button>'
+      + (ketuk >= 15 ? jarak() + '<button class="tbl garis" id="menyerah">Berhenti. Tidak akan pernah cukup.</button>' : '')
+      + '</div>';
+    document.getElementById("kumpul").addEventListener("click", function(){
+      if(!mulai) mulai = Date.now();
+      ketuk++;
+      kumpul += 2000 + Math.floor(Math.random() * 6000);
+      S.uang = kumpul; simpan();
+      if(Date.now() - kirimTerakhir > 1000) kirim();
+      gambar();
+    });
+    var my = document.getElementById("menyerah");
+    if(my) my.addEventListener("click", function(){ S.uang = kumpul; poin(20); tandai("b2"); selesaiB2(); });
+  }
+  gambar();
+}
+function selesaiB2(){
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Babak 2 &middot; kamu benar berhenti</p>'
+    + '<div class="baris"><span>Yang kamu kumpulkan</span><span>' + rupiah(S.uang) + '</span></div>'
+    + (MANDIRI ? '' : '<div class="baris"><span>Gabungan satu kelas</span><span id="gabungan">&hellip;</span></div>'
+                  + '<div class="baris"><span>Masih kurang</span><span id="kurangKelas" style="color:var(--stempel)">&hellip;</span></div>')
+    + '<p class="ayat" style="margin-top:14px">Tidak seorang pun dapat menebus hidup orang lain, atau memberikan uang tebusan kepada Allah ganti nyawanya, <b>karena terlalu mahal harga pembebasan nyawanya, tidak ada pembayaran yang cukup</b>, supaya ia tetap hidup untuk selama-lamanya.<span class="rujukan">Mazmur 49:8-10</span></p>'
+    + '<p>Angka Rp 9 triliun tadi cuma perumpamaan. Kenyataannya lebih berat: nyawa <b>tidak bisa dibayar dengan uang sama sekali</b>, berapa pun jumlahnya, walaupun seluruh kelas menggabungkan semuanya.</p>'
+    + '<p>Yang bisa membayar hanya satu: <b>seorang yang tidak berdosa</b>. Orang berdosa tidak bisa mati untuk orang lain. Yesus membayar bukan dengan uang, tetapi dengan nyawa dan darah-Nya.</p>'
+    + '<div class="stempel-wrap"><span class="stempel">LUNAS</span></div>'
+    + '<div class="baris teks"><span>Tagihan</span><span>Upah dosa = maut (Rm 6:23)</span></div>'
+    + '<div class="baris teks"><span>Dibayar oleh</span><span>Yesus Kristus</span></div>'
+    + '<div class="baris teks" style="border-bottom:0"><span>Alat bayar</span><span>Nyawa &amp; darah-Nya</span></div>'
+    + '<div class="perf">'
+    + '<h3 style="margin-bottom:8px">Dua kata yang jangan tertukar</h3>'
+    + '<div class="baris teks"><span><b>Keselamatan</b></span><span style="font-weight:400">dilepaskan dari dosa dan akibatnya: maut</span></div>'
+    + '<div class="baris teks"><span><b>Penebusan</b></span><span style="font-weight:400">dilepaskan juga, tetapi ada harga yang dibayar</span></div>'
+    + '<p class="ayat" style="margin-top:14px">Atau tidak tahukah kamu, bahwa tubuhmu adalah bait Roh Kudus... <b>Kamu telah dibeli dan harganya telah dibayar</b>: Karena itu muliakanlah Allah dengan tubuhmu!<span class="rujukan">1 Korintus 6:19-20</span></p>'
+    + '<div class="umpan ok"><b>+20 poin.</b> Karena kamu sudah dibayar, kamu bukan milikmu sendiri lagi. Kamu milik Kristus.</div>'
+    + '</div></div>'
+    + kakiBebas("b2", "b3");
+  perbaruiGabungan();
+}
+var ANAK_SEMUA = {};
+function perbaruiGabungan(){
+  var g = document.getElementById("gabungan");
+  if(!g) return;
+  var total = 0, n = 0;
+  for(var k in ANAK_SEMUA){ var a = ANAK_SEMUA[k]; if(a && a.nama){ total += a.uang || 0; n++; } }
+  g.textContent = rupiah(total) + " (" + n + " anak)";
+  document.getElementById("kurangKelas").textContent = rupiahPenuh(TARGET - total);
+}
+
+/* ---------- BABAK 5 (tempo bebas, angka tidak dikirim ke guru) ---------- */
+function layarB5(){
+  if(S.beres.b5 && S.lelang) return selesaiB5();
+  var tawar = (S.lelang && S.lelang.length === BARANG.length) ? S.lelang.slice() : BARANG.map(function(){ return 0; });
+  var MAKS = 100;
+  function sisa(){ var s = MAKS; for(var i=0;i<tawar.length;i++) s -= tawar[i]; return s; }
+  function gambar(){
+    var baris = "";
+    for(var i=0;i<BARANG.length;i++){
+      baris += '<div class="lelang-baris"><span class="nama">' + BARANG[i] + '</span>'
+        + '<span class="stepper">'
+        + '<button data-kurang="' + i + '" aria-label="kurangi 5 poin">&minus;</button>'
+        + '<output>' + tawar[i] + '</output>'
+        + '<button data-tambah="' + i + '" aria-label="tambah 5 poin">+</button>'
+        + '</span></div>';
+    }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">Babak 5 dari 6</p>'
+      + '<h2>Lelang Nilai Hidup</h2>'
+      + '<p class="kecil">Kamu punya <b>' + MAKS + ' poin</b>. Belanjakan ke barang yang <b>sungguh-sungguh</b> paling kamu mau, bukan yang &ldquo;seharusnya&rdquo;. Angkamu tidak dikirim ke guru. Tombol &plus; menambah 5 poin.</p>'
+      + '<div class="perf">' + baris + '</div>'
+      + '<div class="baris" style="border-bottom:0;margin-top:8px"><span>Poin sisa</span><span style="color:' + (sisa() === 0 ? "var(--lunas)" : "var(--stempel)") + '">' + sisa() + '</span></div>'
+      + '</div>'
+      + '<button class="tbl merah" id="palu">Ketuk palu: ini pilihanku</button>';
+    var tb = app.querySelectorAll("[data-tambah]");
+    for(var a=0;a<tb.length;a++) tb[a].addEventListener("click", function(){
+      var n = +this.getAttribute("data-tambah"); if(sisa() >= 5){ tawar[n] += 5; gambar(); }
+    });
+    var kr = app.querySelectorAll("[data-kurang]");
+    for(var b=0;b<kr.length;b++) kr[b].addEventListener("click", function(){
+      var n = +this.getAttribute("data-kurang"); if(tawar[n] >= 5){ tawar[n] -= 5; gambar(); }
+    });
+    document.getElementById("palu").addEventListener("click", function(){
+      S.lelang = tawar.slice(); simpan();
+      if(!S.beres.b5){ poin(20); tandai("b5"); }
+      selesaiB5();
+    });
+  }
+  gambar();
+}
+function selesaiB5(){
+  var tawar = S.lelang;
+  var punyaKristus = tawar[IDX_KRISTUS], lain = 0;
+  for(var j=0;j<tawar.length;j++) if(j !== IDX_KRISTUS) lain += tawar[j];
+  var kwitansi = "";
+  for(var i=0;i<BARANG.length;i++){
+    if(tawar[i] === 0) continue;
+    kwitansi += '<div class="baris"><span>' + BARANG[i] + '</span><span>' + tawar[i] + ' pts</span></div>';
+  }
+  if(!kwitansi) kwitansi = '<div class="baris"><span>Tidak membeli apa-apa</span><span>0 pts</span></div>';
+  var religi = tawar[IDX_RELIGI] > 0
+    ? '<div class="umpan emas">Kamu membayar <b>' + tawar[IDX_RELIGI] + ' poin</b> untuk &ldquo;dikenal paling rajin ibadah dan pelayanan&rdquo;. Paulus punya versi paling hebat dari itu. Lihat apa yang dia lakukan dengannya.</div>'
+    : '';
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Kwitansi nilai hidup &middot; ' + esc(S.nama || "atas namamu") + '</p>'
+    + kwitansi
+    + '<div class="perf"><p class="kecil" style="margin:0">Untuk hal-hal lain kamu bayar <b>' + lain + ' poin</b>. Untuk mengenal Kristus: <b>' + punyaKristus + ' poin</b>.</p></div>'
+    + '</div>'
+    + '<div class="kartu">'
+    + '<p class="eyebrow">Kwitansi Paulus</p>'
+    + '<p class="kecil" style="margin-bottom:12px">Paulus punya semua yang dibanggakan orang saleh di zamannya. Lihat bagaimana dia mencap barang-barangnya sendiri:</p>'
+    + '<div class="baris"><span>Orang Israel asli, suku Benyamin</span><span class="cap rugi">RUGI</span></div>'
+    + '<div class="baris"><span>Disunat pada hari kedelapan</span><span class="cap rugi">RUGI</span></div>'
+    + '<div class="baris"><span>Orang Farisi, golongan paling taat</span><span class="cap rugi">RUGI</span></div>'
+    + '<div class="baris"><span>Tidak bercacat menurut hukum Taurat</span><span class="cap rugi">RUGI</span></div>'
+    + '<div class="baris" style="border-bottom:0"><span><b>Mengenal Kristus Yesus, Tuhanku</b></span><span class="cap untung">UNTUNG</span></div>'
+    + '<p style="margin-top:14px">Perhatikan: yang Paulus cap RUGI bukan HP atau uang. <b>Semuanya prestasi agama.</b> Ibadah dan pelayanan itu baik, tetapi kalau jadi alasan bangga di hadapan Allah, nilainya sama dengan barang lain di lelang tadi.</p>'
+    + religi
+    + '<p class="ayat">Tetapi segala sesuatu yang semula kuanggap sebagai keuntungan, sekarang kuanggap rugi karena Kristus. Bahkan segala sesuatu kuanggap rugi, <b>karena pengenalan akan Kristus Yesus, Tuhanku, lebih mulia dari pada semuanya</b>... dan menganggapnya sampah, supaya aku memperoleh Kristus.<span class="rujukan">Filipi 3:7-8</span></p>'
+    + '<div class="perf">'
+    + '<h3 style="margin-bottom:8px">Tanda orang yang sudah diselamatkan</h3>'
+    + '<ul style="margin:0 0 12px;padding-left:18px">'
+    + '<li>Hidupnya berubah, jadi ciptaan baru (2 Kor 5:17)</li>'
+    + '<li><b>Nilai hidupnya berubah</b>: yang dulu paling penting jadi tidak penting</li>'
+    + '<li>Tujuan hidupnya berubah: dulu untuk diri sendiri, sekarang untuk menyenangkan Allah</li>'
+    + '<li>Hatinya bersyukur, dan syukurnya kelihatan, bukan cuma di mulut</li>'
+    + '<li>Hidup doa, penyembahan, dan pelayanan (Rm 12:1)</li>'
+    + '</ul>'
+    + '<p class="kecil"><b>Pertanyaan buat kamu:</b> kalau kwitansi ini dibuka lagi setahun dari sekarang, angka mana yang kamu harap berubah?</p>'
+    + '<div class="umpan ok"><b>+20 poin.</b> Babak ini tidak ada benar-salah. Yang ada jujur atau tidak.</div>'
+    + '</div></div>'
+    + kakiBebas("b5", "b6");
+}
+
+/* ---------- BABAK SEREMPAK: 3, 4, 6 ---------- */
+function nomorBabak(id){ return id.slice(1); }
+function layarSoal(id){
+  var L = LOCK[id], i = CTRL.soal, key = id + "_" + i;
+  if(i >= L.data.length) return ringkasan(id);
+  var jw = S.jawab[key];
+  if(CTRL.buka) return umpanSoal(id, i, jw);
+  if(jw !== undefined) return terkunci(id, i, jw);
+  var pil = L.pilihan(i), h = "";
+  if(L.jenis === "duo"){
+    h = '<div class="duo">' + pil.map(function(p){ return '<button class="tbl garis" data-v="' + p.v + '">' + p.l + '</button>'; }).join("") + '</div>';
+  } else if(L.jenis === "tiga"){
+    h = '<div class="tiga">' + pil.map(function(p){ return '<button data-v="' + p.v + '">' + p.l + '</button>'; }).join("") + '</div>';
+  } else {
+    h = pil.map(function(p){ return '<button class="pil" data-v="' + p.v + '">' + p.l + '</button>'; }).join("");
+  }
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Babak ' + nomorBabak(id) + ' &middot; ' + (i+1) + ' dari ' + L.data.length + '</p>'
+    + (id === "b6" ? '<div class="bar-progres"><div id="jam" style="width:100%;transition:width 1s linear"></div></div>' : '')
+    + '<div class="skenario">' + L.teks(i) + '</div>'
+    + h + '</div>' + L.catatan;
+  var b = app.querySelectorAll("[data-v]");
+  for(var x=0;x<b.length;x++) b[x].addEventListener("click", function(){
+    var v = this.getAttribute("data-v");
+    jawab(id, i, id === "b6" ? +v : v);
+  });
+  if(id === "b6"){
+    var sisa = DETIK;
+    jamB6 = setInterval(function(){
+      sisa--;
+      var j = document.getElementById("jam");
+      if(j) j.style.width = Math.max(0, sisa/DETIK*100) + "%";
+      if(sisa <= 0){ clearInterval(jamB6); jawab(id, i, -1); }
+    }, 1000);
+  }
+}
+function jawab(id, i, v){
+  clearInterval(jamB6);
+  var key = id + "_" + i;
+  if(S.jawab[key] !== undefined) return;
+  S.jawab[key] = v; simpan(); kirim();
+  if(MANDIRI) CTRL.buka = true;
+  render(true);
+}
+function terkunci(id, i, jw){
+  var L = LOCK[id];
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Babak ' + nomorBabak(id) + ' &middot; ' + (i+1) + ' dari ' + L.data.length + '</p>'
+    + '<div class="skenario">' + L.teks(i) + '</div>'
+    + '<div class="baris" style="border-bottom:0"><span>Jawabanmu</span><span>' + labelPilihan(id, i, jw) + '</span></div>'
+    + '</div>'
+    + '<div class="tunggu"><span class="denyut"></span><div><b>Terkunci.</b> Tunggu teman-teman, lalu guru membuka jawabannya.</div></div>';
+}
+function beriPoinSoal(id){
+  var L = LOCK[id], batas = Math.min(CTRL.buka ? CTRL.soal + 1 : CTRL.soal, L.data.length), tambah = 0;
+  for(var i=0;i<batas;i++){
+    var key = id + "_" + i;
+    if(!S.dapat[key] && S.jawab[key] === L.benar(i)){ S.dapat[key] = true; tambah += 10; }
+  }
+  if(tambah) poin(tambah);
+}
+function umpanSoal(id, i, jw){
+  var L = LOCK[id], ok = (jw === L.benar(i));
+  beriPoinSoal(id);
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Babak ' + nomorBabak(id) + ' &middot; ' + (i+1) + ' dari ' + L.data.length + '</p>'
+    + '<div class="skenario">' + L.teks(i) + '</div>'
+    + '<div class="umpan ' + (ok ? "ok" : "no") + '"><b>'
+    + (ok ? "TEPAT." : (jw === undefined || jw === -1 ? "TIDAK MENJAWAB." : "BUKAN.")) + '</b> '
+    + (ok || jw === undefined || jw === -1 ? "" : "Kamu memilih " + labelPilihan(id, i, jw) + ". ")
+    + L.penjelasan(i) + '</div>'
+    + '</div>'
+    + (MANDIRI
+      ? '<button class="tbl" id="next">' + (i === L.data.length-1 ? "Lihat hasilku" : "Berikutnya") + '</button>'
+      : '<div class="tunggu"><span class="denyut"></span><div>Dengarkan pembahasan. Guru akan membuka soal berikutnya.</div></div>');
+  var n = document.getElementById("next");
+  if(n) n.addEventListener("click", function(){ CTRL.soal++; CTRL.buka = false; render(true); });
+}
+function ringkasan(id){
+  var L = LOCK[id], benar = 0;
+  for(var i=0;i<L.data.length;i++) if(S.jawab[id + "_" + i] === L.benar(i)) benar++;
+  beriPoinSoal(id);
+  if(!S.beres[id]) tandai(id);
+  var isi = "";
+  if(id === "b3"){
+    isi = '<h3 style="margin-bottom:8px">Pertobatan itu</h3>'
+      + '<ul style="margin:0 0 12px;padding-left:18px"><li>Menyesali dosa yang lalu dan mau kembali kepada Allah</li><li>Berbalik dari dosa, berbalik kepada Allah</li><li>Perubahan arah hidup, bukan cuma perubahan perasaan</li></ul>'
+      + '<p class="ayat">Karena itu <b>sadarlah dan bertobatlah</b>, supaya dosamu dihapuskan, agar Tuhan mendatangkan waktu kelegaan.<span class="rujukan">Kisah Para Rasul 3:19</span></p>'
+      + '<p class="ayat">Persembahan yang berkenan kepada-Mu ialah <b>jiwa yang hancur</b>; hati yang patah dan remuk tidak akan Kaupandang hina.<span class="rujukan">Mazmur 51:19</span></p>'
+      + '<p class="kecil">Dan ini penting: kita tidak bisa bertobat kalau Allah tidak memberi kita anugerah untuk bertobat (Kis 11:18).</p>';
+  } else if(id === "b4"){
+    isi = '<div class="baris teks"><span>1. JUSTIFIKASI</span><span style="font-weight:400">sekejap, sekali saja, saat pertama percaya</span></div>'
+      + '<div class="baris teks"><span>2. PENGUDUSAN</span><span style="font-weight:400">seumur hidup, lewat Firman dan doa</span></div>'
+      + '<div class="baris teks"><span>3. PEMULIAAN</span><span style="font-weight:400">saat Kristus datang: dibangkitkan atau diubah</span></div>'
+      + '<p class="ayat" style="margin-top:14px">Hendaklah kamu menjadi kudus di dalam seluruh hidupmu sama seperti Dia yang kudus, yang telah memanggil kamu, sebab ada tertulis: <b>Kuduslah kamu, sebab Aku kudus.</b><span class="rujukan">1 Petrus 1:15-16</span></p>'
+      + '<p class="kecil">Kamu sekarang ada di tahap 2. Artinya: tiap hari, Firman dan doa. Itu pun anugerah Allah, bukan kekuatanmu.</p>';
+  } else {
+    isi = '<p><b>Kesimpulan sesi hari ini:</b></p>'
+      + '<ul style="margin:0 0 12px;padding-left:18px">'
+      + '<li>Allah dan manusia terpisah karena dosa.</li>'
+      + '<li>Manusia yang jatuh tidak bisa mencari atau menemukan Allah. Allah yang harus datang.</li>'
+      + '<li>Manusia yang jatuh tidak bisa menyelamatkan dirinya. Allah yang harus menyelamatkan.</li>'
+      + '<li>Karena Yesus sudah membayar harga semua dosa, kita bisa mengaku dosa dan menerima pengampunan.</li>'
+      + '<li>Hubungan kita dengan Allah akhirnya dipulihkan.</li>'
+      + '</ul>'
+      + '<p class="ayat">Jika kita mengaku dosa kita, maka Ia adalah setia dan adil, sehingga Ia akan mengampuni segala dosa kita dan menyucikan kita dari segala kejahatan.<span class="rujukan">1 Yohanes 1:9</span></p>';
+  }
+  var lanjut = {b3:"b4", b4:"b5", b6:"akhir"}[id];
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Babak ' + nomorBabak(id) + ' &middot; selesai</p>'
+    + '<h2>' + benar + ' dari ' + L.data.length + ' tepat</h2>'
+    + '<div class="umpan ok"><b>+' + (benar*10) + ' poin.</b></div>'
+    + '<div class="perf">' + isi + '</div></div>'
+    + kakiBebas(id, lanjut);
+}
+
+/* ---------- TAGIHAN AKHIR ---------- */
+function layarAkhir(){
+  if(CTRL.buka || S.lunas){
+    if(!S.lunas){ S.lunas = true; simpan(); kirim(); gambarBar(); }
+    return layarLunas();
+  }
+  var bawah;
+  if(!S.ditolak){
+    bawah = '<div id="aksiAkhir"><button class="tbl merah" id="bayar">Bayar pakai poinku</button></div>';
+  } else {
+    bawah = '<div class="umpan no"><b>DITOLAK.</b> ' + S.skor + ' poin tidak bisa membayar satu nyawa. Berapa pun skormu, jawabannya sama.</div>'
+      + (MANDIRI ? '<button class="tbl" id="siapa">Lalu siapa yang membayar?</button>'
+                 : '<div class="tunggu"><span class="denyut"></span><div><b>Lalu siapa yang membayar?</b> Lihat ke depan.</div></div>');
+  }
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Tagihan akhir</p>'
+    + '<h2>Sekarang kita hitung.</h2>'
+    + '<p class="kecil">Selama sesi ini kamu mengumpulkan poin. Ada yang banyak, ada yang sedikit. Waktunya dipakai.</p>'
+    + '<div class="perf">'
+    + '<div class="baris"><span>Tagihan</span><span>1 nyawa</span></div>'
+    + '<div class="baris teks"><span>Jenis</span><span>Upah dosa = maut (Rm 6:23)</span></div>'
+    + '<div class="baris" style="border-bottom:0"><span>Poin kamu</span><span>' + S.skor + ' pts</span></div>'
+    + '</div></div>' + bawah;
+  var by = document.getElementById("bayar");
+  if(by) by.addEventListener("click", function(){ S.ditolak = true; simpan(); kirim(); render(true); });
+  var si = document.getElementById("siapa");
+  if(si) si.addEventListener("click", function(){ CTRL.buka = true; render(true); });
+}
+function layarLunas(){
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Tagihan akhir</p>'
+    + '<div class="baris"><span>Poin kamu</span><span class="coret">' + S.skor + ' pts</span></div>'
+    + '<div class="baris"><span>Dibayar oleh</span><span>Yesus Kristus</span></div>'
+    + '<div class="baris" style="border-bottom:0"><span>Sisa tagihan</span><span>tidak ada</span></div>'
+    + '<div class="stempel-wrap"><span class="stempel">LUNAS</span></div>'
+    + '<p><b>Skor kalian tadi beda-beda. Tagihan kalian sama. Yang membayar juga sama.</b></p>'
+    + '<p>Poin yang tinggi tidak membuat kamu lebih selamat. Poin yang rendah tidak membuat kamu kurang selamat. Karena itu tidak ada yang bisa memegahkan diri, dan tidak ada yang perlu minder.</p>'
+    + '<p class="ayat">Karena semua orang telah berbuat dosa dan telah kehilangan kemuliaan Allah, dan oleh kasih karunia telah dibenarkan dengan cuma-cuma karena penebusan dalam Kristus Yesus.<span class="rujukan">Roma 3:23-24</span></p>'
+    + '</div>'
+    + (MANDIRI ? pindahMandiri("kartu") + jarak() + pindahMandiri("beranda")
+               : '<div class="tunggu"><span class="denyut"></span><div>Berikutnya: Kartu Pengakuan. Tunggu guru.</div></div>');
+}
+
+/* ---------- KARTU PENGAKUAN (tidak dikirim ke guru) ---------- */
+function layarKartu(){
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">Penutup</p>'
+    + '<h2>Kartu Pengakuan</h2>'
+    + '<p class="kecil">Kartu ini untuk kamu tunjukkan ke guru. Isinya hanya nama dan pengakuan imanmu.</p>'
+    + '<div class="perf">'
+    + '<div class="medan"><label for="nm">Namaku</label><input type="text" id="nm" maxlength="40" value="' + esc(S.nama) + '" placeholder="nama kamu"></div>'
+    + '<div class="medan"><label for="im">Satu kalimat pengakuan imanku</label><textarea id="im" maxlength="240" placeholder="contoh: Aku percaya Yesus sudah membayar dosaku dengan nyawa-Nya.">' + esc(S.akuan.iman) + '</textarea></div>'
+    + '</div>'
+    + '<div class="rahasia">'
+    + '<label for="tg">Hanya untukmu</label>'
+    + '<p class="kecil" style="margin-bottom:8px">Satu hal yang mau kamu tinggalkan minggu ini. Ini <b>tidak</b> masuk ke kartu, tidak dikirim ke mana pun, dan tidak perlu ditunjukkan ke siapa pun. Ceritakan ke Tuhan dalam doa.</p>'
+    + '<textarea id="tg" maxlength="240" placeholder="boleh dikosongkan">' + esc(S.akuan.tinggal) + '</textarea>'
+    + '</div>'
+    + '<div style="height:14px"></div>'
+    + '<button class="tbl merah" id="cetak">Cap kartuku</button>'
+    + '</div>'
+    + (MANDIRI ? pindahMandiri("beranda") : '');
+  document.getElementById("cetak").addEventListener("click", function(){
+    S.akuan.tinggal = document.getElementById("tg").value.trim();
+    S.akuan.iman = document.getElementById("im").value.trim();
+    var nmBaru = document.getElementById("nm").value.trim();
+    if(nmBaru) S.nama = nmBaru;
+    simpan(); kirim();
+    var tgl = new Date().toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">Kartu Pengakuan &middot; ' + tgl + '</p>'
+      + '<h2 style="margin-bottom:12px">' + (S.nama ? esc(S.nama) : "Tanpa nama") + '</h2>'
+      + '<div class="perf">'
+      + '<p class="eyebrow" style="margin-bottom:4px">Pengakuan imanku</p>'
+      + '<p class="pengakuan">' + (S.akuan.iman ? esc(S.akuan.iman) : "&mdash;") + '</p>'
+      + '</div>'
+      + '<div class="stempel-wrap"><span class="stempel">LUNAS</span></div>'
+      + '<p class="kecil" style="text-align:center;margin:0 0 14px">Dibayar oleh Yesus Kristus. Bukan olehku.</p>'
+      + '<div class="perf">'
+      + '<h3 style="margin-bottom:6px">Tantangan sampai minggu depan</h3>'
+      + '<p class="kecil" style="margin:0">Ceritakan <b>satu hal</b> yang kamu pelajari hari ini kepada <b>satu orang</b>, teman atau keluarga. Iman yang dipercaya di hati, diakui dengan mulut (Rm 10:10).</p>'
+      + '</div></div>'
+      + '<p class="kecil" style="text-align:center">Screenshot kartu ini, lalu tunjukkan ke gurumu.</p>'
+      + '<button class="tbl garis" id="ubah">Ubah isi kartu</button>'
+      + (MANDIRI ? jarak() + pindahMandiri("beranda") : '');
+    document.getElementById("ubah").addEventListener("click", layarKartu);
+  });
+}
+
+/* =========================================================
+   MULAI: ANAK
+   ========================================================= */
+function banner(html){
+  var b = document.getElementById("banner");
+  b.innerHTML = html || "";
+  b.hidden = !html;
+}
+function keMandiri(){
+  MANDIRI = true;
+  banner("");
+  CTRL = {tahap:"beranda", soal:0, buka:false};
+  render(true);
+}
+function mulaiAnak(){
+  if(MANDIRI || DB.mode === "putus"){
+    MANDIRI = true;
+    if(DB.mode === "putus" && !Q.has("mandiri")) banner('Tidak bisa tersambung ke guru, jadi game berjalan <b>mandiri</b>. Ikuti aba-aba guru secara lisan.');
+    CTRL = {tahap:"beranda", soal:0, buka:false};
+    render(true);
+    return;
+  }
+  render(true);
+  if(S.nama){ kirim(); DB.hadir(ROOT + "/anak/" + S.id + "/online"); }
+  DB.on(ROOT + "/ctrl", function(v){
+    if(MANDIRI) return;
+    v = v || {};
+    var baru = {tahap: v.tahap || "lobi", soal: v.soal || 0, buka: !!v.buka, sesi: v.sesi || 0};
+    if(baru.sesi && S.sesi !== baru.sesi){
+      Object.assign(S, progresBaru()); S.sesi = baru.sesi; simpan(); gambarBar();
+      if(S.nama) kirim();
+      kunciLayar = "";
+    }
+    CTRL = baru;
+    render();
+  });
+  DB.on(ROOT + "/anak/" + S.id + "/diberi", function(v){
+    if(v && !S.beres.b1) menangB1();
+  });
+  DB.on(ROOT + "/anak", function(v){ ANAK_SEMUA = v || {}; perbaruiGabungan(); });
+  var putusSejak = 0, t = null;
+  DB.koneksi(function(ok){
+    if(MANDIRI) return;
+    clearTimeout(t);
+    if(ok){ putusSejak = 0; banner(""); return; }
+    putusSejak = Date.now();
+    banner('Sedang menyambung ke guru&hellip;');
+    t = setTimeout(function(){
+      banner('Belum tersambung. <button class="tbl-kecil" id="keMandiri">Main tanpa guru</button>');
+      document.getElementById("keMandiri").addEventListener("click", keMandiri);
+    }, 10000);
+  });
+}
+
+/* =========================================================
+   PANEL GURU
+   ========================================================= */
+var G = {ctrl:{tahap:"lobi", soal:0, buka:false}, anak:{}, koneksi:false};
+function mulaiGuru(){
+  gambarBar();
+  if(sessionStorage.getItem("lunas-guru") !== "ok"){
+    app.innerHTML =
+      '<div class="kartu" style="margin-top:26px">'
+      + '<p class="eyebrow">Panel guru &middot; kelas ' + esc(KELAS) + '</p>'
+      + '<h2>Masukkan PIN</h2>'
+      + '<div class="medan"><input type="password" inputmode="numeric" id="pin" autocomplete="off" placeholder="PIN"></div>'
+      + '<button class="tbl merah" id="okPin">Buka panel</button>'
+      + '<p class="kecil" id="salahPin" style="margin:10px 0 0"></p></div>';
+    var p = document.getElementById("pin");
+    function cek(){
+      if(p.value === CONFIG.PIN){ sessionStorage.setItem("lunas-guru", "ok"); mulaiGuru(); }
+      else { document.getElementById("salahPin").textContent = "PIN salah."; p.value = ""; p.focus(); }
+    }
+    document.getElementById("okPin").addEventListener("click", cek);
+    p.addEventListener("keydown", function(e){ if(e.key === "Enter") cek(); });
+    return;
+  }
+  if(DB.mode === "putus"){
+    app.innerHTML = '<div class="kartu" style="margin-top:26px"><h2>Tidak tersambung</h2><p>Firebase tidak termuat. Periksa internet, lalu muat ulang halaman. Kalau tetap gagal, anak-anak bisa bermain dengan link berakhiran <b>?mandiri</b>.</p></div>' + panduanHTML();
+    return;
+  }
+  app.innerHTML = '<div id="gLive"></div><div id="gPanduan">' + panduanHTML() + '</div>';
+  DB.on(ROOT + "/ctrl", function(v){ G.ctrl = Object.assign({tahap:"lobi", soal:0, buka:false}, v || {}); gambarGuru(); });
+  DB.on(ROOT + "/anak", function(v){ G.anak = v || {}; gambarGuru(); });
+  DB.koneksi(function(ok){ G.koneksi = ok; gambarGuru(); });
+  document.getElementById("gLive").addEventListener("click", aksiGuru);
+}
+function daftarAnak(){
+  var out = [];
+  for(var id in G.anak){ var a = G.anak[id]; if(a && a.nama) out.push(Object.assign({id:id}, a)); }
+  out.sort(function(x, y){ return (y.skor || 0) - (x.skor || 0) || String(x.nama).localeCompare(String(y.nama)); });
+  return out;
+}
+function statusAnak(a){
+  var c = G.ctrl, t = c.tahap, jw = a.jawab || {}, br = a.beres || {};
+  if(t === "lobi") return a.online === false ? "offline" : "siap";
+  if(t === "b1"){ if(br.b1) return "&#10003; selesai"; return a.minta ? "&#9995; minta tolong" : "mengerjakan"; }
+  if(t === "b2" || t === "b5") return br[t] ? "&#10003; selesai" : "mengerjakan";
+  if(LOCK[t]){
+    if(c.soal >= LOCK[t].data.length) return br[t] ? "&#10003;" : "";
+    var v = jw[t + "_" + c.soal];
+    if(v === undefined) return "belum";
+    if(!c.buka) return "&#10003; sudah";
+    return v === LOCK[t].benar(c.soal) ? "benar" : "salah";
+  }
+  if(t === "akhir") return a.lunas ? "" : (a.ditolak ? "ditolak" : "belum bayar");
+  return "";
+}
+function gambarGuru(){
+  var el = document.getElementById("gLive");
+  if(!el) return;
+  var c = G.ctrl, t = c.tahap, anak = daftarAnak(), n = anak.length;
+  var idx = URUTAN.indexOf(t), berikut = URUTAN[idx + 1];
+  var kontrol = "";
+
+  if(t === "lobi"){
+    kontrol = '<p>' + (n ? n + ' anak sudah masuk.' : 'Belum ada anak yang masuk.') + ' Bagikan link tanpa <b>#guru</b>.</p>'
+      + tombolG("Mulai: Babak 1", "ke", "b1", "merah");
+  }
+  else if(t === "b1" || t === "b2" || t === "b5"){
+    var sel = anak.filter(function(a){ return a.beres && a.beres[t]; }).length;
+    kontrol = '<p class="angka-besar">' + sel + '<span>/' + n + ' selesai</span></p>';
+    if(t === "b1"){
+      var minta = anak.filter(function(a){ return a.minta && !(a.beres && a.beres.b1); });
+      minta.forEach(function(a){
+        kontrol += '<div class="minta"><span>&#9995; <b>' + esc(a.nama) + '</b> bilang &ldquo;saya tidak bisa&rdquo;</span>'
+          + '<button class="tbl-kecil merah" data-g="beri" data-id="' + a.id + '">Berikan</button></div>';
+      });
+      kontrol += '<p class="kecil">Tombol &ldquo;Berikan&rdquo; muncul setelah anak menekan &ldquo;Aku tidak bisa&rdquo;. Tunggu sampai dia angkat tangan dan mengucapkannya.</p>';
+    }
+    if(t === "b2"){
+      var total = anak.reduce(function(s, a){ return s + (a.uang || 0); }, 0);
+      kontrol += '<div class="baris"><span>Gabungan kelas</span><span>' + rupiah(total) + '</span></div>'
+        + '<div class="baris"><span>Masih kurang</span><span style="color:var(--stempel)">' + rupiahPenuh(TARGET - total) + '</span></div>'
+        + '<p class="kecil" style="margin-top:8px">Angka gabungan ini juga tampil di HP anak yang sudah berhenti.</p>';
+    }
+    if(t === "b5") kontrol += '<p class="kecil">Angka lelang tiap anak sengaja tidak dikirim ke sini.</p>';
+    kontrol += tombolG("Lanjut: " + NAMA_TAHAP[berikut], "ke", berikut, sel >= n && n ? "merah" : "");
+  }
+  else if(LOCK[t]){
+    var L = LOCK[t], N = L.data.length;
+    if(c.soal >= N){
+      kontrol = '<p>Ringkasan babak sedang tampil di HP anak.</p>' + tombolG("Lanjut: " + NAMA_TAHAP[berikut], "ke", berikut, "merah");
+    } else {
+      var key = t + "_" + c.soal;
+      var sudah = anak.filter(function(a){ return a.jawab && a.jawab[key] !== undefined; }).length;
+      kontrol = '<p class="eyebrow" style="margin-bottom:6px">Soal ' + (c.soal + 1) + ' dari ' + N + '</p>'
+        + '<div class="skenario" style="min-height:0">' + L.teks(c.soal) + '</div>';
+      if(!c.buka){
+        kontrol += '<p class="angka-besar">' + sudah + '<span>/' + n + ' sudah menjawab</span></p>'
+          + tombolG("Buka jawaban di semua HP", "buka", "", sudah >= n && n ? "merah" : "");
+      } else {
+        var pil = L.pilihan(c.soal), benar = L.benar(c.soal), rinci = "";
+        pil.forEach(function(p){
+          var jml = anak.filter(function(a){ return a.jawab && a.jawab[key] === p.v; }).length;
+          rinci += '<div class="baris' + (p.v === benar ? ' benar-g' : '') + '"><span>' + (p.v === benar ? "&#10003; " : "") + labelPilihan(t, c.soal, p.v) + '</span><span>' + jml + '</span></div>';
+        });
+        var kosong = anak.filter(function(a){ return !a.jawab || a.jawab[key] === undefined || a.jawab[key] === -1; }).length;
+        if(kosong) rinci += '<div class="baris"><span>tidak menjawab</span><span>' + kosong + '</span></div>';
+        kontrol += rinci + '<div class="umpan ok" style="margin-top:10px">' + L.penjelasan(c.soal) + '</div>'
+          + (c.soal < N - 1 ? tombolG("Soal berikutnya", "berikut", "", "merah") : tombolG("Tutup babak, tampilkan ringkasan", "tutup", "", "merah"));
+      }
+    }
+  }
+  else if(t === "akhir"){
+    var byr = anak.filter(function(a){ return a.ditolak || a.lunas; }).length;
+    if(!c.buka){
+      kontrol = '<p class="angka-besar">' + byr + '<span>/' + n + ' sudah mencoba bayar</span></p>'
+        + '<p class="kecil">Setelah semua melihat &ldquo;DITOLAK&rdquo;, tanya: &ldquo;Lalu siapa yang membayar?&rdquo; Baru tekan tombol ini.</p>'
+        + tombolG("Cap LUNAS di semua HP", "buka", "", "merah");
+    } else {
+      kontrol = '<p>Stempel LUNAS sudah tampil. Hapus skor di papan, tulis satu kata besar: <b>LUNAS</b>.</p>'
+        + tombolG("Lanjut: Kartu Pengakuan", "ke", "kartu", "merah");
+    }
+  }
+  else if(t === "kartu"){
+    kontrol = '<p>Anak mengisi Kartu Pengakuan di HP-nya. Isinya tidak dikirim ke sini. Minta mereka menunjukkan screenshot kartunya, lalu tutup dengan doa.</p>';
+  }
+
+  var lunasSemua = t === "kartu" || (t === "akhir" && c.buka);
+  var tabel = anak.map(function(a){
+    return '<tr><td><span class="on-dot ' + (a.online === false ? "mati" : "") + '"></span>' + esc(a.nama) + '</td>'
+      + '<td class="st">' + statusAnak(a) + '</td>'
+      + '<td class="sk">' + (lunasSemua || a.lunas ? '<span class="coret">' + (a.skor || 0) + '</span> <b class="lunas-teks">LUNAS</b>' : (a.skor || 0)) + '</td>'
+      + '<td><button class="hapus" data-g="hapus" data-id="' + a.id + '" aria-label="hapus ' + esc(a.nama) + '">&times;</button></td></tr>';
+  }).join("");
+
+  var loncat = URUTAN.map(function(u){
+    return '<button class="lompat' + (u === t ? " kini" : "") + '" data-g="ke" data-t="' + u + '">' + NAMA_TAHAP[u].replace(/ · .*/, "") + '</button>';
+  }).join("");
+
+  el.innerHTML =
+    '<div class="kartu" style="margin-top:14px">'
+    + '<p class="eyebrow">Panel guru &middot; kelas ' + esc(KELAS) + ' &middot; ' + (G.koneksi ? "tersambung" : "TERPUTUS") + (DB.mode === "demo" ? " &middot; DEMO" : "") + '</p>'
+    + '<h2>' + NAMA_TAHAP[t] + '</h2>'
+    + '<div class="perf">' + kontrol + '</div></div>'
+    + '<div class="kartu"><p class="eyebrow">Anak (' + n + ')</p>'
+    + (n ? '<div class="gulir"><table class="tabel-anak">' + tabel + '</table></div>' : '<p class="kecil" style="margin:0">Belum ada.</p>')
+    + '</div>'
+    + '<div class="kartu"><p class="eyebrow">Loncat ke tahap</p><div class="lompatan">' + loncat + '</div>'
+    + '<div class="perf"><button class="tbl-kecil" data-g="baru">Mulai sesi baru (hapus semua skor)</button></div></div>';
+}
+function tombolG(teks, aksi, t, kls){
+  return '<div style="height:12px"></div><button class="tbl ' + (kls || "") + '" data-g="' + aksi + '"' + (t ? ' data-t="' + t + '"' : '') + '>' + teks + '</button>';
+}
+function aksiGuru(e){
+  var b = e.target.closest("[data-g]");
+  if(!b) return;
+  var a = b.getAttribute("data-g"), c = G.ctrl, P = ROOT + "/ctrl";
+  if(a === "ke") DB.update(P, {tahap:b.getAttribute("data-t"), soal:0, buka:false});
+  else if(a === "buka") DB.update(P, {buka:true});
+  else if(a === "berikut") DB.update(P, {soal:c.soal + 1, buka:false});
+  else if(a === "tutup") DB.update(P, {soal:LOCK[c.tahap].data.length, buka:false});
+  else if(a === "beri") DB.set(ROOT + "/anak/" + b.getAttribute("data-id") + "/diberi", true);
+  else if(a === "hapus"){
+    if(confirm("Hapus anak ini dari daftar? (Kalau HP-nya masih terbuka, dia akan muncul lagi.)")) DB.remove(ROOT + "/anak/" + b.getAttribute("data-id"));
+  }
+  else if(a === "baru"){
+    if(confirm("Mulai sesi baru? Semua skor dan jawaban kelas " + KELAS + " dihapus, semua HP kembali ke ruang tunggu.")){
+      DB.remove(ROOT + "/anak").then(function(){ DB.set(P, {tahap:"lobi", soal:0, buka:false, sesi:Date.now()}); });
+    }
+  }
+}
+
+function panduanHTML(){
+  return '<details class="kartu panduan"><summary><h3>Panduan memandu sesi</h3></summary>'
+    + '<p class="kecil" style="margin-top:12px">Dirancang untuk 6 anak kelas 7, tiap anak satu HP, 50&ndash;60 menit. HP guru jadi remote: semua HP anak pindah babak mengikuti tombol di panel ini. Kunci suasana: <b>jangan ada blok bicara lebih dari 8 menit</b>.</p>'
+    + '<div class="guru-blok"><h3>Sebelum mulai</h3><ul>'
+    + '<li>Buka panel ini, tekan <b>Mulai sesi baru</b>. Semua skor minggu lalu terhapus.</li>'
+    + '<li>Kirim link (tanpa #guru) ke 6 anak. Mereka mengetik nama, lalu menunggu. Nama mereka muncul di daftar &ldquo;Anak&rdquo;.</li>'
+    + '<li>Aturan: HP tengkurap di meja kecuali babak sedang jalan.</li>'
+    + '<li>Skor tiap anak tampil di panel ini. Tulis juga di papan: ini sengaja, karena di akhir sesi skor itu akan &ldquo;dibatalkan&rdquo;.</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Dua jenis babak</h3><ul>'
+    + '<li><b>Tempo bebas (1, 2, 5):</b> tiap anak jalan sendiri. Yang selesai duluan melihat layar tunggu berisi tugas kecil. Lanjut kalau angka &ldquo;selesai&rdquo; sudah penuh.</li>'
+    + '<li><b>Serempak (3, 4, 6):</b> kamu yang memegang soal. Anak menjawab, jawabannya terkunci. Setelah semua menjawab, tekan &ldquo;Buka jawaban&rdquo;: pembahasan muncul bersamaan di semua HP. Bahas, lalu &ldquo;Soal berikutnya&rdquo;.</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Alur waktu</h3><div class="gulir"><table>'
+    + '<tr><td>0&ndash;7</td><td><b>Babak 1, Puzzle Mustahil.</b> Jangan bocorkan bahwa 2 kata tidak ada. Anak yang menyerah menekan &ldquo;Aku tidak bisa&rdquo;, lalu harus angkat tangan dan bilang &ldquo;Saya tidak bisa&rdquo;. Baru kamu tekan <b>Berikan</b> di panel. Tanya: &ldquo;Siapa yang merasa kurang usaha?&rdquo;</td></tr>'
+    + '<tr><td>7&ndash;17</td><td><b>Babak 2, Uang Tebusan.</b> Biarkan mereka mengetuk sampai bosan. Panel menunjukkan gabungan uang kelas secara langsung. Tanya: &ldquo;Gabungan kita, masih kurang berapa?&rdquo; Lalu bahas keselamatan vs penebusan.</td></tr>'
+    + '<tr><td>17&ndash;25</td><td><b>Ajar singkat (maks 8 menit).</b> Tetap di babak 2 (HP tengkurap). Bagaimana kita diselamatkan: dilahirkan kembali (Yoh 3:3), bertobat, percaya (Kis 16:31), mengaku (Rm 10:9-10). Semuanya anugerah, bukan usaha.</td></tr>'
+    + '<tr><td>25&ndash;35</td><td><b>Babak 3, Tobat atau Nyesel.</b> Bagian terpenting. Lihat sebaran jawaban setelah dibuka; kartu yang banyak salah dibahas lebih lama. Setelah selesai, minta 2 anak membacakan skenario buatan mereka.</td></tr>'
+    + '<tr><td>35&ndash;41</td><td><b>Babak 4, Tiga Tahap.</b> Versi bergerak: 3 kertas di 3 sudut ruangan, anak berdiri di sudut pilihannya, lalu menjawab di HP.</td></tr>'
+    + '<tr><td>41&ndash;48</td><td><b>Babak 5, Lelang Nilai Hidup.</b> Tekankan: angka mereka tidak dikirim ke guru. Debrief ke <b>kelompok</b>, bukan satu per satu.</td></tr>'
+    + '<tr><td>48&ndash;54</td><td><b>Babak 6, Kuis Ayat.</b> Tiap soal 20 detik. Berdiri semua; yang salah duduk.</td></tr>'
+    + '<tr><td>54&ndash;58</td><td><b>Tagihan Akhir.</b> Buka tahap ini: semua anak melihat tagihan dan menekan &ldquo;Bayar&rdquo;, lalu DITOLAK. Tanya &ldquo;Lalu siapa yang membayar?&rdquo;, baru tekan <b>Cap LUNAS</b>: stempel muncul di semua HP bersamaan. Hapus skor di papan, tulis LUNAS. Yang tadi duduk di babak 6, berdiri lagi.</td></tr>'
+    + '<tr><td>58&ndash;60</td><td><b>Kartu Pengakuan</b> + doa penutup. Yang ditunjukkan ke kamu hanya nama dan pengakuan iman.</td></tr>'
+    + '</table></div></div>'
+    + '<div class="guru-blok"><h3>Pertanyaan debrief</h3><ul>'
+    + '<li><b>B1:</b> Apa yang kamu rasakan waktu tahu kata itu memang tidak ada? Apa hubungannya dengan &ldquo;jangan ada yang memegahkan diri&rdquo;?</li>'
+    + '<li><b>B1 (anak yang kritis):</b> Kata &ldquo;iman&rdquo; ada di kantongmu. Apakah iman itu hasil usaha kita? (Ef 2:8; Kis 11:18.)</li>'
+    + '<li><b>B2:</b> Kalau harga nyawa tidak bisa dibayar manusia, kenapa Yesus bisa? (Karena Dia tidak berdosa.)</li>'
+    + '<li><b>B3:</b> Ceritakan satu kali kamu cuma nyesel, bukan bertobat. Apa bedanya kalau kamu bertobat?</li>'
+    + '<li><b>B4:</b> Kamu sekarang di tahap mana? Apa yang kamu kerjakan besok?</li>'
+    + '<li><b>B5:</b> &ldquo;Barang mana yang paling susah dilepas anak seumuran kalian?&rdquo; Lalu: &ldquo;Kenapa Paulus justru mencap prestasi agamanya sebagai rugi?&rdquo;</li>'
+    + '<li><b>Tagihan Akhir:</b> Kalau keselamatan soal skor, siapa yang paling selamat hari ini? Kalau semua sama-sama LUNAS, apa artinya untuk cara kita memandang teman?</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Catatan kepekaan</h3><ul>'
+    + '<li>Kartu Yudas sengaja tidak menyebut akhir hidupnya. Kalau ada yang bertanya, jawab singkat dan tenang, lalu kembali ke inti: Yudas menyesal tapi menjauh; Petrus menyesal lalu kembali.</li>'
+    + '<li>Kolom &ldquo;hanya untukmu&rdquo; di Kartu Pengakuan tidak dikirim ke mana pun. Jangan minta melihatnya.</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Kalau ada masalah</h3><ul>'
+    + '<li><b>HP anak tidak ikut pindah:</b> minta dia memuat ulang halaman. Skor dan jawabannya tetap ada.</li>'
+    + '<li><b>Internet mati total:</b> anak bisa membuka link dengan akhiran <b>?mandiri</b>. Game jalan seperti biasa tanpa sinkron; pandu secara lisan.</li>'
+    + '<li><b>Waktu tinggal 30 menit:</b> babak 2, 3, 6, lalu Tagihan Akhir (pakai &ldquo;Loncat ke tahap&rdquo;).</li>'
+    + '</ul></div>'
+    + '</details>';
+}
+
+/* ---------- jalan ---------- */
+if(MODE_GURU) mulaiGuru(); else mulaiAnak();
+window.addEventListener("hashchange", function(){ if(location.hash === "#guru" && !MODE_GURU) location.reload(); });
+</script>
+</body>
+</html>
