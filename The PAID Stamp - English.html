@@ -1,0 +1,1448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The PAID Stamp</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Asap:wght@400;500;600;700&family=Courier+Prime:wght@400;700&display=swap">
+<style>img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+  :root{
+    --kertas:#EDEFF1;
+    --kartu:#FCFCFA;
+    --kartu-2:#F3F4F1;
+    --tinta:#151B2E;
+    --tinta-2:#5C6879;
+    --garis:#D2D7DD;
+    --garis-kuat:#B6BEC8;
+    --stempel:#BE2A25;
+    --lunas:#1A7052;
+    --emas:#9A6B10;
+    --emas-bg:#F6EBCF;
+    --lunas-bg:#E2F0EA;
+    --stempel-bg:#F8E5E3;
+    --radius:10px;
+    --shadow:0 1px 0 var(--garis), 0 6px 18px -12px rgba(21,27,46,.35);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --kertas:#0D1220;
+      --kartu:#171E30;
+      --kartu-2:#1E263A;
+      --tinta:#E8EBF1;
+      --tinta-2:#95A0B5;
+      --garis:#2A3349;
+      --garis-kuat:#3C476180;
+      --stempel:#EC5C55;
+      --lunas:#43AE86;
+      --emas:#DCAE49;
+      --emas-bg:#2E2718;
+      --lunas-bg:#16302A;
+      --stempel-bg:#331A1A;
+      --shadow:0 1px 0 var(--garis), 0 8px 22px -14px #000;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --kertas:#0D1220;
+    --kartu:#171E30;
+    --kartu-2:#1E263A;
+    --tinta:#E8EBF1;
+    --tinta-2:#95A0B5;
+    --garis:#2A3349;
+    --garis-kuat:#3C476180;
+    --stempel:#EC5C55;
+    --lunas:#43AE86;
+    --emas:#DCAE49;
+    --emas-bg:#2E2718;
+    --lunas-bg:#16302A;
+    --stempel-bg:#331A1A;
+    --shadow:0 1px 0 var(--garis), 0 8px 22px -14px #000;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--kertas);
+    color:var(--tinta);
+    font-family:"Asap","Segoe UI",system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:540px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
+
+  /* ---------- bar atas ---------- */
+  .bar{
+    position:sticky;top:0;z-index:20;
+    background:var(--kertas);
+    border-bottom:1px solid var(--garis);
+    padding-block:10px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .bar-merek{
+    font-family:"Archivo Black",Impact,sans-serif;
+    font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--stempel);
+    line-height:1;
+  }
+  .dots{display:flex;gap:5px;margin-left:auto}
+  .dot{width:9px;height:9px;border:1.5px solid var(--garis-kuat);border-radius:2px;background:transparent}
+  .dot.on{background:var(--lunas);border-color:var(--lunas)}
+  .dot.now{border-color:var(--stempel);background:var(--stempel)}
+  .skor{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:14px;
+    background:var(--emas-bg);color:var(--emas);
+    border:1px solid var(--emas);
+    padding:2px 8px;border-radius:3px;
+    font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+
+  /* ---------- teks ---------- */
+  h1,h2,h3{font-family:"Archivo Black",Impact,sans-serif;font-weight:400;text-wrap:balance;margin:0}
+  h1{font-size:clamp(28px,8vw,38px);line-height:1.02;letter-spacing:-.01em}
+  h2{font-size:22px;line-height:1.15;margin-bottom:6px}
+  h3{font-size:15px;letter-spacing:.02em}
+  p{margin:0 0 12px}
+  .eyebrow{
+    font-family:"Courier Prime",monospace;font-weight:700;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--tinta-2);margin-bottom:10px;
+  }
+  .kecil{font-size:14px;color:var(--tinta-2)}
+  .ayat{
+    font-family:"Courier Prime",monospace;font-size:14.5px;line-height:1.6;
+    background:var(--kartu-2);
+    border-left:3px solid var(--stempel);
+    padding:12px 14px;margin:0 0 14px;
+  }
+  .ayat b{color:var(--stempel)}
+  .rujukan{display:block;margin-top:6px;font-weight:700;letter-spacing:.06em;font-size:12px;text-transform:uppercase;color:var(--tinta-2)}
+
+  /* ---------- kartu ---------- */
+  .kartu{
+    background:var(--kartu);
+    border:1px solid var(--garis);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .perf{border-top:2px dashed var(--garis-kuat);margin-top:14px;padding-top:14px}
+
+  /* ---------- tombol ---------- */
+  button{font-family:inherit;font-size:16px;cursor:pointer}
+  .tbl{
+    display:block;width:100%;
+    background:var(--tinta);color:var(--kertas);
+    border:none;border-radius:6px;
+    padding:14px 16px;
+    font-weight:700;letter-spacing:.02em;
+    transition:transform .08s ease, filter .15s ease;
+  }
+  .tbl:hover{filter:brightness(1.15)}
+  .tbl:active{transform:translateY(1px)}
+  .tbl.merah{background:var(--stempel);color:#fff}
+  .tbl.garis{background:transparent;color:var(--tinta);border:1.5px solid var(--garis-kuat);font-weight:600}
+  .tbl[disabled]{opacity:.45;cursor:not-allowed}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tbl-kecil{
+    background:transparent;border:1.5px solid var(--garis-kuat);color:var(--tinta);
+    border-radius:5px;padding:7px 12px;font-size:14px;font-weight:600;
+  }
+  a{color:var(--stempel)}
+  :focus-visible{outline:2.5px solid var(--stempel);outline-offset:2px}
+
+  /* ---------- angka & kwitansi ---------- */
+  .rp{font-family:"Courier Prime",monospace;font-variant-numeric:tabular-nums;font-weight:700}
+  .baris{
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    font-family:"Courier Prime",monospace;font-size:14px;
+    padding:5px 0;border-bottom:1px dotted var(--garis);
+  }
+  .baris span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}
+  .bar-progres{height:14px;background:var(--kartu-2);border:1px solid var(--garis-kuat);border-radius:2px;overflow:hidden;margin:10px 0 6px}
+  .bar-progres div{height:100%;background:var(--stempel);width:0%;transition:width .2s ease}
+
+  /* ---------- stempel ---------- */
+  .stempel{
+    display:inline-block;
+    font-family:"Archivo Black",Impact,sans-serif;
+    color:var(--stempel);
+    border:4px solid var(--stempel);
+    border-radius:6px;
+    padding:6px 18px 4px;
+    font-size:clamp(30px,10vw,46px);
+    letter-spacing:.1em;
+    transform:rotate(-8deg);
+    opacity:.92;
+    line-height:1;
+  }
+  .stempel-wrap{text-align:center;padding:18px 0 22px}
+  .cap{
+    display:inline-block;font-family:"Archivo Black",Impact,sans-serif;font-size:11px;
+    letter-spacing:.12em;padding:3px 8px;border:2px solid currentColor;border-radius:3px;
+    transform:rotate(-4deg);
+  }
+  .cap.rugi{color:var(--stempel)}
+  .cap.untung{color:var(--lunas)}
+  @media (prefers-reduced-motion: no-preference){
+    .stempel{animation:cap .45s cubic-bezier(.2,1.5,.4,1) both}
+    @keyframes cap{from{transform:rotate(-8deg) scale(2.6);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:.92}}
+  }
+
+  /* ---------- kuis & sortir ---------- */
+  .pil{
+    display:block;width:100%;text-align:left;
+    background:var(--kartu-2);border:1.5px solid var(--garis);
+    border-radius:6px;padding:12px 14px;margin-bottom:8px;
+    color:var(--tinta);font-size:15px;line-height:1.4;
+  }
+  .pil:hover{border-color:var(--garis-kuat)}
+  .pil.benar{background:var(--lunas-bg);border-color:var(--lunas);color:var(--lunas);font-weight:600}
+  .pil.salah{background:var(--stempel-bg);border-color:var(--stempel);color:var(--stempel)}
+  .skenario{
+    font-size:17px;line-height:1.45;min-height:5.2em;
+    display:flex;align-items:center;
+    background:var(--kartu-2);border:1px solid var(--garis);
+    border-radius:8px;padding:16px;margin-bottom:14px;
+  }
+  .umpan{border-radius:6px;padding:11px 13px;font-size:14.5px;margin-bottom:12px;line-height:1.45}
+  .umpan.ok{background:var(--lunas-bg);border:1px solid var(--lunas);color:var(--lunas)}
+  .umpan.no{background:var(--stempel-bg);border:1px solid var(--stempel);color:var(--stempel)}
+  .umpan b{font-family:"Archivo Black",Impact,sans-serif;letter-spacing:.04em}
+
+  /* ---------- babak 1: ayat rumpang ---------- */
+  .rumpang{font-size:18px;line-height:2.1}
+  .slot{
+    display:inline-block;min-width:110px;text-align:center;
+    border-bottom:2.5px solid var(--garis-kuat);
+    padding:1px 8px;margin:0 2px;
+    font-weight:700;color:var(--tinta-2);cursor:pointer;
+  }
+  .slot.aktif{border-bottom-color:var(--stempel);background:var(--stempel-bg)}
+  .slot.isi{color:var(--tinta);border-bottom-color:var(--tinta)}
+  .slot.hadiah{color:var(--emas);border-bottom-color:var(--emas);background:var(--emas-bg)}
+  .kantong{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .kata{
+    background:var(--kartu-2);border:1.5px solid var(--garis-kuat);
+    border-radius:20px;padding:6px 13px;font-size:14.5px;color:var(--tinta);
+  }
+  .kata.pakai{opacity:.3;text-decoration:line-through;pointer-events:none}
+
+  /* ---------- babak 4: tiga tahap ---------- */
+  .tiga{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .tiga button{
+    background:var(--kartu-2);border:1.5px solid var(--garis);border-radius:6px;
+    padding:12px 4px;color:var(--tinta);font-weight:700;font-size:13px;line-height:1.2;
+  }
+  .tiga button small{display:block;font-weight:400;font-size:10.5px;color:var(--tinta-2);margin-top:3px;letter-spacing:.04em}
+
+  /* ---------- babak 5: lelang ---------- */
+  .lelang-baris{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dotted var(--garis)}
+  .lelang-baris .nama{flex:1;font-size:15px;line-height:1.3}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{
+    width:34px;height:34px;border-radius:5px;border:1.5px solid var(--garis-kuat);
+    background:var(--kartu-2);color:var(--tinta);font-size:19px;font-weight:700;line-height:1;
+  }
+  .stepper output{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:16px;
+    min-width:34px;text-align:center;font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- daftar babak di beranda ---------- */
+  .daftar{display:flex;flex-direction:column;gap:0}
+  .item{
+    display:flex;gap:12px;align-items:flex-start;
+    padding:13px 0;border-bottom:1px solid var(--garis);
+    text-align:left;width:100%;background:none;border-left:0;border-right:0;border-top:0;
+    color:var(--tinta);
+  }
+  .item:last-child{border-bottom:0}
+  .no{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:13px;
+    border:1.5px solid var(--garis-kuat);border-radius:3px;
+    width:26px;height:26px;display:grid;place-items:center;flex:none;margin-top:1px;
+    color:var(--tinta-2);
+  }
+  .item.beres .no{background:var(--lunas);border-color:var(--lunas);color:#fff}
+  .item .judul{display:block;font-weight:700;font-size:15.5px;line-height:1.25}
+  .item .ket{display:block;font-size:13.5px;color:var(--tinta-2);line-height:1.35;margin-top:1px}
+
+  input[type=text],textarea{
+    width:100%;font-family:inherit;font-size:16px;color:var(--tinta);
+    background:var(--kartu-2);border:1.5px solid var(--garis);border-radius:6px;
+    padding:11px 12px;
+  }
+  textarea{resize:vertical;min-height:70px}
+  label{display:block;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:5px}
+  .medan{margin-bottom:14px}
+
+  .guru-blok{border-top:1px solid var(--garis);padding-top:14px;margin-top:14px}
+  .guru-blok h3{color:var(--stempel);margin-bottom:6px}
+  .guru-blok ul{margin:0 0 10px;padding-left:18px;font-size:14.5px}
+  .guru-blok li{margin-bottom:5px}
+  .waktu{font-family:"Courier Prime",monospace;font-weight:700;font-size:12.5px;color:var(--tinta-2);letter-spacing:.04em}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td{padding:6px 8px 6px 0;border-bottom:1px solid var(--garis);vertical-align:top}
+  td:first-child{font-family:"Courier Prime",monospace;font-weight:700;white-space:nowrap;color:var(--tinta-2)}
+  .gulir{overflow-x:auto}
+  /* ---------- tombol bahasa ---------- */
+  .bahasa{display:flex;border:1.5px solid var(--garis-kuat);border-radius:4px;overflow:hidden;flex:none}
+  .bahasa button{
+    background:transparent;border:0;color:var(--tinta-2);
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:12.5px;letter-spacing:.06em;
+    padding:4px 8px;line-height:1.2;
+  }
+  .bahasa button[aria-pressed="true"]{background:var(--tinta);color:var(--kertas)}
+  .dots{margin-left:auto}
+  @media (max-width:360px){ .dots{display:none} .bahasa{margin-left:auto} }
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="bar-merek" id="merek">Lunas</div>
+    <div class="dots" id="dots"></div>
+    <div class="bahasa" role="group" aria-label="Bahasa / Language">
+      <button type="button" id="lang-id" data-lang="id">ID</button>
+      <button type="button" id="lang-en" data-lang="en">EN</button>
+    </div>
+    <div class="skor" id="skor">0 pts</div>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+"use strict";
+
+var BAHASA_TETAP = "en"; /* "id" atau "en" = file satu bahasa, tombol ID|EN disembunyikan */
+var KUNCI = "lunas-cg9-v1";
+var S = {nama:"", skor:0, beres:{}, akuan:{tinggal:"", iman:""}, lelang:null, lang:"id"};
+try{ var m = localStorage.getItem(KUNCI); if(m) S = Object.assign(S, JSON.parse(m)); }catch(e){}
+if(BAHASA_TETAP){ S.lang = BAHASA_TETAP; document.querySelector(".bahasa").hidden = true; }
+function simpan(){ try{ localStorage.setItem(KUNCI, JSON.stringify(S)); }catch(e){} }
+function poin(n){ S.skor += n; simpan(); gambarBar(); }
+function tandai(id){ S.beres[id] = true; simpan(); gambarBar(); }
+
+/* =========================================================
+   TEKS — dua bahasa. D() mengambil isi bahasa yang aktif.
+   ========================================================= */
+var ISI = {};
+
+ISI.id = {
+  locale:"id-ID",
+  merek:"Lunas",
+  triliun:" triliun",
+  babak:[
+    {id:"b1", judul:"Puzzle yang Mustahil", ket:"Susun ayat yang tidak mungkin kamu selesaikan sendiri."},
+    {id:"b2", judul:"Uang Tebusan", ket:"Kumpulkan harga satu nyawa. Sampai kamu menyerah."},
+    {id:"b3", judul:"Tobat atau Cuma Nyesel?", ket:"12 kejadian sehari-hari. Pilih yang benar."},
+    {id:"b4", judul:"Tiga Tahap", ket:"Justifikasi, Pengudusan, Pemuliaan — taruh di tempatnya."},
+    {id:"b5", judul:"Lelang Nilai Hidup", ket:"100 poin. Belanjakan. Lalu lihat kwitansi Paulus."},
+    {id:"b6", judul:"Kuis Ayat", ket:"10 soal cepat. Ayat-ayat keselamatan."}
+  ],
+  u:{
+    babakKe:function(n){ return "Babak " + n + " dari 6"; },
+    selesai:function(n){ return "Babak " + n + " &middot; selesai"; },
+    kembali:"Kembali ke daftar",
+    lanjut:function(x){ return "Lanjut: " + x + " &rarr;"; },
+    tepatDari:function(a,b){ return a + " dari " + b + " tepat"; },
+    benarDari:function(a,b){ return a + " dari " + b + " benar"; },
+    plus:function(n){ return "+" + n + " poin."; },
+    lihatHasil:"Lihat hasilku",
+    berikut:"Berikutnya &rarr;",
+    TEPAT:"TEPAT", SALAH:"SALAH", BUKAN:"BUKAN", BENAR:"BENAR", HABIS:"WAKTU HABIS"
+  },
+  beranda:{
+    eyebrow:"Cell Group 9 &middot; Keselamatan bagian 1",
+    judul:"Utangmu<br>tidak bisa<br>kamu bayar.",
+    intro:"Enam babak tentang apa itu keselamatan, apa itu penebusan, dan mengapa harganya hanya bisa dibayar oleh satu Orang. Mainkan di HP-mu sendiri. Guru memandu urutannya.",
+    skor:"Skor kamu sekarang",
+    kartu:"Kartu Pengakuan", guru:"Panel Guru", reset:"Mulai dari nol",
+    tanyaReset:"Hapus semua skor dan jawaban di HP ini?"
+  },
+  b1:{
+    judul:"Puzzle yang Mustahil",
+    petunjuk:"Lengkapi Efesus 2:8-9. Ketuk garis kosong, lalu ketuk kata yang benar. Kamu punya waktu sampai guru bilang stop.",
+    bagian:["Sebab karena ", 0, " kamu diselamatkan oleh ", 1, "; itu bukan hasil ", 2, ", tetapi ", 3, " Allah."],
+    jawab:["kasih karunia", "iman", "usahamu", "pemberian"],
+    kantong:["iman", "usahamu", "perbuatan baik", "rajin ibadah", "hafalan ayat", "uang persembahan"],
+    ketukDulu:"Ketuk dulu garis kosong yang mau kamu isi.",
+    periksa:"Periksa jawabanku",
+    minta:"Minta kepada Guru",
+    salah:function(n){ return "<b>Belum tepat.</b> Ada " + n + " kata yang salah tempat. Coba lagi."; },
+    kurang:function(n){ return "<b>Masih kurang " + n + " kata.</b> Dan &mdash; periksa kantongmu. Dua kata itu memang tidak ada di sana."; },
+    hasil:"<b>Dua kata yang kuning tadi tidak pernah ada di kantongmu.</b> Kamu bukan gagal karena kurang usaha. Kamu gagal karena bagian itu memang cuma bisa <i>diberi</i>.",
+    ayat:'Sebab karena <b>kasih karunia</b> kamu diselamatkan oleh <b>iman</b>; itu bukan hasil usahamu, tetapi <b>pemberian Allah</b>, itu bukan hasil pekerjaanmu: jangan ada orang yang memegahkan diri.<span class="rujukan">Efesus 2:8-9</span>',
+    poin:"<b>+30 poin.</b> Perhatikan: poin ini diberikan, bukan kamu menangkan. Persis seperti keselamatan."
+  },
+  b2:{
+    judul:"Uang Tebusan",
+    petunjuk:"Di depanmu ada satu tagihan: harga tebusan untuk <b>satu nyawa manusia</b> di hadapan Allah. Ketuk untuk mengumpulkan uang. Kumpulkan sebanyak mungkin.",
+    harga:"Harga tebusan 1 nyawa", kumpul:"Sudah kamu kumpulkan", kurang:"Kekurangan",
+    capai:function(p){ return "Kamu baru mencapai " + p + "%"; },
+    tahun:function(n){ return " &middot; dengan kecepatan ini kamu butuh " + n + " tahun lagi"; },
+    ketuk:"Ketuk: kumpulkan uang",
+    menyerah:"Berhenti. Tidak akan pernah cukup.",
+    eyebrow:"Babak 2 &middot; kamu benar berhenti",
+    ayat1:'Tidak seorang pun dapat menebus hidup orang lain, atau memberikan uang tebusan kepada Allah ganti nyawanya, <b>karena terlalu mahal harga pembebasan nyawanya, tidak ada pembayaran yang cukup</b>, supaya ia tetap hidup untuk selama-lamanya.<span class="rujukan">Mazmur 49:8-10</span>',
+    p1:"Bukan soal kamu kurang rajin mengetuk. Harga satu nyawa tidak pernah bisa dibayar oleh manusia &mdash; berapa pun yang kamu kumpulkan, dan walaupun seluruh kelas menggabungkan semuanya.",
+    p2:"Yang bisa membayar hanya satu: <b>seorang yang tidak berdosa</b>. Orang berdosa tidak bisa mati untuk orang lain. Yesus membayar bukan dengan uang &mdash; dengan nyawa dan darah-Nya.",
+    stempel:"LUNAS",
+    tagihan:"Tagihan", tagihanIsi:"Upah dosa = maut (Rm 6:23)",
+    oleh:"Dibayar oleh", olehIsi:"Yesus Kristus",
+    alat:"Alat bayar", alatIsi:"Nyawa &amp; darah-Nya",
+    duaKata:"Dua kata yang jangan tertukar",
+    kSel:"Keselamatan", kSelIsi:"dilepaskan dari dosa<br>dan akibatnya: maut",
+    kTeb:"Penebusan", kTebIsi:"dilepaskan juga &mdash; tetapi<br>ada harga yang dibayar",
+    ayat2:'Atau tidak tahukah kamu, bahwa tubuhmu adalah bait Roh Kudus... <b>Kamu telah dibeli dan harganya telah dibayar</b>: Karena itu muliakanlah Allah dengan tubuhmu!<span class="rujukan">1 Korintus 6:19-20</span>',
+    poin:"<b>+20 poin.</b> Karena kamu sudah dibayar, kamu bukan milikmu sendiri lagi. Kamu milik Kristus."
+  },
+  b3:{
+    kartuKe:function(a,b,c){ return "Babak 3 &middot; kartu " + a + " dari " + b + " &middot; benar " + c; },
+    kartuSaja:function(a,b){ return "Kartu " + a + " dari " + b; },
+    nyesel:"Cuma Nyesel", tobat:"Pertobatan",
+    aturan:"<b>Pertobatan</b> = berbalik arah. <b>Penyesalan</b> = cuma perasaan.",
+    ini:"Ini", kataTobat:"<b>pertobatan</b>", kataNyesel:"<b>penyesalan</b>",
+    kartuBerikut:"Kartu berikutnya &rarr;",
+    ringkas:"Pertobatan itu",
+    poin3:["Menyesali dosa yang lalu dan mau kembali kepada Allah","Berbalik dari dosa, berbalik kepada Allah","Perubahan arah hidup &mdash; bukan cuma perubahan perasaan"],
+    ayat1:'Karena itu <b>sadarlah dan bertobatlah</b>, supaya dosamu dihapuskan, agar Tuhan mendatangkan waktu kelegaan.<span class="rujukan">Kisah Para Rasul 3:19</span>',
+    ayat2:'Persembahan yang berkenan kepada-Mu ialah <b>jiwa yang hancur</b>; hati yang patah dan remuk tidak akan Kaupandang hina.<span class="rujukan">Mazmur 51:19</span>',
+    catatan:"Dan ini penting: kita tidak bisa bertobat kalau Allah tidak memberi kita anugerah untuk bertobat (Kis 11:18).",
+    kartu:[
+      {t:"Aku ketangkap nyontek. Aku nangis seharian karena takut dimarahi mama.", j:"nyesel",
+       a:"Sedih karena akibatnya, bukan karena dosanya. Arah hidupnya belum berubah sama sekali."},
+      {t:"Aku nyontek minggu lalu dan nggak ada yang tahu. Aku ngaku sendiri ke guru, lalu mulai belajar sungguhan.", j:"tobat",
+       a:"Mengaku walau tidak terpaksa, lalu berbalik arah. Itu pertobatan."},
+      {t:"Aku nge-bully anak di chat grup. Aku hapus chatnya biar nggak ada bukti.", j:"nyesel",
+       a:"Menghapus jejak bukan berbalik arah &mdash; itu menutupi dosa, bukan meninggalkannya."},
+      {t:"Aku minta maaf langsung ke anak yang aku bully, lalu aku keluar dari grup itu.", j:"tobat",
+       a:"Minta maaf + menyingkirkan tempat yang menjatuhkan. Berbalik arah yang nyata."},
+      {t:"Yudas menyesal, mengembalikan 30 uang perak, lalu mengakhiri hidupnya sendiri.", j:"nyesel",
+       a:"Yudas sungguh-sungguh menyesal. Tapi dia tidak pernah berbalik kepada Allah (Mat 27:3-5)."},
+      {t:"Petrus menyangkal Yesus tiga kali, menangis pahit, lalu kembali dan memberitakan Yesus.", j:"tobat",
+       a:"Yudas dan Petrus dua-duanya menangis. Bedanya arah: satu menjauh, satu kembali."},
+      {t:"Aku bohong ke papa soal uang. Aku ceritakan semuanya dan aku ganti uangnya dari tabunganku.", j:"tobat",
+       a:"Mengaku + memperbaiki. Buah pertobatan kelihatan."},
+      {t:"Aku merasa jahat banget habis marah ke mama. Aku diam di kamar tiga hari, tapi nggak minta maaf.", j:"nyesel",
+       a:"Menghukum diri sendiri bukan pertobatan. Pertobatan berbalik kepada Allah dan kepada orangnya."},
+      {t:"Tiap malam aku janji 'aku nggak akan gitu lagi', tapi aku nggak pernah minta tolong Tuhan dan kebiasaannya nggak aku ubah.", j:"nyesel",
+       a:"Janji berulang tanpa perubahan arah cuma penyesalan. Pertobatan pun anugerah &mdash; harus diminta dari Allah."},
+      {t:"Aku sering ketinggalan ibadah karena main game sampai subuh. Aku matikan notifikasi game tiap Sabtu malam supaya siap ibadah.", j:"tobat",
+       a:"Bertobat berarti menyingkirkan hal yang menjatuhkan, bukan cuma menyesalinya."},
+      {t:"Aku sedih berat setelah orang tahu dosaku. Yang aku pikirkan cuma nama baikku yang rusak.", j:"nyesel",
+       a:"Yang dipikirkan citra diri, bukan Allah yang dilukai."},
+      {t:"Aku sadar aku sombong ke teman sekelasku. Aku minta Tuhan ubah hatiku, dan aku mulai duduk sama anak yang biasa aku jauhi.", j:"tobat",
+       a:"Minta Allah mengubah hati + langkah nyata yang kelihatan orang lain."}
+    ]
+  },
+  b4:{
+    ke:function(a,b,c){ return "Babak 4 &middot; " + a + " dari " + b + " &middot; benar " + c; },
+    keSaja:function(a,b){ return a + " dari " + b; },
+    jawabnya:"Jawabannya",
+    tahap:{J:"Justifikasi", P:"Pengudusan", G:"Pemuliaan"},
+    tombol:{J:"JUSTI-<br>FIKASI<small>dibenarkan</small>", P:"PENG-<br>UDUSAN<small>dikuduskan</small>", G:"PEMU-<br>LIAAN<small>dimuliakan</small>"},
+    soal:[
+      {t:"Terjadi sekali saja, seketika, waktu pertama kali aku percaya kepada Yesus.", j:"J"},
+      {t:"Berlangsung seumur hidupku, sedikit demi sedikit.", j:"P"},
+      {t:"Aku dinyatakan benar di hadapan Allah &mdash; utangku dicap LUNAS.", j:"J"},
+      {t:"Lewat membaca dan mendengar Firman, dan berdoa setiap hari (1 Tim 4:5).", j:"P"},
+      {t:"Terjadi nanti, waktu Kristus datang kembali.", j:"G"},
+      {t:"Gambar Allah dipulihkan penuh di dalam aku &mdash; seluruh kemuliaan-Nya.", j:"G"},
+      {t:"Tahap yang sedang aku jalani sekarang, hari ini.", j:"P"},
+      {t:"Kalau aku mati sebelum Kristus datang, aku dibangkitkan lebih dulu, lalu ini terjadi.", j:"G"},
+      {t:"Kalau aku masih hidup waktu Kristus datang, aku diubah dalam sekejap, lalu ini terjadi.", j:"G"}
+    ],
+    ringkas:[
+      ["1. JUSTIFIKASI","sekejap, sekali saja<br>saat pertama percaya"],
+      ["2. PENGUDUSAN","seumur hidup, lewat<br>Firman dan doa"],
+      ["3. PEMULIAAN","saat Kristus datang:<br>dibangkitkan atau diubah"]
+    ],
+    ayat:'Hendaklah kamu menjadi kudus di dalam seluruh hidupmu sama seperti Dia yang kudus, yang telah memanggil kamu, sebab ada tertulis: <b>Kuduslah kamu, sebab Aku kudus.</b><span class="rujukan">1 Petrus 1:15-16</span>',
+    catatan:"Kamu sekarang ada di tahap 2. Itu artinya: tiap hari, Firman dan doa &mdash; dan itu pun anugerah Allah, bukan kekuatanmu."
+  },
+  b5:{
+    judul:"Lelang Nilai Hidup",
+    petunjuk:function(n){ return "Kamu punya <b>" + n + " poin</b>. Belanjakan ke barang yang paling kamu mau. Tidak harus habis. Tombol &plus; menambah 5 poin."; },
+    sisa:"Poin sisa",
+    palu:"Ketuk palu &mdash; sudah, ini pilihanku",
+    kurangi:"kurangi", tambah:"tambah",
+    barang:["HP model terbaru, dan selalu yang terbaru","1 juta followers","Juara 1 paralel sampai lulus","Uang Rp 100 juta sekarang","Disukai semua orang di sekolah","Mengenal Kristus Yesus"],
+    kwitansi:function(n){ return "Kwitansi nilai hidup &middot; " + (n || "atas namamu"); },
+    kosong:"&mdash; tidak membeli apa-apa &mdash;",
+    banding:function(a,b){ return "Untuk hal-hal dunia kamu bayar <b>" + a + " poin</b>. Untuk mengenal Kristus: <b>" + b + " poin</b>."; },
+    paulus:"Kwitansi Paulus",
+    paulusIntro:"Paulus punya semua yang orang zamannya kejar. Lihat bagaimana dia mencap barang-barangnya sendiri:",
+    paulusBarang:["Orang Israel asli, suku Benyamin","Disunat pada hari kedelapan","Orang Farisi &mdash; gelar agama tertinggi","Tidak bercacat menurut hukum Taurat"],
+    paulusKristus:"Mengenal Kristus Yesus, Tuhanku",
+    rugi:"RUGI", untung:"UNTUNG",
+    ayat:'Tetapi segala sesuatu yang semula kuanggap sebagai keuntungan, sekarang kuanggap rugi karena Kristus. Bahkan segala sesuatu kuanggap rugi, <b>karena pengenalan akan Kristus Yesus, Tuhanku, lebih mulia dari pada semuanya</b>... dan menganggapnya sampah, supaya aku memperoleh Kristus.<span class="rujukan">Filipi 3:7-8</span>',
+    tanda:"Tanda orang yang sudah diselamatkan",
+    tandaIsi:["Hidupnya berubah &mdash; jadi ciptaan baru (2 Kor 5:17)","<b>Nilai hidupnya berubah</b> &mdash; yang dulu paling penting jadi tidak penting","Tujuan hidupnya berubah &mdash; dulu untuk diri sendiri, sekarang untuk menyenangkan Allah","Hatinya bersyukur, dan syukurnya kelihatan &mdash; bukan cuma di mulut","Hidup doa, penyembahan, dan pelayanan (Rm 12:1)"],
+    tanya:"<b>Pertanyaan buat kamu:</b> kalau kwitansi ini dibuka lagi setahun dari sekarang, apa yang kamu mau berubah angkanya?",
+    poin:"<b>+20 poin.</b> Babak ini tidak ada benar-salah &mdash; yang ada jujur atau tidak."
+  },
+  b6:{
+    ke:function(a,b,c){ return "Babak 6 &middot; soal " + a + " dari " + b + " &middot; benar " + c; },
+    keSaja:function(a,b){ return "Soal " + a + " dari " + b; },
+    cepat:"Cepat juga.", hijau:"Jawabannya yang hijau.",
+    soalBerikut:"Soal berikutnya &rarr;", hasilAkhir:"Lihat hasil akhir",
+    bonus:function(n){ return "<b>+" + n + " poin</b> (termasuk bonus kecepatan)."; },
+    kesimpulan:"Kesimpulan seluruh sesi hari ini:",
+    kesimpulanIsi:["Allah dan manusia terpisah karena dosa.","Manusia yang jatuh tidak bisa mencari atau menemukan Allah. Allah yang harus datang.","Manusia yang jatuh tidak bisa menyelamatkan dirinya. Allah yang harus menyelamatkan.","Karena Yesus sudah membayar harga semua dosa, kita bisa mengaku dosa dan menerima pengampunan.","Hubungan kita dengan Allah akhirnya dipulihkan."],
+    ayat:'Jika kita mengaku dosa kita, maka Ia adalah setia dan adil, sehingga Ia akan mengampuni segala dosa kita dan menyucikan kita dari segala kejahatan.<span class="rujukan">1 Yohanes 1:9</span>',
+    keKartu:"Terakhir: isi Kartu Pengakuan &rarr;",
+    soal:[
+      {t:"&ldquo;Sebab upah dosa ialah ____, tetapi karunia Allah ialah hidup yang kekal dalam Kristus Yesus.&rdquo; (Rm 6:23)",
+       p:["maut","sakit penyakit","kemiskinan","rasa bersalah"], b:0},
+      {t:"Menurut Efesus 2:8-9, kita diselamatkan oleh kasih karunia melalui&hellip;",
+       p:["perbuatan baik kita","iman","rajin beribadah","usaha kita menghindari dosa"], b:1},
+      {t:"&ldquo;Sesungguhnya jika seorang tidak ____, ia tidak dapat melihat Kerajaan Allah.&rdquo; (Yoh 3:3)",
+       p:["rajin berdoa","dibaptis di gereja besar","dilahirkan kembali","menghafal seluruh Alkitab"], b:2},
+      {t:"&ldquo;Dilahirkan kembali&rdquo; artinya&hellip;",
+       p:["kita lahir lagi secara fisik","jiwa yang mati karena dosa dihidupkan kembali","kita pindah agama","kita jadi anak kecil lagi"], b:1},
+      {t:"Apa jawaban Paulus dan Silas kepada kepala penjara Filipi? (Kis 16:31)",
+       p:["&ldquo;Perbaiki dulu hidupmu.&rdquo;","&ldquo;Bayar dulu utangmu.&rdquo;","&ldquo;Percayalah kepada Tuhan Yesus, maka engkau akan diselamatkan.&rdquo;","&ldquo;Belajar dulu tiga tahun.&rdquo;"], b:2},
+      {t:"Roma 10:9-10 menyebut dua hal. Apa itu?",
+       p:["Percaya dalam hati dan mengaku dengan mulut","Berpuasa dan memberi persembahan","Menghafal dan mengajar","Dibaptis dan dikonfirmasi"], b:0},
+      {t:"Apa bedanya penebusan dengan keselamatan?",
+       p:["Tidak ada bedanya sama sekali","Penebusan hanya untuk orang Israel","Pada penebusan ada harga atau uang tebusan yang dibayar","Keselamatan terjadi setelah kita mati"], b:2},
+      {t:"Mengapa hanya Yesus yang bisa mati untuk kita?",
+       p:["Karena Dia paling kuat","Karena hanya orang tanpa dosa yang bisa mati untuk orang lain","Karena Dia laki-laki","Karena Dia punya banyak murid"], b:1},
+      {t:"&ldquo;Jadi siapa yang ada di dalam Kristus, ia adalah ____; yang lama sudah berlalu.&rdquo; (2 Kor 5:17)",
+       p:["orang hebat","ciptaan baru","hamba hukum Taurat","orang kaya"], b:1},
+      {t:"Cara terbaik mengakui iman yang kita percaya adalah&hellip;",
+       p:["menyimpannya sendiri supaya aman","memberitakannya kepada teman dan keluarga","menuliskannya di buku harian","menunggu sampai dewasa"], b:1}
+    ]
+  },
+  kartu:{
+    eyebrow:"Penutup", judul:"Kartu Pengakuan",
+    petunjuk:"Isi dua hal ini. Setelah itu kartunya jadi &mdash; <b>screenshot</b> dan tunjukkan ke gurumu.",
+    nama:"Namaku", namaPh:"nama kamu",
+    tinggal:"Satu hal yang mau aku tinggalkan minggu ini", tinggalPh:"tulis jujur, ini cuma di HP kamu",
+    iman:"Satu kalimat pengakuan imanku", imanPh:"contoh: Aku percaya Yesus sudah membayar dosaku dengan nyawa-Nya.",
+    cap:"Cap kartuku",
+    tanpaNama:"Tanpa nama",
+    skorSesi:"Skor sesi ini",
+    yangDitinggal:"Yang aku tinggalkan", pengakuan:"Pengakuan imanku",
+    dibayar:"Dibayar oleh Yesus Kristus. Bukan olehku.",
+    tantangan:"Tantangan sampai minggu depan",
+    tantanganIsi:"Ceritakan <b>satu hal</b> yang kamu pelajari hari ini kepada <b>satu orang</b> &mdash; teman atau keluarga. Cara terbaik mengakui iman kita adalah memberitakannya (Rm 10:10).",
+    ss:"Screenshot sekarang, tunjukkan ke guru",
+    ssSiap:"Kartunya sudah siap di layar — screenshot ya!"
+  },
+  guru:
+    '<p class="eyebrow">Panel guru &middot; jangan dibuka bareng anak-anak</p>'
+    + '<h2>Cara memandu sesi ini</h2>'
+    + '<p class="kecil">Dirancang untuk 6 anak kelas 7, tiap anak satu HP, 50&ndash;60 menit. Kamu yang mengumumkan babak; anak menekan sendiri di HP-nya. Kunci suasana: <b>jangan ada blok bicara lebih dari 8 menit</b>.</p>'
+    + '<div class="guru-blok"><h3>Sebelum mulai</h3><ul>'
+    + '<li>Kirim link ini ke 6 anak. Minta mereka buka dan <b>berhenti di beranda</b>.</li>'
+    + '<li>Kalau ada tombol <b>ID | EN</b> di kanan atas, itu mengganti bahasa. Pilih sebelum mulai &mdash; mengganti bahasa di tengah babak akan mengulang babak itu (skor tidak hilang).</li>'
+    + '<li>Skor tersimpan di HP masing-masing. Di akhir tiap babak, minta anak menyebut skornya; tulis di papan.</li>'
+    + '<li>Aturan: HP hanya dipakai kalau kamu bilang &ldquo;buka babak&rdquo;. Di luar itu, layar tengkurap di meja.</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Alur waktu</h3>'
+    + '<div class="gulir"><table>'
+    + '<tr><td>0&ndash;8</td><td><b>Babak 1 &mdash; Puzzle Mustahil.</b> Jangan bocorkan bahwa 2 kata tidak ada. Biarkan mereka frustrasi. Tanya: &ldquo;Siapa yang merasa kurang usaha?&rdquo;</td></tr>'
+    + '<tr><td>8&ndash;20</td><td><b>Babak 2 &mdash; Uang Tebusan.</b> Biarkan mereka mengetuk sampai bosan. Tantang: &ldquo;gabungkan semua uang kalian berenam &mdash; masih kurang berapa?&rdquo; Lalu bahas dua kata: keselamatan vs penebusan.</td></tr>'
+    + '<tr><td>20&ndash;28</td><td><b>Ajar singkat (maks 8 menit).</b> Bagaimana kita diselamatkan: dilahirkan kembali (Yoh 3:3), bertobat, percaya (Kis 16:31), mengaku (Rm 10:9-10). Semuanya anugerah, bukan usaha.</td></tr>'
+    + '<tr><td>28&ndash;38</td><td><b>Babak 3 &mdash; Tobat atau Nyesel.</b> Bagian terpenting. Setelah selesai, minta 2 anak membuat skenario sendiri dan kelas menebak.</td></tr>'
+    + '<tr><td>38&ndash;44</td><td><b>Babak 4 &mdash; Tiga Tahap.</b> Versi bergerak: taruh 3 kertas di 3 sudut ruangan, kamu baca pernyataan, anak berdiri di sudutnya, baru cek di HP.</td></tr>'
+    + '<tr><td>44&ndash;52</td><td><b>Babak 5 &mdash; Lelang Nilai Hidup.</b> Setelah palu diketuk, tanya satu per satu: &ldquo;kamu bayar 40 poin untuk apa?&rdquo; Baru buka kwitansi Paulus.</td></tr>'
+    + '<tr><td>52&ndash;58</td><td><b>Babak 6 &mdash; Kuis Ayat.</b> Berdiri semua; yang salah duduk. Skor tetap dihitung di HP.</td></tr>'
+    + '<tr><td>58&ndash;60</td><td><b>Kartu Pengakuan</b> + doa penutup. Kumpulkan janji &ldquo;cerita ke 1 orang&rdquo;.</td></tr>'
+    + '</table></div></div>'
+    + '<div class="guru-blok"><h3>Pertanyaan debrief (pakai yang perlu)</h3><ul>'
+    + '<li><b>B1:</b> Apa yang kamu rasakan waktu tahu kata itu memang tidak ada? Apa hubungannya dengan &ldquo;jangan ada yang memegahkan diri&rdquo;?</li>'
+    + '<li><b>B2:</b> Kalau harga nyawa tidak bisa dibayar manusia, kenapa Yesus bisa? (Karena Dia tidak berdosa &mdash; orang berdosa tidak bisa mati untuk orang lain.)</li>'
+    + '<li><b>B3:</b> Ceritakan satu kali kamu cuma nyesel, bukan bertobat. Apa bedanya kalau kamu bertobat?</li>'
+    + '<li><b>B4:</b> Kamu sekarang di tahap mana? Kalau pengudusan seumur hidup, apa yang kamu kerjakan besok?</li>'
+    + '<li><b>B5:</b> Apa yang dulu paling penting untukmu, dan sekarang apa? Kalau belum berubah, apa artinya?</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Kunci jawaban</h3>'
+    + '<p class="kecil" style="margin-bottom:6px"><b>B1:</b> kasih karunia &middot; iman &middot; usahamu &middot; pemberian. Dua yang <i>tidak</i> ada di kantong: &ldquo;kasih karunia&rdquo; dan &ldquo;pemberian&rdquo;.</p>'
+    + '<p class="kecil" style="margin-bottom:6px"><b>B3 &mdash; PERTOBATAN:</b> kartu 2, 4, 6, 7, 10, 12. Sisanya penyesalan.</p>'
+    + '<p class="kecil" style="margin-bottom:6px"><b>B4:</b> J-P-J-P-G-G-P-G-G (urut soal 1&ndash;9; J = Justifikasi, P = Pengudusan, G = Pemuliaan).</p>'
+    + '<p class="kecil" style="margin:0"><b>B6:</b> maut &middot; iman &middot; dilahirkan kembali &middot; jiwa dihidupkan kembali &middot; &ldquo;Percayalah kepada Tuhan Yesus&rdquo; &middot; percaya di hati + mengaku dengan mulut &middot; ada harga yang dibayar &middot; hanya orang tanpa dosa &middot; ciptaan baru &middot; memberitakannya.</p>'
+    + '</div>'
+    + '<div class="guru-blok"><h3>Kalau anak mulai hilang fokus</h3><ul>'
+    + '<li>Pindahkan badan: babak 3, 4, dan 6 bisa dijalankan sambil berdiri atau berpindah tempat.</li>'
+    + '<li>Beri satu anak tugas jadi &ldquo;pencatat skor&rdquo; di papan &mdash; anak yang paling sulit duduk tenang biasanya paling cocok.</li>'
+    + '<li>Kalau waktu tinggal 30 menit: ambil babak 2, 3, dan 6 saja. Itu inti materinya.</li>'
+    + '</ul></div>'
+};
+
+ISI.en = {
+  locale:"en-US",
+  merek:"Paid",
+  triliun:" trillion",
+  babak:[
+    {id:"b1", judul:"The Impossible Puzzle", ket:"Complete a verse you can't finish on your own."},
+    {id:"b2", judul:"The Ransom", ket:"Collect the price of one life. Until you give up."},
+    {id:"b3", judul:"Repentance or Just Regret?", ket:"12 everyday situations. Pick the right one."},
+    {id:"b4", judul:"Three Stages", ket:"Justification, Sanctification, Glorification — put each in its place."},
+    {id:"b5", judul:"Life Values Auction", ket:"100 points. Spend them. Then see Paul's receipt."},
+    {id:"b6", judul:"Verse Quiz", ket:"10 quick questions. Salvation verses."}
+  ],
+  u:{
+    babakKe:function(n){ return "Round " + n + " of 6"; },
+    selesai:function(n){ return "Round " + n + " &middot; done"; },
+    kembali:"Back to the list",
+    lanjut:function(x){ return "Next: " + x + " &rarr;"; },
+    tepatDari:function(a,b){ return a + " of " + b + " correct"; },
+    benarDari:function(a,b){ return a + " of " + b + " correct"; },
+    plus:function(n){ return "+" + n + " points."; },
+    lihatHasil:"See my result",
+    berikut:"Next &rarr;",
+    TEPAT:"CORRECT", SALAH:"WRONG", BUKAN:"NOT QUITE", BENAR:"CORRECT", HABIS:"TIME'S UP"
+  },
+  beranda:{
+    eyebrow:"Cell Group 9 &middot; Salvation part 1",
+    judul:"You can't<br>pay this<br>debt.",
+    intro:"Six rounds on what salvation is, what redemption is, and why the price could only be paid by one Person. Play on your own phone. Your teacher leads the order.",
+    skor:"Your score now",
+    kartu:"Confession Card", guru:"Teacher Panel", reset:"Start over",
+    tanyaReset:"Erase all scores and answers on this phone?"
+  },
+  b1:{
+    judul:"The Impossible Puzzle",
+    petunjuk:"Complete Ephesians 2:8. Tap a blank line, then tap the right word. You have until your teacher says stop.",
+    bagian:["For by ", 0, " you have been saved through ", 1, "; and that not of ", 2, ", it is the ", 3, " of God."],
+    jawab:["grace", "faith", "yourselves", "gift"],
+    kantong:["faith", "yourselves", "good deeds", "going to church", "memorizing verses", "offering money"],
+    ketukDulu:"Tap the blank line you want to fill first.",
+    periksa:"Check my answer",
+    minta:"Ask the Teacher",
+    salah:function(n){ return "<b>Not yet.</b> " + n + " word" + (n>1?"s are":" is") + " in the wrong place. Try again."; },
+    kurang:function(n){ return "<b>Still " + n + " word" + (n>1?"s":"") + " missing.</b> And &mdash; check your word bag. Those two words simply aren't there."; },
+    hasil:"<b>The two yellow words were never in your bag.</b> You didn't fail because you didn't try hard enough. You failed because that part can only be <i>given</i>.",
+    ayat:'For by <b>grace</b> you have been saved through <b>faith</b>; and that not of yourselves, <b>it is the gift of God</b>; not as a result of works, so that no one may boast.<span class="rujukan">Ephesians 2:8-9</span>',
+    poin:"<b>+30 points.</b> Notice: these points were given to you, not won. Just like salvation."
+  },
+  b2:{
+    judul:"The Ransom",
+    petunjuk:"In front of you is one bill: the ransom price for <b>one human life</b> before God. Tap to collect money. Collect as much as you can.",
+    harga:"Ransom for 1 life", kumpul:"You have collected", kurang:"Still short",
+    capai:function(p){ return "You have reached only " + p + "%"; },
+    tahun:function(n){ return " &middot; at this speed you need " + n + " more years"; },
+    ketuk:"Tap: collect money",
+    menyerah:"Stop. It will never be enough.",
+    eyebrow:"Round 2 &middot; you were right to stop",
+    ayat1:'No one can redeem the life of another or give to God a ransom for them &mdash; <b>the ransom for a life is costly, no payment is ever enough</b> &mdash; so that they should live on forever and not see decay.<span class="rujukan">Psalm 49:7-9</span>',
+    p1:"It's not that you didn't tap hard enough. The price of one life can never be paid by a human &mdash; no matter how much you collect, even if the whole class put everything together.",
+    p2:"Only one could pay it: <b>someone without sin</b>. A sinner cannot die for another person. Jesus didn't pay with money &mdash; He paid with His life and His blood.",
+    stempel:"PAID",
+    tagihan:"Bill", tagihanIsi:"Wages of sin = death (Rom 6:23)",
+    oleh:"Paid by", olehIsi:"Jesus Christ",
+    alat:"Paid with", alatIsi:"His life &amp; His blood",
+    duaKata:"Two words not to mix up",
+    kSel:"Salvation", kSelIsi:"deliverance from sin<br>and its result: death",
+    kTeb:"Redemption", kTebIsi:"deliverance too &mdash; but<br>a price is paid",
+    ayat2:'Or do you not know that your body is a temple of the Holy Spirit... <b>you have been bought with a price</b>: therefore glorify God in your body.<span class="rujukan">1 Corinthians 6:19-20</span>',
+    poin:"<b>+20 points.</b> Because you have been paid for, you don't belong to yourself anymore. You belong to Christ."
+  },
+  b3:{
+    kartuKe:function(a,b,c){ return "Round 3 &middot; card " + a + " of " + b + " &middot; correct " + c; },
+    kartuSaja:function(a,b){ return "Card " + a + " of " + b; },
+    nyesel:"Just Regret", tobat:"Repentance",
+    aturan:"<b>Repentance</b> = turning around. <b>Regret</b> = just a feeling.",
+    ini:"This is", kataTobat:"<b>repentance</b>", kataNyesel:"<b>regret</b>",
+    kartuBerikut:"Next card &rarr;",
+    ringkas:"Repentance is",
+    poin3:["Feeling sorry about past sins and wanting to return to God","Turning away from sin and turning to God","A change in the direction of life &mdash; not just a change of feelings"],
+    ayat1:'Therefore <b>repent and return</b>, so that your sins may be wiped away, in order that times of refreshing may come from the presence of the Lord.<span class="rujukan">Acts 3:19</span>',
+    ayat2:'The sacrifices of God are <b>a broken spirit</b>; a broken and a contrite heart, O God, You will not despise.<span class="rujukan">Psalm 51:17</span>',
+    catatan:"And this matters: we cannot repent unless God gives us the grace of repentance (Acts 11:18).",
+    kartu:[
+      {t:"I got caught cheating. I cried all day because I was scared Mom would be angry.", j:"nyesel",
+       a:"Sad about the consequences, not about the sin. The direction of life hasn't changed at all."},
+      {t:"I cheated last week and nobody knew. I told my teacher myself, and started studying for real.", j:"tobat",
+       a:"Confessing without being forced, then turning around. That's repentance."},
+      {t:"I bullied a kid in a group chat. I deleted the messages so there's no proof.", j:"nyesel",
+       a:"Deleting the evidence isn't turning around &mdash; it's hiding the sin, not leaving it."},
+      {t:"I apologized face to face to the kid I bullied, then I left that group chat.", j:"tobat",
+       a:"Apologizing + removing what makes you fall. A real change of direction."},
+      {t:"Judas felt remorse, gave back the 30 pieces of silver, then took his own life.", j:"nyesel",
+       a:"Judas truly regretted it. But he never turned back to God (Matt 27:3-5)."},
+      {t:"Peter denied Jesus three times, wept bitterly, then came back and preached about Jesus.", j:"tobat",
+       a:"Judas and Peter both wept. The difference is direction: one walked away, one came back."},
+      {t:"I lied to my dad about money. I told him everything and paid it back from my savings.", j:"tobat",
+       a:"Confess + make it right. The fruit of repentance shows."},
+      {t:"I felt terrible after yelling at my mom. I stayed in my room for three days, but never said sorry.", j:"nyesel",
+       a:"Punishing yourself isn't repentance. Repentance turns to God and to the person you hurt."},
+      {t:"Every night I promise 'I won't do it again', but I never ask God for help and I don't change the habit.", j:"nyesel",
+       a:"Repeated promises with no change of direction are just regret. Even repentance is grace &mdash; ask God for it."},
+      {t:"I often miss church because I game until dawn. Now I turn off game notifications every Saturday night so I'm ready for worship.", j:"tobat",
+       a:"Repenting means removing what makes you fall, not just feeling bad about it."},
+      {t:"I was really upset after people found out my sin. All I could think about was my reputation.", j:"nyesel",
+       a:"The focus is on self-image, not on the God who was hurt."},
+      {t:"I realized I was proud toward a classmate. I asked God to change my heart, and started sitting with the kid I used to avoid.", j:"tobat",
+       a:"Asking God to change the heart + a real step others can see."}
+    ]
+  },
+  b4:{
+    ke:function(a,b,c){ return "Round 4 &middot; " + a + " of " + b + " &middot; correct " + c; },
+    keSaja:function(a,b){ return a + " of " + b; },
+    jawabnya:"The answer is",
+    tahap:{J:"Justification", P:"Sanctification", G:"Glorification"},
+    tombol:{J:"JUSTI-<br>FICATION<small>declared right</small>", P:"SANCTI-<br>FICATION<small>made holy</small>", G:"GLORI-<br>FICATION<small>made glorious</small>"},
+    soal:[
+      {t:"Happens only once, instantly, when I first believe in Jesus.", j:"J"},
+      {t:"Goes on my whole life, little by little.", j:"P"},
+      {t:"I am declared righteous before God &mdash; my debt is stamped PAID.", j:"J"},
+      {t:"Through reading and hearing God's Word, and praying every day (1 Tim 4:5).", j:"P"},
+      {t:"Happens later, when Christ returns.", j:"G"},
+      {t:"The image of God is fully restored in me &mdash; His full glory.", j:"G"},
+      {t:"The stage I am living in right now, today.", j:"P"},
+      {t:"If I die before Christ returns, I will be resurrected first, then this happens.", j:"G"},
+      {t:"If I am still alive when Christ returns, I will be transformed in a moment, then this happens.", j:"G"}
+    ],
+    ringkas:[
+      ["1. JUSTIFICATION","instant, one time only<br>when we first believe"],
+      ["2. SANCTIFICATION","lifelong, through<br>the Word and prayer"],
+      ["3. GLORIFICATION","when Christ returns:<br>resurrected or transformed"]
+    ],
+    ayat:'Like the Holy One who called you, be holy yourselves also in all your behavior; because it is written, <b>&ldquo;You shall be holy, for I am holy.&rdquo;</b><span class="rujukan">1 Peter 1:15-16</span>',
+    catatan:"You are in stage 2 right now. That means: every day, the Word and prayer &mdash; and even that is God's grace, not your own strength."
+  },
+  b5:{
+    judul:"Life Values Auction",
+    petunjuk:function(n){ return "You have <b>" + n + " points</b>. Spend them on what you want most. You don't have to spend them all. The &plus; button adds 5 points."; },
+    sisa:"Points left",
+    palu:"Bang the gavel &mdash; this is my choice",
+    kurangi:"decrease", tambah:"increase",
+    barang:["The newest phone, always the latest one","1 million followers","Top of the class until graduation","Rp 100 million cash right now","Liked by everyone at school","Knowing Christ Jesus"],
+    kwitansi:function(n){ return "Life values receipt &middot; " + (n || "in your name"); },
+    kosong:"&mdash; bought nothing &mdash;",
+    banding:function(a,b){ return "For worldly things you paid <b>" + a + " points</b>. For knowing Christ: <b>" + b + " points</b>."; },
+    paulus:"Paul's receipt",
+    paulusIntro:"Paul had everything people of his day chased after. See how he stamped his own things:",
+    paulusBarang:["Of the nation of Israel, tribe of Benjamin","Circumcised on the eighth day","A Pharisee &mdash; the highest religious rank","Blameless according to the Law"],
+    paulusKristus:"Knowing Christ Jesus my Lord",
+    rugi:"LOSS", untung:"GAIN",
+    ayat:'But whatever things were gain to me, those things I have counted as loss for the sake of Christ. More than that, I count all things to be loss <b>in view of the surpassing value of knowing Christ Jesus my Lord</b>... and count them but rubbish so that I may gain Christ.<span class="rujukan">Philippians 3:7-8</span>',
+    tanda:"Evidence that a person has been saved",
+    tandaIsi:["Their life changes &mdash; a new creation (2 Cor 5:17)","<b>Their life values change</b> &mdash; what used to matter most no longer does","Their purpose changes &mdash; from living for self to living to please God","A thankful heart, and thanks that shows &mdash; not just words","A life of prayer, worship, and service (Rom 12:1)"],
+    tanya:"<b>A question for you:</b> if this receipt were opened again a year from now, which numbers would you want to have changed?",
+    poin:"<b>+20 points.</b> There's no right or wrong in this round &mdash; only honest or not."
+  },
+  b6:{
+    ke:function(a,b,c){ return "Round 6 &middot; question " + a + " of " + b + " &middot; correct " + c; },
+    keSaja:function(a,b){ return "Question " + a + " of " + b; },
+    cepat:"Nice and fast.", hijau:"The answer is the green one.",
+    soalBerikut:"Next question &rarr;", hasilAkhir:"See final result",
+    bonus:function(n){ return "<b>+" + n + " points</b> (including speed bonus)."; },
+    kesimpulan:"Today's whole session in short:",
+    kesimpulanIsi:["God and man became separated because of sin.","Fallen man cannot seek or find God. God has to come to us.","Fallen man cannot save themselves. God has to save them.","Because Jesus paid the price for all sin, we can confess our sins and receive forgiveness.","Finally, our broken relationship with God is restored."],
+    ayat:'If we confess our sins, He is faithful and righteous to forgive us our sins and to cleanse us from all unrighteousness.<span class="rujukan">1 John 1:9</span>',
+    keKartu:"Last: fill in your Confession Card &rarr;",
+    soal:[
+      {t:"&ldquo;For the wages of sin is ____, but the gift of God is eternal life in Christ Jesus our Lord.&rdquo; (Rom 6:23)",
+       p:["death","sickness","poverty","guilt"], b:0},
+      {t:"According to Ephesians 2:8-9, we are saved by grace through&hellip;",
+       p:["our good deeds","faith","going to church a lot","our effort to avoid sin"], b:1},
+      {t:"&ldquo;Truly, truly, I say to you, unless one is ____ he cannot see the kingdom of God.&rdquo; (John 3:3)",
+       p:["praying often","baptized in a big church","born again","memorizing the whole Bible"], b:2},
+      {t:"&ldquo;Born again&rdquo; means&hellip;",
+       p:["being physically born a second time","the soul that died because of sin is brought back to life","changing religion","becoming a little child again"], b:1},
+      {t:"What did Paul and Silas tell the jailer in Philippi? (Acts 16:31)",
+       p:["&ldquo;Fix your life first.&rdquo;","&ldquo;Pay your debt first.&rdquo;","&ldquo;Believe in the Lord Jesus, and you will be saved.&rdquo;","&ldquo;Study for three years first.&rdquo;"], b:2},
+      {t:"Romans 10:9-10 names two things. What are they?",
+       p:["Believe in your heart and confess with your mouth","Fast and give offerings","Memorize and teach","Be baptized and confirmed"], b:0},
+      {t:"What is the difference between redemption and salvation?",
+       p:["There's no difference at all","Redemption is only for Israel","In redemption a price or ransom is paid","Salvation happens after we die"], b:2},
+      {t:"Why is Jesus the only one who could die for us?",
+       p:["Because He was the strongest","Because only a person without sin can die for another","Because He was a man","Because He had many disciples"], b:1},
+      {t:"&ldquo;Therefore if anyone is in Christ, he is a ____; the old things passed away.&rdquo; (2 Cor 5:17)",
+       p:["great person","new creature","servant of the Law","rich person"], b:1},
+      {t:"The best way to confess what we believe is&hellip;",
+       p:["keep it to ourselves to be safe","share it with our friends and family","write it in a diary","wait until we're adults"], b:1}
+    ]
+  },
+  kartu:{
+    eyebrow:"Closing", judul:"Confession Card",
+    petunjuk:"Fill in these two things. Then your card is ready &mdash; <b>take a screenshot</b> and show your teacher.",
+    nama:"My name", namaPh:"your name",
+    tinggal:"One thing I want to leave behind this week", tinggalPh:"be honest, this stays on your phone",
+    iman:"One sentence confessing my faith", imanPh:"example: I believe Jesus paid for my sin with His life.",
+    cap:"Stamp my card",
+    tanpaNama:"No name",
+    skorSesi:"Score this session",
+    yangDitinggal:"What I leave behind", pengakuan:"My confession of faith",
+    dibayar:"Paid by Jesus Christ. Not by me.",
+    tantangan:"Challenge until next week",
+    tantanganIsi:"Tell <b>one thing</b> you learned today to <b>one person</b> &mdash; a friend or family member. The best way to confess our faith is to share it (Rom 10:10).",
+    ss:"Take a screenshot now, show your teacher",
+    ssSiap:"Your card is on screen — take the screenshot!"
+  },
+  guru:
+    '<p class="eyebrow">Teacher panel &middot; don\'t open this with the kids</p>'
+    + '<h2>How to lead this session</h2>'
+    + '<p class="kecil">Designed for 6 Grade 7 kids, one phone each, 50&ndash;60 minutes. You announce each round; the kids tap on their own phones. The key to the room: <b>no talking block longer than 8 minutes</b>.</p>'
+    + '<div class="guru-blok"><h3>Before you start</h3><ul>'
+    + '<li>Send this link to the 6 kids. Ask them to open it and <b>stop at the home screen</b>.</li>'
+    + '<li>If there is an <b>ID | EN</b> button at the top right, it switches language. Choose before you start &mdash; switching mid-round restarts that round (scores are kept).</li>'
+    + '<li>Scores are saved on each phone. At the end of each round, ask the kids to say their score; write it on the board.</li>'
+    + '<li>Rule: phones are only used when you say &ldquo;open the round&rdquo;. Otherwise, screens face down on the table.</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Timeline</h3>'
+    + '<div class="gulir"><table>'
+    + '<tr><td>0&ndash;8</td><td><b>Round 1 &mdash; Impossible Puzzle.</b> Don\'t reveal that 2 words are missing. Let them get frustrated. Ask: &ldquo;Who felt they didn\'t try hard enough?&rdquo;</td></tr>'
+    + '<tr><td>8&ndash;20</td><td><b>Round 2 &mdash; The Ransom.</b> Let them tap until they\'re bored. Challenge: &ldquo;put all six of your totals together &mdash; how much is still missing?&rdquo; Then explain the two words: salvation vs redemption.</td></tr>'
+    + '<tr><td>20&ndash;28</td><td><b>Short teaching (max 8 min).</b> How are we saved: born again (John 3:3), repent, believe (Acts 16:31), confess (Rom 10:9-10). All of it is grace, not effort.</td></tr>'
+    + '<tr><td>28&ndash;38</td><td><b>Round 3 &mdash; Repentance or Regret.</b> The most important part. Afterwards, have 2 kids make up their own scenario and let the class guess.</td></tr>'
+    + '<tr><td>38&ndash;44</td><td><b>Round 4 &mdash; Three Stages.</b> Moving version: put 3 papers in 3 corners of the room, read a statement, kids stand in a corner, then check on the phone.</td></tr>'
+    + '<tr><td>44&ndash;52</td><td><b>Round 5 &mdash; Life Values Auction.</b> After the gavel, ask each kid: &ldquo;what did you pay 40 points for?&rdquo; Then open Paul\'s receipt.</td></tr>'
+    + '<tr><td>52&ndash;58</td><td><b>Round 6 &mdash; Verse Quiz.</b> Everyone stands; a wrong answer sits down. Scores still count on the phone.</td></tr>'
+    + '<tr><td>58&ndash;60</td><td><b>Confession Card</b> + closing prayer. Collect the &ldquo;tell 1 person&rdquo; promises.</td></tr>'
+    + '</table></div></div>'
+    + '<div class="guru-blok"><h3>Debrief questions (use what you need)</h3><ul>'
+    + '<li><b>R1:</b> How did it feel to find out the word really wasn\'t there? How does that connect to &ldquo;so that no one may boast&rdquo;?</li>'
+    + '<li><b>R2:</b> If no human can pay the price of a life, why could Jesus? (Because He had no sin &mdash; a sinner cannot die for another.)</li>'
+    + '<li><b>R3:</b> Tell about a time you only regretted instead of repenting. What would have been different if you had repented?</li>'
+    + '<li><b>R4:</b> Which stage are you in? If sanctification is lifelong, what will you do tomorrow?</li>'
+    + '<li><b>R5:</b> What used to matter most to you, and what matters now? If nothing has changed, what does that mean?</li>'
+    + '</ul></div>'
+    + '<div class="guru-blok"><h3>Answer key</h3>'
+    + '<p class="kecil" style="margin-bottom:6px"><b>R1:</b> grace &middot; faith &middot; yourselves &middot; gift. The two <i>not</i> in the bag: &ldquo;grace&rdquo; and &ldquo;gift&rdquo;.</p>'
+    + '<p class="kecil" style="margin-bottom:6px"><b>R3 &mdash; REPENTANCE:</b> cards 2, 4, 6, 7, 10, 12. The rest are regret.</p>'
+    + '<p class="kecil" style="margin-bottom:6px"><b>R4:</b> J-S-J-S-G-G-S-G-G (questions 1&ndash;9; J = Justification, S = Sanctification, G = Glorification).</p>'
+    + '<p class="kecil" style="margin:0"><b>R6:</b> death &middot; faith &middot; born again &middot; soul brought back to life &middot; &ldquo;Believe in the Lord Jesus&rdquo; &middot; believe in the heart + confess with the mouth &middot; a price is paid &middot; only someone without sin &middot; new creature &middot; share it.</p>'
+    + '</div>'
+    + '<div class="guru-blok"><h3>When kids start losing focus</h3><ul>'
+    + '<li>Get them moving: rounds 3, 4, and 6 can be played standing or moving around.</li>'
+    + '<li>Make one kid the &ldquo;score keeper&rdquo; at the board &mdash; the kid who struggles most to sit still is usually the best fit.</li>'
+    + '<li>If you only have 30 minutes: do rounds 2, 3, and 6 only. That\'s the core of the lesson.</li>'
+    + '</ul></div>'
+};
+
+function D(){ return ISI[S.lang] || ISI.id; }
+
+function rupiah(n){
+  var d = D();
+  if(n >= 1e12) return "Rp " + (n/1e12).toLocaleString(d.locale,{maximumFractionDigits:2}) + d.triliun;
+  return "Rp " + Math.round(n).toLocaleString(d.locale);
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+var app = document.getElementById("app");
+var layarKini = "beranda";
+var hentikan = null; /* pembersih timer babak yang sedang jalan */
+
+function gambarBar(){
+  document.getElementById("skor").textContent = S.skor + " pts";
+  var B = D().babak, d = "";
+  for(var i=0;i<B.length;i++){
+    var k = "dot";
+    if(S.beres[B[i].id]) k += " on";
+    else if(layarKini === B[i].id) k += " now";
+    d += '<span class="' + k + '"></span>';
+  }
+  document.getElementById("dots").innerHTML = d;
+  document.getElementById("lang-id").setAttribute("aria-pressed", S.lang === "id" ? "true" : "false");
+  document.getElementById("lang-en").setAttribute("aria-pressed", S.lang === "en" ? "true" : "false");
+  document.documentElement.lang = S.lang;
+  document.getElementById("merek").textContent = D().merek;
+}
+
+function ke(layar){
+  if(hentikan){ hentikan(); hentikan = null; }
+  layarKini = layar;
+  window.scrollTo(0,0);
+  LAYAR[layar]();
+  gambarBar();
+}
+
+function gantiBahasa(l){
+  if(S.lang === l) return;
+  S.lang = l; simpan();
+  ke(layarKini);
+}
+document.getElementById("lang-id").addEventListener("click", function(){ gantiBahasa("id"); });
+document.getElementById("lang-en").addEventListener("click", function(){ gantiBahasa("en"); });
+
+function judulBabak(id){
+  var B = D().babak;
+  for(var i=0;i<B.length;i++) if(B[i].id === id) return B[i].judul;
+  return "";
+}
+function tombolLanjut(tujuan){
+  return '<button class="tbl" data-ke="' + tujuan + '">' + D().u.lanjut(judulBabak(tujuan)) + '</button>';
+}
+function tombolKembali(){
+  return '<div style="height:10px"></div><button class="tbl garis" data-ke="beranda">' + D().u.kembali + '</button>';
+}
+function pasangNav(){
+  var b = app.querySelectorAll("[data-ke]");
+  for(var i=0;i<b.length;i++){
+    b[i].addEventListener("click", function(){ ke(this.getAttribute("data-ke")); });
+  }
+}
+function daftarLi(arr){
+  var h = '<ul style="margin:0 0 12px;padding-left:18px">';
+  for(var i=0;i<arr.length;i++) h += '<li>' + arr[i] + '</li>';
+  return h + '</ul>';
+}
+
+var LAYAR = {};
+
+/* =========================================================
+   BERANDA
+   ========================================================= */
+LAYAR.beranda = function(){
+  var d = D(), T = d.beranda, daftar = "";
+  for(var i=0;i<d.babak.length;i++){
+    var b = d.babak[i];
+    daftar += '<button class="item ' + (S.beres[b.id] ? "beres" : "") + '" data-ke="' + b.id + '">'
+      + '<span class="no">' + (S.beres[b.id] ? "&#10003;" : (i+1)) + '</span>'
+      + '<span><span class="judul">' + b.judul + '</span>'
+      + '<span class="ket">' + b.ket + '</span></span></button>';
+  }
+  app.innerHTML =
+    '<div style="padding-block:26px 18px">'
+    + '<p class="eyebrow" style="margin-bottom:14px">' + T.eyebrow + '</p>'
+    + '<h1>' + T.judul + '</h1>'
+    + '<p class="kecil" style="margin-top:14px;max-width:34em">' + T.intro + '</p>'
+    + '</div>'
+    + '<div class="kartu"><div class="daftar">' + daftar + '</div></div>'
+    + '<div class="kartu">'
+    + '<div class="baris" style="border-bottom:0"><span>' + T.skor + '</span><span>' + S.skor + ' pts</span></div>'
+    + '<div class="perf" style="display:flex;gap:10px;flex-wrap:wrap">'
+    + '<button class="tbl-kecil" data-ke="kartu">' + T.kartu + '</button>'
+    + '<button class="tbl-kecil" data-ke="guru">' + T.guru + '</button>'
+    + '<button class="tbl-kecil" id="reset">' + T.reset + '</button>'
+    + '</div></div>';
+  pasangNav();
+  document.getElementById("reset").addEventListener("click", function(){
+    if(confirm(T.tanyaReset)){
+      S = {nama:"", skor:0, beres:{}, akuan:{tinggal:"", iman:""}, lelang:null, lang:S.lang};
+      simpan(); ke("beranda");
+    }
+  });
+};
+
+/* =========================================================
+   BABAK 1 — Puzzle yang Mustahil (Efesus 2:8-9)
+   ========================================================= */
+LAYAR.b1 = function(){
+  var d = D(), B1 = d.b1, U = d.u;
+  var isi = ["", "", "", ""], aktif = -1, cekKe = 0, selesai = false;
+
+  function gambar(){
+    var t = "";
+    for(var i=0;i<B1.bagian.length;i++){
+      var p = B1.bagian[i];
+      if(typeof p === "string"){ t += p; }
+      else {
+        var kls = "slot";
+        if(isi[p]) kls += " isi";
+        if(aktif === p) kls += " aktif";
+        t += '<span class="' + kls + '" data-slot="' + p + '">' + (isi[p] || "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") + '</span>';
+      }
+    }
+    var kant = "";
+    for(var j=0;j<B1.kantong.length;j++){
+      var dipakai = isi.indexOf(B1.kantong[j]) > -1;
+      kant += '<button class="kata ' + (dipakai ? "pakai" : "") + '" data-kata="' + j + '">' + B1.kantong[j] + '</button>';
+    }
+
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.babakKe(1) + '</p>'
+      + '<h2>' + B1.judul + '</h2>'
+      + '<p class="kecil">' + B1.petunjuk + '</p>'
+      + '<div class="perf rumpang">' + t + '</div>'
+      + '<div class="kantong">' + kant + '</div>'
+      + '</div>'
+      + '<div id="aksi1"></div>';
+
+    var slots = app.querySelectorAll("[data-slot]");
+    for(var a=0;a<slots.length;a++){
+      slots[a].addEventListener("click", function(){
+        if(selesai) return;
+        var n = +this.getAttribute("data-slot");
+        if(isi[n]) isi[n] = "";
+        aktif = n;
+        gambar();
+      });
+    }
+    var kata = app.querySelectorAll("[data-kata]");
+    for(var b=0;b<kata.length;b++){
+      kata[b].addEventListener("click", function(){
+        if(selesai) return;
+        if(aktif < 0){ pesan(B1.ketukDulu); return; }
+        isi[aktif] = B1.kantong[+this.getAttribute("data-kata")];
+        aktif = -1;
+        gambar();
+      });
+    }
+    aksi();
+  }
+
+  function tombolCek(){
+    return '<button class="tbl" id="cek">' + B1.periksa + '</button>'
+      + (cekKe >= 2 ? '<div style="height:10px"></div><button class="tbl merah" id="minta">' + B1.minta + '</button>' : '');
+  }
+  function pesan(t){
+    document.getElementById("aksi1").innerHTML = '<div class="umpan no">' + t + '</div>' + tombolCek();
+    pasangAksi();
+  }
+  function aksi(){
+    if(selesai) return;
+    document.getElementById("aksi1").innerHTML = tombolCek();
+    pasangAksi();
+  }
+  function pasangAksi(){
+    var c = document.getElementById("cek");
+    if(c) c.addEventListener("click", function(){
+      cekKe++;
+      var kosong = 0, salah = 0;
+      for(var i=0;i<4;i++){
+        if(!isi[i]) kosong++;
+        else if(isi[i] !== B1.jawab[i]) salah++;
+      }
+      if(salah > 0) pesan(B1.salah(salah));
+      else if(kosong > 0) pesan(B1.kurang(kosong));
+      else menang();
+    });
+    var mi = document.getElementById("minta");
+    if(mi) mi.addEventListener("click", menang);
+  }
+
+  function menang(){
+    selesai = true;
+    var t = "";
+    for(var i=0;i<B1.bagian.length;i++){
+      var p = B1.bagian[i];
+      if(typeof p === "string"){ t += p; }
+      else {
+        var hadiah = (p === 0 || p === 3);
+        t += '<span class="slot ' + (hadiah ? "hadiah" : "isi") + '">' + B1.jawab[p] + '</span>';
+      }
+    }
+    if(!S.beres.b1){ poin(30); tandai("b1"); }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.selesai(1) + '</p>'
+      + '<div class="rumpang">' + t + '</div>'
+      + '<div class="perf">'
+      + '<p>' + B1.hasil + '</p>'
+      + '<p class="ayat">' + B1.ayat + '</p>'
+      + '<div class="umpan ok">' + B1.poin + '</div>'
+      + '</div></div>'
+      + tombolLanjut("b2") + tombolKembali();
+    pasangNav();
+  }
+
+  gambar();
+};
+
+/* =========================================================
+   BABAK 2 — Uang Tebusan (Mzm 49 / 1 Kor 6:19-20)
+   ========================================================= */
+LAYAR.b2 = function(){
+  var d = D(), T = d.b2, U = d.u;
+  var TARGET = 9e12;
+  var kumpul = 0, ketuk = 0, mulai = 0;
+
+  function gambar(){
+    var persen = kumpul / TARGET * 100;
+    var lama = mulai ? (Date.now() - mulai) / 1000 : 0;
+    var laju = (lama > 0.5) ? kumpul / lama : 0;
+    var tahun = laju > 0 ? (TARGET - kumpul) / laju / 31557600 : 0;
+    var persenTeks = persen.toLocaleString(d.locale, {minimumFractionDigits:7, maximumFractionDigits:7});
+
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.babakKe(2) + '</p>'
+      + '<h2>' + T.judul + '</h2>'
+      + '<p class="kecil">' + T.petunjuk + '</p>'
+      + '<div class="perf">'
+      + '<div class="baris"><span>' + T.harga + '</span><span>' + rupiah(TARGET) + '</span></div>'
+      + '<div class="baris"><span>' + T.kumpul + '</span><span>' + rupiah(kumpul) + '</span></div>'
+      + '<div class="baris"><span>' + T.kurang + '</span><span style="color:var(--stempel)">' + rupiah(TARGET - kumpul) + '</span></div>'
+      + '<div class="bar-progres"><div style="width:' + Math.min(100, persen) + '%"></div></div>'
+      + '<p class="kecil rp" style="margin:0">' + T.capai(persenTeks)
+      + (ketuk >= 8 ? T.tahun(Math.round(tahun).toLocaleString(d.locale)) : '')
+      + '</p>'
+      + '</div>'
+      + '<div style="height:14px"></div>'
+      + '<button class="tbl" id="kumpul" style="padding-block:22px;font-size:18px">' + T.ketuk + '</button>'
+      + (ketuk >= 15 ? '<div style="height:10px"></div><button class="tbl garis" id="menyerah">' + T.menyerah + '</button>' : '')
+      + '</div>';
+
+    document.getElementById("kumpul").addEventListener("click", function(){
+      if(!mulai) mulai = Date.now();
+      ketuk++;
+      kumpul += 2000 + Math.floor(Math.random() * 6000);
+      gambar();
+    });
+    var my = document.getElementById("menyerah");
+    if(my) my.addEventListener("click", akhir);
+  }
+
+  function akhir(){
+    if(!S.beres.b2){ poin(20); tandai("b2"); }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.eyebrow + '</p>'
+      + '<p class="ayat">' + T.ayat1 + '</p>'
+      + '<p>' + T.p1 + '</p>'
+      + '<p>' + T.p2 + '</p>'
+      + '<div class="stempel-wrap"><span class="stempel">' + T.stempel + '</span></div>'
+      + '<div class="baris"><span>' + T.tagihan + '</span><span>' + T.tagihanIsi + '</span></div>'
+      + '<div class="baris"><span>' + T.oleh + '</span><span>' + T.olehIsi + '</span></div>'
+      + '<div class="baris" style="border-bottom:0"><span>' + T.alat + '</span><span>' + T.alatIsi + '</span></div>'
+      + '<div class="perf">'
+      + '<h3 style="margin-bottom:8px">' + T.duaKata + '</h3>'
+      + '<div class="baris"><span><b>' + T.kSel + '</b></span><span style="font-weight:400;text-align:right">' + T.kSelIsi + '</span></div>'
+      + '<div class="baris"><span><b>' + T.kTeb + '</b></span><span style="font-weight:400;text-align:right">' + T.kTebIsi + '</span></div>'
+      + '<p class="ayat" style="margin-top:14px">' + T.ayat2 + '</p>'
+      + '<div class="umpan ok">' + T.poin + '</div>'
+      + '</div></div>'
+      + tombolLanjut("b3") + tombolKembali();
+    pasangNav();
+  }
+
+  gambar();
+};
+
+/* =========================================================
+   BABAK 3 — Tobat atau Cuma Nyesel?
+   ========================================================= */
+LAYAR.b3 = function(){
+  var d = D(), T = d.b3, U = d.u, K = T.kartu;
+  var i = 0, benar = 0;
+  function gambar(){
+    if(i >= K.length) return tutup();
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.kartuKe(i+1, K.length, benar) + '</p>'
+      + '<div class="skenario">&ldquo;' + K[i].t + '&rdquo;</div>'
+      + '<div class="duo">'
+      + '<button class="tbl garis" data-p="nyesel">' + T.nyesel + '</button>'
+      + '<button class="tbl garis" data-p="tobat">' + T.tobat + '</button>'
+      + '</div></div>'
+      + '<p class="kecil" style="text-align:center">' + T.aturan + '</p>';
+    var b = app.querySelectorAll("[data-p]");
+    for(var x=0;x<b.length;x++) b[x].addEventListener("click", function(){ jawab(this.getAttribute("data-p")); });
+  }
+  function jawab(p){
+    var k = K[i], ok = (p === k.j);
+    if(ok) benar++;
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.kartuSaja(i+1, K.length) + '</p>'
+      + '<div class="skenario">&ldquo;' + k.t + '&rdquo;</div>'
+      + '<div class="umpan ' + (ok ? "ok" : "no") + '"><b>' + (ok ? U.TEPAT : U.BUKAN) + '.</b> ' + T.ini + ' '
+      + (k.j === "tobat" ? T.kataTobat : T.kataNyesel) + '. ' + k.a + '</div>'
+      + '<button class="tbl" id="next">' + (i === K.length-1 ? U.lihatHasil : T.kartuBerikut) + '</button>'
+      + '</div>';
+    document.getElementById("next").addEventListener("click", function(){ i++; gambar(); });
+  }
+  function tutup(){
+    var pertama = !S.beres.b3;
+    if(pertama){ poin(benar * 10); tandai("b3"); }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.selesai(3) + '</p>'
+      + '<h2>' + U.tepatDari(benar, K.length) + '</h2>'
+      + '<div class="perf">'
+      + '<h3 style="margin-bottom:8px">' + T.ringkas + '</h3>'
+      + daftarLi(T.poin3)
+      + '<p class="ayat">' + T.ayat1 + '</p>'
+      + '<p class="ayat">' + T.ayat2 + '</p>'
+      + '<p class="kecil">' + T.catatan + '</p>'
+      + (pertama ? '<div class="umpan ok"><b>' + U.plus(benar*10) + '</b></div>' : '')
+      + '</div></div>'
+      + tombolLanjut("b4") + tombolKembali();
+    pasangNav();
+  }
+  gambar();
+};
+
+/* =========================================================
+   BABAK 4 — Tiga Tahap
+   ========================================================= */
+LAYAR.b4 = function(){
+  var d = D(), T = d.b4, U = d.u, Q = T.soal;
+  var i = 0, benar = 0;
+  function gambar(){
+    if(i >= Q.length) return tutup();
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.ke(i+1, Q.length, benar) + '</p>'
+      + '<div class="skenario">' + Q[i].t + '</div>'
+      + '<div class="tiga">'
+      + '<button data-t="J">' + T.tombol.J + '</button>'
+      + '<button data-t="P">' + T.tombol.P + '</button>'
+      + '<button data-t="G">' + T.tombol.G + '</button>'
+      + '</div></div>';
+    var b = app.querySelectorAll("[data-t]");
+    for(var x=0;x<b.length;x++) b[x].addEventListener("click", function(){ jawab(this.getAttribute("data-t")); });
+  }
+  function jawab(p){
+    var s = Q[i], ok = (p === s.j);
+    if(ok) benar++;
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.keSaja(i+1, Q.length) + '</p>'
+      + '<div class="skenario">' + s.t + '</div>'
+      + '<div class="umpan ' + (ok ? "ok" : "no") + '"><b>' + (ok ? U.TEPAT : U.SALAH) + '.</b> ' + T.jawabnya + ' <b>'
+      + T.tahap[s.j].toUpperCase() + '</b>.</div>'
+      + '<button class="tbl" id="next">' + (i === Q.length-1 ? U.lihatHasil : U.berikut) + '</button>'
+      + '</div>';
+    document.getElementById("next").addEventListener("click", function(){ i++; gambar(); });
+  }
+  function tutup(){
+    var pertama = !S.beres.b4;
+    if(pertama){ poin(benar * 10); tandai("b4"); }
+    var r = "";
+    for(var k=0;k<T.ringkas.length;k++){
+      r += '<div class="baris"><span>' + T.ringkas[k][0] + '</span><span style="font-weight:400;text-align:right">' + T.ringkas[k][1] + '</span></div>';
+    }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.selesai(4) + '</p>'
+      + '<h2>' + U.tepatDari(benar, Q.length) + '</h2>'
+      + '<div class="perf">' + r
+      + '<p class="ayat" style="margin-top:14px">' + T.ayat + '</p>'
+      + '<p class="kecil">' + T.catatan + '</p>'
+      + (pertama ? '<div class="umpan ok"><b>' + U.plus(benar*10) + '</b></div>' : '')
+      + '</div></div>'
+      + tombolLanjut("b5") + tombolKembali();
+    pasangNav();
+  }
+  gambar();
+};
+
+/* =========================================================
+   BABAK 5 — Lelang Nilai Hidup (Filipi 3:4-10)
+   ========================================================= */
+LAYAR.b5 = function(){
+  var d = D(), T = d.b5, U = d.u;
+  var tawar = S.lelang ? S.lelang.slice() : [0,0,0,0,0,0];
+  var MAKS = 100;
+
+  function sisa(){ var s = MAKS; for(var i=0;i<6;i++) s -= tawar[i]; return s; }
+
+  function gambar(){
+    var baris = "";
+    for(var i=0;i<6;i++){
+      baris += '<div class="lelang-baris"><span class="nama">' + T.barang[i] + '</span>'
+        + '<span class="stepper">'
+        + '<button data-kurang="' + i + '" aria-label="' + T.kurangi + '">&minus;</button>'
+        + '<output>' + tawar[i] + '</output>'
+        + '<button data-tambah="' + i + '" aria-label="' + T.tambah + '">+</button>'
+        + '</span></div>';
+    }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.babakKe(5) + '</p>'
+      + '<h2>' + T.judul + '</h2>'
+      + '<p class="kecil">' + T.petunjuk(MAKS) + '</p>'
+      + '<div class="perf">' + baris + '</div>'
+      + '<div class="baris" style="border-bottom:0;margin-top:8px"><span>' + T.sisa + '</span><span style="color:' + (sisa() === 0 ? "var(--lunas)" : "var(--stempel)") + '">' + sisa() + '</span></div>'
+      + '</div>'
+      + '<button class="tbl merah" id="palu">' + T.palu + '</button>';
+
+    var tb = app.querySelectorAll("[data-tambah]");
+    for(var a=0;a<tb.length;a++) tb[a].addEventListener("click", function(){
+      var n = +this.getAttribute("data-tambah");
+      if(sisa() >= 5){ tawar[n] += 5; gambar(); }
+    });
+    var kr = app.querySelectorAll("[data-kurang]");
+    for(var b=0;b<kr.length;b++) kr[b].addEventListener("click", function(){
+      var n = +this.getAttribute("data-kurang");
+      if(tawar[n] >= 5){ tawar[n] -= 5; gambar(); }
+    });
+    document.getElementById("palu").addEventListener("click", tutup);
+  }
+
+  function tutup(){
+    S.lelang = tawar.slice(); simpan();
+    var pertama = !S.beres.b5;
+    if(pertama){ poin(20); tandai("b5"); }
+    var duniawi = tawar[0]+tawar[1]+tawar[2]+tawar[3]+tawar[4];
+    var kwitansi = "";
+    for(var i=0;i<6;i++){
+      if(tawar[i] === 0) continue;
+      kwitansi += '<div class="baris"><span>' + T.barang[i] + '</span><span>' + tawar[i] + ' pts</span></div>';
+    }
+    if(!kwitansi) kwitansi = '<div class="baris"><span>' + T.kosong + '</span><span>0 pts</span></div>';
+    var paulus = "";
+    for(var j=0;j<T.paulusBarang.length;j++){
+      paulus += '<div class="baris"><span>' + T.paulusBarang[j] + '</span><span class="cap rugi">' + T.rugi + '</span></div>';
+    }
+
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.kwitansi(S.nama ? esc(S.nama) : "") + '</p>'
+      + kwitansi
+      + '<div class="perf"><p class="kecil" style="margin:0">' + T.banding(duniawi, tawar[5]) + '</p></div>'
+      + '</div>'
+      + '<div class="kartu">'
+      + '<p class="eyebrow">' + T.paulus + '</p>'
+      + '<p class="kecil" style="margin-bottom:12px">' + T.paulusIntro + '</p>'
+      + paulus
+      + '<div class="baris" style="border-bottom:0"><span><b>' + T.paulusKristus + '</b></span><span class="cap untung">' + T.untung + '</span></div>'
+      + '<p class="ayat" style="margin-top:14px">' + T.ayat + '</p>'
+      + '<div class="perf">'
+      + '<h3 style="margin-bottom:8px">' + T.tanda + '</h3>'
+      + daftarLi(T.tandaIsi)
+      + '<p class="kecil">' + T.tanya + '</p>'
+      + (pertama ? '<div class="umpan ok">' + T.poin + '</div>' : '')
+      + '</div></div>'
+      + tombolLanjut("b6") + tombolKembali();
+    pasangNav();
+  }
+
+  gambar();
+};
+
+/* =========================================================
+   BABAK 6 — Kuis Ayat
+   ========================================================= */
+LAYAR.b6 = function(){
+  var d = D(), T = d.b6, U = d.u, Q = T.soal;
+  var i = 0, benar = 0, nilai = 0, waktu = null, sisaDetik = 15;
+  hentikan = function(){ clearInterval(waktu); };
+
+  function gambar(){
+    if(i >= Q.length) return tutup();
+    var s = Q[i];
+    sisaDetik = 15;
+    var pil = "";
+    for(var x=0;x<s.p.length;x++) pil += '<button class="pil" data-j="' + x + '">' + s.p[x] + '</button>';
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.ke(i+1, Q.length, benar) + '</p>'
+      + '<div class="bar-progres"><div id="jam" style="width:100%;transition:width 1s linear"></div></div>'
+      + '<p style="font-size:17px;line-height:1.45;margin-bottom:14px">' + s.t + '</p>'
+      + pil + '</div>';
+    var b = app.querySelectorAll("[data-j]");
+    for(var y=0;y<b.length;y++) b[y].addEventListener("click", function(){ jawab(+this.getAttribute("data-j")); });
+    clearInterval(waktu);
+    waktu = setInterval(function(){
+      sisaDetik--;
+      var j = document.getElementById("jam");
+      if(j) j.style.width = Math.max(0, sisaDetik/15*100) + "%";
+      if(sisaDetik <= 0){ clearInterval(waktu); jawab(-1); }
+    }, 1000);
+  }
+
+  function jawab(p){
+    clearInterval(waktu);
+    var s = Q[i], ok = (p === s.b);
+    if(ok){ benar++; nilai += 10 + Math.max(0, Math.round(sisaDetik/3)); }
+    var pil = "";
+    for(var x=0;x<s.p.length;x++){
+      var kls = "pil";
+      if(x === s.b) kls += " benar";
+      else if(x === p) kls += " salah";
+      pil += '<div class="' + kls + '">' + s.p[x] + '</div>';
+    }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.keSaja(i+1, Q.length) + '</p>'
+      + '<p style="font-size:17px;line-height:1.45;margin-bottom:14px">' + s.t + '</p>'
+      + pil
+      + '<div class="umpan ' + (ok ? "ok" : "no") + '" style="margin-top:12px"><b>'
+      + (ok ? U.BENAR : (p === -1 ? U.HABIS : U.SALAH)) + '.</b> ' + (ok ? T.cepat : T.hijau) + '</div>'
+      + '<button class="tbl" id="next">' + (i === Q.length-1 ? T.hasilAkhir : T.soalBerikut) + '</button>'
+      + '</div>';
+    document.getElementById("next").addEventListener("click", function(){ i++; gambar(); });
+  }
+
+  function tutup(){
+    var pertama = !S.beres.b6;
+    if(pertama){ poin(nilai); tandai("b6"); }
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + U.selesai(6) + '</p>'
+      + '<h2>' + U.benarDari(benar, Q.length) + '</h2>'
+      + (pertama ? '<div class="umpan ok">' + T.bonus(nilai) + '</div>' : '')
+      + '<div class="perf">'
+      + '<p><b>' + T.kesimpulan + '</b></p>'
+      + daftarLi(T.kesimpulanIsi)
+      + '<p class="ayat">' + T.ayat + '</p>'
+      + '</div></div>'
+      + '<button class="tbl" data-ke="kartu">' + T.keKartu + '</button>'
+      + tombolKembali();
+    pasangNav();
+  }
+  gambar();
+};
+
+/* =========================================================
+   KARTU PENGAKUAN
+   ========================================================= */
+LAYAR.kartu = function(){
+  var d = D(), T = d.kartu;
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">' + T.eyebrow + '</p>'
+    + '<h2>' + T.judul + '</h2>'
+    + '<p class="kecil">' + T.petunjuk + '</p>'
+    + '<div class="perf">'
+    + '<div class="medan"><label for="nm">' + T.nama + '</label><input type="text" id="nm" value="' + esc(S.nama || "") + '" placeholder="' + T.namaPh + '"></div>'
+    + '<div class="medan"><label for="tg">' + T.tinggal + '</label><textarea id="tg" placeholder="' + T.tinggalPh + '">' + esc(S.akuan.tinggal || "") + '</textarea></div>'
+    + '<div class="medan"><label for="im">' + T.iman + '</label><textarea id="im" placeholder="' + T.imanPh + '">' + esc(S.akuan.iman || "") + '</textarea></div>'
+    + '<button class="tbl merah" id="cetak">' + T.cap + '</button>'
+    + '</div></div>'
+    + '<button class="tbl garis" data-ke="beranda">' + d.u.kembali + '</button>';
+  pasangNav();
+  document.getElementById("cetak").addEventListener("click", function(){
+    S.nama = document.getElementById("nm").value.trim();
+    S.akuan.tinggal = document.getElementById("tg").value.trim();
+    S.akuan.iman = document.getElementById("im").value.trim();
+    simpan();
+    var tgl = new Date().toLocaleDateString(d.locale, {day:"numeric", month:"long", year:"numeric"});
+    app.innerHTML =
+      '<div class="kartu">'
+      + '<p class="eyebrow">' + T.judul + ' &middot; ' + tgl + '</p>'
+      + '<h2 style="margin-bottom:12px">' + (S.nama ? esc(S.nama) : T.tanpaNama) + '</h2>'
+      + '<div class="baris"><span>' + T.skorSesi + '</span><span>' + S.skor + ' pts</span></div>'
+      + '<div class="perf">'
+      + '<p class="eyebrow" style="margin-bottom:4px">' + T.yangDitinggal + '</p>'
+      + '<p>' + (S.akuan.tinggal ? esc(S.akuan.tinggal) : "&mdash;") + '</p>'
+      + '<p class="eyebrow" style="margin-bottom:4px">' + T.pengakuan + '</p>'
+      + '<p>' + (S.akuan.iman ? esc(S.akuan.iman) : "&mdash;") + '</p>'
+      + '</div>'
+      + '<div class="stempel-wrap"><span class="stempel">' + d.b2.stempel + '</span></div>'
+      + '<p class="kecil" style="text-align:center;margin:0">' + T.dibayar + '</p>'
+      + '<div class="perf">'
+      + '<h3 style="margin-bottom:6px">' + T.tantangan + '</h3>'
+      + '<p class="kecil" style="margin:0">' + T.tantanganIsi + '</p>'
+      + '</div></div>'
+      + '<button class="tbl" id="ss">' + T.ss + '</button>'
+      + tombolKembali();
+    pasangNav();
+    document.getElementById("ss").addEventListener("click", function(){
+      this.textContent = T.ssSiap;
+      this.disabled = true;
+    });
+  });
+};
+
+/* =========================================================
+   PANEL GURU
+   ========================================================= */
+LAYAR.guru = function(){
+  app.innerHTML = '<div class="kartu">' + D().guru + '</div>'
+    + '<button class="tbl garis" data-ke="beranda">' + D().u.kembali + '</button>';
+  pasangNav();
+};
+
+/* ---------- jalan ---------- */
+ke("beranda");
+</script>
+
+</body>
+</html>
