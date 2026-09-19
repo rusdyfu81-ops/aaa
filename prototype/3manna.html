@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manna dari Langit — Lorong Waktu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#8a6f30;--cream:#f0e6cf;--parchment:#d8c9a4;--ink:#0d0a04;--panel:rgba(25,19,7,.88);--border:#463713;--red:#d0543a;--green:#8fc46a;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--cream);font-family:'Crimson Pro',Georgia,serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+video{position:fixed;width:1px;height:1px;opacity:0;pointer-events:none}
+[hidden]{display:none!important}
+
+#hud{position:fixed;left:0;right:0;top:0;display:flex;align-items:flex-start;justify-content:space-between;padding:1.8vh 2.4vw;pointer-events:none;z-index:5}
+#hud .brand{font-family:'Cinzel',serif;font-size:1.3vw;letter-spacing:.14em;color:var(--gold)}
+#hud .right{text-align:right}
+#hud .team{font-family:'Cinzel',serif;font-size:1.4vw;color:var(--gold-light);letter-spacing:.06em}
+#hud .score{font-family:'Cinzel',serif;font-weight:900;font-size:3vw;color:var(--gold-light);text-shadow:0 0 20px rgba(232,201,122,.5);line-height:1.1}
+#dayBox{position:fixed;top:1.8vh;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:5}
+#dayName{font-family:'Cinzel',serif;font-weight:900;font-size:2.6vw;color:var(--cream);text-shadow:0 0 20px rgba(0,0,0,.8)}
+#dayDots{display:flex;gap:.7vw;justify-content:center;margin-top:.8vh}
+#dayDots i{width:2vw;height:2vw;border-radius:50%;border:2px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-style:normal;font-family:'Cinzel',serif;font-size:.85vw;color:var(--gold-dim);background:rgba(13,10,4,.6)}
+#dayDots i.done{background:var(--gold);color:var(--ink);border-color:var(--gold-light)}
+#dayDots i.now{border-color:var(--gold-light);color:var(--gold-light);transform:scale(1.2)}
+#dayBar{width:22vw;height:.8vh;margin:1vh auto 0;border-radius:99px;background:rgba(13,10,4,.7);border:1px solid var(--border);overflow:hidden}
+#dayBarFill{height:100%;width:0;background:var(--gold)}
+
+#jars{position:fixed;left:2.4vw;bottom:3vh;display:flex;gap:1vw;align-items:flex-end;z-index:5;pointer-events:none}
+.jar{width:6.4vw;height:14vh;border:2px solid var(--gold);border-top-width:0;border-radius:0 0 1.4vw 1.4vw;position:relative;overflow:hidden;background:rgba(13,10,4,.65)}
+.jar::before{content:'';position:absolute;top:0;left:-2px;right:-2px;height:2px;background:var(--gold)}
+.jar .fill{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(0deg,#e9e1c9,#fffaf0);transition:height .15s}
+.jar.full{box-shadow:0 0 24px rgba(232,201,122,.8)}
+#jarInfo{font-family:'Cinzel',serif;color:var(--parchment);font-size:1.1vw;letter-spacing:.06em;margin-left:.6vw;line-height:1.5}
+#jarInfo b{color:var(--gold-light);font-size:1.6vw}
+#jarInfo .worm{color:var(--red)}
+
+#calm{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%);width:40vw;text-align:center;z-index:5;pointer-events:none}
+#calm .lbl{font-family:'Cinzel',serif;font-size:1.6vw;letter-spacing:.12em;margin-bottom:1vh}
+#calm .bar{height:2vh;border-radius:99px;border:1px solid var(--gold-dim);background:rgba(13,10,4,.7);overflow:hidden}
+#calm .bar div{height:100%;width:0;background:linear-gradient(90deg,#5c8a3a,#e8c97a,#d0543a)}
+
+#banner{position:fixed;left:0;right:0;top:38vh;text-align:center;font-family:'Cinzel',serif;font-weight:900;font-size:5.4vw;letter-spacing:.03em;pointer-events:none;z-index:6;opacity:0}
+#banner small{display:block;font-family:'Crimson Pro',serif;font-weight:400;font-style:italic;font-size:1.9vw;letter-spacing:0;margin-top:1vh}
+#banner.show{animation:pop 1.4s ease-out forwards}
+#banner.hold{animation:popHold .5s ease-out forwards}
+#banner.gold{color:var(--gold-light);text-shadow:0 0 40px rgba(232,201,122,.8),0 0 8px rgba(0,0,0,.9)}
+#banner.red{color:var(--red);text-shadow:0 0 30px rgba(208,84,58,.8),0 0 8px rgba(0,0,0,.9)}
+#banner.cream{color:var(--cream);text-shadow:0 0 30px rgba(0,0,0,.9)}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}12%{opacity:1;transform:scale(1.06)}22%{transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+@keyframes popHold{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;gap:3vw;padding:4vh 4vw;z-index:10;background:radial-gradient(ellipse at center,rgba(13,10,4,.45),rgba(13,10,4,.85))}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:1.4vw;padding:4vh 3vw;backdrop-filter:blur(6px)}
+.main{max-width:46vw;text-align:center}
+.kicker{font-family:'Cinzel',serif;font-size:1.05vw;letter-spacing:.18em;color:var(--gold-dim)}
+.title{font-family:'Cinzel',serif;font-weight:900;font-size:4.4vw;line-height:1.05;color:var(--gold);text-shadow:0 0 36px rgba(201,168,76,.45);margin:1.2vh 0}
+.sub{font-style:italic;font-size:1.6vw;color:var(--parchment)}
+.steps{list-style:none;text-align:left;margin:3vh auto 2.4vh;display:flex;flex-direction:column;gap:1.3vh}
+.steps li{display:flex;gap:1vw;align-items:baseline;font-size:1.5vw;line-height:1.3}
+.steps b{font-family:'Cinzel',serif;color:var(--ink);background:var(--gold);border-radius:50%;min-width:2vw;height:2vw;display:inline-flex;align-items:center;justify-content:center;font-size:1vw;flex:0 0 auto;transform:translateY(-.15vw)}
+input.team{width:100%;font-family:'Cinzel',serif;font-size:1.7vw;text-align:center;padding:1.4vh 1vw;border-radius:.8vw;background:#0d0a04;border:1px solid var(--gold-dim);color:var(--gold-light);outline:none}
+input.team::placeholder{color:#5a4a20}
+.go{margin-top:1.6vh;font-family:'Cinzel',serif;font-size:1.3vw;letter-spacing:.1em;color:var(--gold-light)}
+.go kbd{font-family:inherit;border:1px solid var(--gold-dim);border-radius:.4vw;padding:.1vh .6vw;margin:0 .2vw}
+.btn{cursor:pointer;font-family:'Cinzel',serif;font-size:1.25vw;letter-spacing:.08em;background:var(--gold);color:var(--ink);border:none;border-radius:.8vw;padding:1.4vh 2.4vw;margin-top:1.6vh}
+.status{display:flex;justify-content:center;gap:1.4vw;margin-top:2vh;font-family:'Cinzel',serif;font-size:.9vw;letter-spacing:.08em}
+.status span{padding:.5vh .8vw;border-radius:99px;border:1px solid var(--border);color:var(--gold-dim)}
+.status span.ok{border-color:#5c8a3a;color:var(--green)}
+.status span.bad{border-color:var(--red);color:var(--red)}
+.foot{position:fixed;bottom:1.6vh;left:0;right:0;text-align:center;font-size:.95vw;color:var(--gold-dim);letter-spacing:.04em;z-index:11}
+.lb{min-width:24vw}
+.lb h3{font-family:'Cinzel',serif;font-size:1.4vw;letter-spacing:.12em;color:var(--gold);margin-bottom:1.6vh;text-align:center}
+.lb ol{list-style:none}
+.lb li{display:flex;justify-content:space-between;gap:2vw;padding:.9vh 0;border-bottom:1px solid rgba(70,55,19,.5);font-size:1.45vw}
+.lb li .r{font-family:'Cinzel',serif;color:var(--gold-dim);width:2.4vw}
+.lb li .n{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb li .t{font-family:'Cinzel',serif;color:var(--gold-light)}
+.lb li.me{color:var(--gold-light)}
+.lb .empty{font-style:italic;color:var(--parchment);opacity:.6;text-align:center;font-size:1.3vw}
+.big{font-family:'Cinzel',serif;font-weight:900;font-size:6.4vw;color:var(--gold-light);text-shadow:0 0 40px rgba(232,201,122,.5);line-height:1}
+.big small{font-size:2vw;font-weight:600;color:var(--gold)}
+.stats{display:flex;justify-content:center;gap:2.4vw;margin-top:2.4vh}
+.stat{min-width:10vw}
+.stat .v{font-family:'Cinzel',serif;font-weight:700;font-size:2.6vw;color:var(--cream)}
+.stat .v.bad{color:var(--red)}
+.stat .v.good{color:var(--green)}
+.stat .k{font-size:1.1vw;color:var(--parchment);opacity:.8}
+.msg{font-size:1.45vw;color:var(--cream);margin-top:2.4vh;line-height:1.45}
+.msg b{color:var(--gold-light)}
+.verse{margin-top:2.4vh;border-left:3px solid var(--gold);background:rgba(13,10,4,.6);padding:1.4vh 1.2vw;text-align:left;border-radius:0 .6vw .6vw 0}
+.verse .ref{font-family:'Cinzel',serif;font-size:.95vw;letter-spacing:.08em;color:var(--gold)}
+.verse .tx{font-style:italic;font-size:1.4vw;color:var(--parchment);line-height:1.4;margin-top:.4vh}
+
+#settings{position:fixed;right:2vw;top:8vh;width:30vw;z-index:20;background:var(--panel);border:1px solid var(--gold-dim);border-radius:1vw;padding:2.4vh 1.6vw;font-size:1.1vw}
+#settings h4{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:.1em;margin-bottom:1.4vh}
+#settings label{display:block;margin:1.2vh 0 .4vh;color:var(--parchment)}
+#settings label span{float:right;color:var(--gold-light);font-family:'Cinzel',serif}
+#settings input[type=range]{width:100%;accent-color:#c9a84c}
+#settings .hint{font-size:.9vw;color:var(--gold-dim);font-style:italic;margin-top:1.2vh;line-height:1.4}
+#settings button{margin-top:1.6vh;font-family:'Cinzel',serif;font-size:.95vw;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:.5vw;padding:.8vh 1vw;cursor:pointer}
+.camtools{display:flex;gap:1vw;justify-content:center;margin-top:1.4vh}.camtools select,.camtools button{font-family:'Cinzel',serif;font-size:1vw;padding:.7vh .8vw;border-radius:.5vw;background:#0d0a04;color:#e8c97a;border:1px solid #8a6f30;cursor:pointer;max-width:26vw}.camhelp{margin-top:1.2vh;padding:1.2vh 1vw;border-radius:.6vw;background:rgba(160,40,30,.9);color:#fff;font-size:1.3vw;line-height:1.35;text-align:left}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<video id="vid" playsinline muted></video>
+
+<div id="hud" hidden>
+  <div class="brand">LORONG WAKTU · BABAK 3</div>
+  <div class="right"><div class="team" id="hudTeam"></div><div class="score" id="hudScore">0</div></div>
+</div>
+<div id="dayBox" hidden><div id="dayName"></div><div id="dayDots"></div><div id="dayBar"><div id="dayBarFill"></div></div></div>
+<div id="jars" hidden><div id="jarWrap" style="display:flex;gap:1vw"></div><div id="jarInfo"></div></div>
+<div id="calm" hidden><div class="lbl" id="calmLbl">TENANG</div><div class="bar"><div id="calmFill"></div></div></div>
+<div id="banner"></div>
+
+<div class="screen" id="idle">
+  <div class="card main">
+    <div class="kicker">LORONG WAKTU · BABAK 3</div>
+    <div class="title">Manna dari Langit</div>
+    <div class="sub">Keluaran 16 — ambil secukupnya</div>
+    <ul class="steps">
+      <li><b>1</b><span>Tangkap manna dengan <strong>tangan</strong> sampai gomer penuh.</span></li>
+      <li><b>2</b><span>Sudah penuh? <strong>Hindari</strong> sisanya. Kelebihan jadi ulat!</span></li>
+      <li><b>3</b><span>Hari ke-6 ambil <strong>dua kali lipat</strong>. Hari ke-7 Sabat: <strong>diam</strong>.</span></li>
+    </ul>
+    <input class="team" id="teamInput" maxlength="28" placeholder="Nama pemain / gereja" autocomplete="off">
+    <div class="go">Tekan <kbd>ENTER</kbd> untuk mulai</div>
+    <button class="btn" id="startBtn">Mulai</button>
+    <div class="status"><span id="stModel">MODEL: …</span><span id="stCam">KAMERA: …</span><span id="stHands">TANGAN: —</span></div>
+    <div class="camtools"><select id="camSel" hidden></select><button id="camRetry" type="button">Coba lagi kamera</button></div>
+    <div class="camhelp" id="camHelp" hidden></div>
+  </div>
+  <div class="card lb"><h3>PAPAN JUARA</h3><ol id="lbIdle"></ol></div>
+</div>
+
+<div class="screen" id="result" hidden>
+  <div class="card main" id="resultMain"></div>
+  <div class="card lb"><h3>PAPAN JUARA</h3><ol id="lbResult"></ol></div>
+</div>
+
+<div id="settings" hidden>
+  <h4>PENGATURAN</h4>
+  <label>Jangkauan tangan <span id="vReach"></span></label>
+  <input type="range" id="sReach" min="0.03" max="0.13" step="0.005">
+  <label>Kepekaan gerak (Sabat) <span id="vMot"></span></label>
+  <input type="range" id="sMot" min="0.06" max="0.8" step="0.02">
+  <label>Kederasan manna <span id="vRate"></span></label>
+  <input type="range" id="sRate" min="2" max="8" step="0.2">
+  <label>Kecepatan jatuh <span id="vSpeed"></span></label>
+  <input type="range" id="sSpeed" min="0.5" max="1.8" step="0.1">
+  <div class="hint">Kepekaan gerak: makin kecil, makin mudah dianggap "bergerak" di hari Sabat. D = tampilkan kerangka tubuh. M = mode mouse (tanpa kamera).</div>
+  <button id="resetLb">Hapus papan juara</button>
+</div>
+
+<div class="foot" id="foot">F layar penuh · S pengaturan · D kerangka · M mode mouse · ESC batal</div>
+
+<script type="module">
+/* ════════════════════════════════════════════
+   MANNA DARI LANGIT — prototipe
+   Webcam → MediaPipe Pose → posisi tangan & besar gerakan
+   7 hari: hari 1–5 jatah 1 gomer, hari 6 dua gomer, hari 7 Sabat (diam)
+   ════════════════════════════════════════════ */
+const MP_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+const MODEL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
+
+const $ = s => document.querySelector(s);
+const cv = $('#c'), ctx = cv.getContext('2d'), video = $('#vid');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = (a = 0, b = 1) => a + Math.random() * (b - a);
+function load(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function esc(s) { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+const DEF = { reach: 0.07, motion: 0.25, rate: 4.2, speed: 1 };
+const CFG = Object.assign({}, DEF, load('manna:cfg', {}));
+const DAYS = [1, 2, 3, 4, 5].map(n => ({ n, quota: 8, dur: 6 }))
+  .concat([{ n: 6, quota: 16, dur: 8 }, { n: 7, sabbath: true, dur: 6 }]);
+const MAX_OK = DAYS.reduce((s, d) => s + (d.quota || 0), 0);
+
+/* ── canvas ── */
+let W, H, DPR, stars = [], dunes = [];
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  stars = Array.from({ length: 110 }, () => ({ x: rnd(0, W), y: rnd(0, H * 0.6), r: rnd(0.4, 1.7), p: rnd(0, 6) }));
+}
+addEventListener('resize', resize);
+
+/* ── vision + camera ── */
+let landmarker = null, CONN = [], camOK = false, mouseMode = false, showSkel = false;
+function setSt(id, txt, cls) { const e = $(id); e.textContent = txt; e.className = cls || ''; }
+/* camera + model start-up, with a readable reason when something fails (for the operator) */
+const CAM_HINT = {
+  NotAllowedError: 'Izin kamera ditolak. Klik ikon kamera di address bar Chrome, pilih "Izinkan", lalu tekan "Coba lagi kamera".',
+  SecurityError: 'Browser memblokir kamera. Buka halaman ini di Chrome lewat http://localhost:8765.',
+  NotFoundError: 'Kamera tidak ditemukan. Cek kabel USB webcam, lalu pilih kamera di daftar.',
+  OverconstrainedError: 'Kamera terpilih tidak tersedia. Pilih kamera lain di daftar.',
+  NotReadableError: 'Kamera sedang dipakai aplikasi lain (Zoom, OBS, WhatsApp, atau tab Chrome lain). Tutup dulu, lalu "Coba lagi kamera".',
+  AbortError: 'Kamera gagal dinyalakan. Cabut lalu pasang lagi webcam-nya, lalu "Coba lagi kamera".',
+  NoMediaDevices: 'Kamera tidak diizinkan di alamat ini. Buka lewat http://localhost:8765 di Chrome (bukan alamat IP, bukan pratinjau aplikasi lain).'
+};
+let makeLandmarker = null, detErr = 0, cpuTried = false, modelFailed = false;
+function camHelp(msg) { const h = $('#camHelp'); if (!h) return; h.textContent = msg || ''; h.hidden = !msg; }
+async function initVision() {
+  setSt('#stModel', 'MODEL: MEMUAT…');
+  try {
+    const { FilesetResolver, PoseLandmarker } = await import(`${MP_BASE}/vision_bundle.mjs`);
+    const fs = await FilesetResolver.forVisionTasks(`${MP_BASE}/wasm`);
+    const opts = delegate => ({
+      baseOptions: { modelAssetPath: MODEL, delegate }, runningMode: 'VIDEO', numPoses: 1,
+      minPoseDetectionConfidence: 0.5, minPosePresenceConfidence: 0.5, minTrackingConfidence: 0.5
+    });
+    makeLandmarker = d => PoseLandmarker.createFromOptions(fs, opts(d));
+    try { landmarker = await makeLandmarker('GPU'); }
+    catch (e) { console.warn('GPU gagal, pakai CPU', e); cpuTried = true; landmarker = await makeLandmarker('CPU'); }
+    CONN = PoseLandmarker.POSE_CONNECTIONS || [];
+    setSt('#stModel', 'MODEL: SIAP', 'ok');
+  } catch (e) {
+    console.error('Model gagal dimuat', e);
+    setSt('#stModel', 'MODEL GAGAL DIMUAT', 'bad');
+    modelFailed = true; mouseMode = true;
+    camHelp(`Model pembaca gerak gagal dimuat (${e && e.message ? e.message : e}). Pastikan laptop tersambung internet, lalu muat ulang halaman (F5).`);
+  }
+}
+// detection errors must never freeze the game: after repeated errors on the GPU, switch to the CPU
+async function onDetectError(e) {
+  detErr++;
+  if (detErr === 20) {
+    console.error('Deteksi pose error', e);
+    if (!cpuTried && makeLandmarker) {
+      cpuTried = true; setSt('#stModel', 'MODEL: PINDAH KE CPU…');
+      try { landmarker = await makeLandmarker('CPU'); detErr = 0; setSt('#stModel', 'MODEL: SIAP (CPU)', 'ok'); return; } catch (e2) { e = e2; }
+    }
+    setSt('#stModel', 'MODEL ERROR', 'bad');
+    camHelp(`Pembaca gerak error: ${e && e.message ? e.message : e}. Muat ulang halaman (F5).`);
+  }
+}
+async function initCam() {
+  if (video.srcObject) video.srcObject.getTracks().forEach(tr => tr.stop());
+  camOK = false;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return camFail({ name: 'NoMediaDevices' });
+  setSt('#stCam', 'KAMERA: MENYALAKAN…');
+  try {
+    const v = { width: { ideal: 1280 }, height: { ideal: 720 } };
+    if (CFG.camId) v.deviceId = { exact: CFG.camId }; else v.facingMode = 'user';
+    const s = await navigator.mediaDevices.getUserMedia({ video: v, audio: false });
+    video.srcObject = s; await video.play();
+    camOK = true; mouseMode = modelFailed; if (!modelFailed) camHelp('');
+    const tr = s.getVideoTracks()[0];
+    setSt('#stCam', `KAMERA: ${(tr && tr.label ? tr.label : 'SIAP').slice(0, 22).toUpperCase()}`, 'ok');
+    if (tr) tr.addEventListener('ended', () => camFail({ name: 'AbortError' }));
+  } catch (e) {
+    if (e.name === 'OverconstrainedError' && CFG.camId) { CFG.camId = ''; save('manna:cfg', CFG); return initCam(); }
+    camFail(e);
+  }
+  listCams();
+}
+function camFail(e) {
+  camOK = false; mouseMode = true;
+  setSt('#stCam', `KAMERA GAGAL · ${e.name}`, 'bad');
+  camHelp(CAM_HINT[e.name] || `Kamera gagal: ${e.name} ${e.message || ''}`);
+  listCams();
+}
+async function listCams() {
+  const sel = $('#camSel'); if (!sel || !navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+  try {
+    const ds = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    sel.innerHTML = '';
+    ds.forEach((d, i) => { const o = document.createElement('option'); o.value = d.deviceId; o.textContent = d.label || `Kamera ${i + 1}`; sel.appendChild(o); });
+    const tr = video.srcObject && video.srcObject.getVideoTracks()[0];
+    const cur = tr && tr.getSettings ? tr.getSettings().deviceId : CFG.camId;
+    if (cur) sel.value = cur;
+    sel.hidden = !ds.length;
+  } catch (e) { sel.hidden = true; }
+}
+function wireCamTools() {
+  const sel = $('#camSel'), btn = $('#camRetry');
+  if (sel) sel.addEventListener('change', () => { CFG.camId = sel.value; save('manna:cfg', CFG); initCam(); sel.blur(); });
+  if (btn) btn.addEventListener('click', () => { initCam(); btn.blur(); });
+  setInterval(() => {
+    const el = $('#stPerson'); if (!el) return;
+    if (mouseMode || !camOK || !landmarker) setSt('#stPerson', 'ORANG: —');
+    else setSt('#stPerson', pose ? 'ORANG TERDETEKSI ✓' : 'BELUM ADA ORANG DI DEPAN KAMERA', pose ? 'ok' : '');
+  }, 300);
+}
+
+/* pose → hands + motion */
+let pose = null, prevPose = null, lastVT = -1, lastDetT = 0, lostT = 0, motion = 0, hands = [];
+const HAND_IDX = [[15, 17, 19, 21], [16, 18, 20, 22]];
+const MOT_IDX = [0, 11, 12, 13, 14, 15, 16, 23, 24];
+function vmap() {
+  const vw = video.videoWidth || 1280, vh = video.videoHeight || 720;
+  const sc = Math.max(W / vw, H / vh), dw = vw * sc, dh = vh * sc;
+  return { ox: (W - dw) / 2, oy: (H - dh) / 2, dw, dh };
+}
+const toCanvas = (p, m) => ({ x: m.ox + (1 - p.x) * m.dw, y: m.oy + p.y * m.dh });
+
+function detect(now) {
+  if (mouseMode || !landmarker || !camOK) return;
+  if (video.readyState < 2 || video.currentTime === lastVT) return;
+  lastVT = video.currentTime;
+  let r; try { r = landmarker.detectForVideo(video, now); detErr = 0; } catch (e) { onDetectError(e); return; }
+  const p = r.landmarks && r.landmarks[0];
+  const dt = Math.max(0.001, (now - lastDetT) / 1000); lastDetT = now;
+  if (p) {
+    if (prevPose) {
+      let d = 0; MOT_IDX.forEach(i => { d += Math.hypot(p[i].x - prevPose[i].x, p[i].y - prevPose[i].y); });
+      const sp = d / MOT_IDX.length / dt;
+      motion += (sp - motion) * 0.35;
+    }
+    prevPose = p.map(q => ({ x: q.x, y: q.y }));
+    lostT = 0;
+  } else { prevPose = null; }
+  pose = p || null;
+}
+
+let mouse = { x: 0, y: 0, in: false, dist: 0 };
+function updateInput(dt) {
+  hands = [];
+  if (mouseMode) {
+    if (mouse.in) hands.push({ x: mouse.x, y: mouse.y });
+    const sp = mouse.dist / Math.max(dt, 0.001) / W * 1.2; mouse.dist = 0;
+    motion += (sp - motion) * (1 - Math.exp(-8 * dt));
+    return;
+  }
+  if (!pose) { lostT += dt; return; }
+  const m = vmap();
+  HAND_IDX.forEach(idx => {
+    if ((pose[idx[0]].visibility ?? 1) < 0.5) return;
+    let x = 0, y = 0; idx.forEach(i => { x += pose[i].x; y += pose[i].y; });
+    hands.push(toCanvas({ x: x / idx.length, y: y / idx.length }, m));
+  });
+}
+
+/* ── sounds ── */
+let actx = null;
+function audio() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); return actx; }
+function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+function blip(f, type = 'sine', peak = 0.15, d = 0.18, delay = 0) {
+  if (!actx) return;
+  const t = actx.currentTime + delay, o = actx.createOscillator(), g = actx.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t);
+  o.connect(g); g.connect(actx.destination); env(g, t, 0.01, peak, d);
+  o.start(t); o.stop(t + d + 0.05);
+}
+const sPop = n => blip(620 + n * 45, 'sine', 0.14, 0.14);
+const sWorm = () => { blip(140, 'square', 0.09, 0.25); blip(110, 'square', 0.07, 0.25, 0.08); };
+const sFull = () => [784, 988, 1175].forEach((f, i) => blip(f, 'triangle', 0.14, 0.35, i * 0.08));
+const sDay = () => [523, 659].forEach((f, i) => blip(f, 'triangle', 0.12, 0.5, i * 0.12));
+const sBad = () => blip(180, 'sawtooth', 0.07, 0.3);
+
+/* ── game state ── */
+let state = 'idle', t = 0, team = '';
+let di = 0, phaseT = 0, dayCount = 0, totalOk = 0, totalExtra = 0, sabMoves = 0, moveAcc = 0, score = 0, lastTs = 0;
+let flakes = [], fx = [], spawnAcc = 0, wormBannerT = 0;
+
+function show(id, on) { $(id).hidden = !on; }
+function setState(s) {
+  state = s;
+  const playing = ['count', 'intro', 'day'].includes(s);
+  show('#idle', s === 'idle'); show('#result', s === 'result');
+  show('#hud', playing); show('#dayBox', s === 'intro' || s === 'day');
+  show('#jars', (s === 'intro' || s === 'day') && !DAYS[di]?.sabbath);
+  show('#calm', s === 'day' && DAYS[di]?.sabbath);
+  show('#foot', s === 'idle' || s === 'result');
+  if (s === 'idle') { renderLb('#lbIdle'); hideBanner(); setTimeout(() => $('#teamInput').focus(), 50); }
+}
+function banner(html, cls, hold) {
+  const b = $('#banner'); b.className = ''; void b.offsetWidth;
+  b.innerHTML = html; b.className = `${cls} ${hold ? 'hold' : 'show'}`;
+}
+function hideBanner() { $('#banner').className = ''; }
+
+function start() {
+  if (state !== 'idle') return;
+  audio();
+  team = $('#teamInput').value.trim() || 'Pemain tanpa nama';
+  $('#hudTeam').textContent = team; $('#teamInput').blur();
+  di = 0; totalOk = 0; totalExtra = 0; sabMoves = 0; score = 0; flakes = []; fx = [];
+  phaseT = 0; setState('count');
+}
+function beginDay() {
+  const d = DAYS[di];
+  dayCount = 0; phaseT = 0; spawnAcc = 0; moveAcc = 0; flakes = [];
+  setState('intro');
+  renderDays(); renderJars();
+  $('#dayName').textContent = d.sabbath ? 'HARI 7 · SABAT' : `HARI ${d.n}`;
+  if (d.sabbath) banner('HARI SABAT<small>Manna tidak turun. Beristirahat, diam di tempat.</small>', 'gold', true);
+  else if (d.n === 6) banner('HARI KEENAM<small>Kumpulkan dua kali lipat: 2 gomer!</small>', 'gold', true);
+  else if (d.n === 1) banner('HARI PERTAMA<small>Kumpulkan 1 gomer, secukupnya</small>', 'cream', true);
+  else banner(`HARI ${d.n}`, 'cream', true);
+  sDay();
+}
+function introLen() { const d = DAYS[di]; return (d.n === 1 || d.n >= 6) ? 2.2 : 1.1; }
+
+function renderDays() {
+  $('#dayDots').innerHTML = DAYS.map((d, i) => `<i class="${i < di ? 'done' : i === di ? 'now' : ''}">${d.sabbath ? 'S' : d.n}</i>`).join('');
+}
+function renderJars() {
+  const d = DAYS[di]; if (d.sabbath) return;
+  const n = d.quota / 8;
+  $('#jarWrap').innerHTML = Array.from({ length: n }, (_, i) => {
+    const f = clamp((dayCount - i * 8) / 8, 0, 1);
+    return `<div class="jar ${f >= 1 ? 'full' : ''}"><div class="fill" style="height:${f * 100}%"></div></div>`;
+  }).join('');
+  const full = dayCount >= d.quota;
+  $('#jarInfo').innerHTML = `${n > 1 ? '2 GOMER' : '1 GOMER'}<br><b>${Math.min(dayCount, d.quota)}/${d.quota}</b>${full ? '<br><span style="color:var(--gold-light)">CUKUP ✓</span>' : ''}${totalExtra ? `<br><span class="worm">🐛 lebih: ${totalExtra}</span>` : ''}`;
+}
+
+function spawn() {
+  const d = DAYS[di], full = dayCount >= d.quota;
+  let x;
+  if (full && hands.length && Math.random() < 0.55) {
+    const h = hands[Math.floor(Math.random() * hands.length)];
+    x = h.x + rnd(-1, 1) * H * 0.08;
+  } else x = W * rnd(0.08, 0.92);
+  flakes.push({ x: clamp(x, W * 0.04, W * 0.96), y: -20, vy: H * rnd(0.3, 0.48) * CFG.speed, r: H * rnd(0.013, 0.02), ph: rnd(0, 6), sw: rnd(0.6, 1.4) });
+}
+function catchFlake(f) {
+  const d = DAYS[di];
+  if (dayCount < d.quota) {
+    dayCount++; totalOk++; score += 10;
+    sPop(dayCount % 8);
+    for (let i = 0; i < 8; i++) fx.push({ k: 'spark', x: f.x, y: f.y, vx: rnd(-160, 160), vy: rnd(-200, 40), life: 0.6, max: 0.6 });
+    fx.push({ k: 'txt', x: f.x, y: f.y - 20, vy: -60, life: 0.8, max: 0.8, text: '+10', c: '#e8c97a' });
+    if (dayCount === d.quota) { sFull(); banner('CUKUP!<small>Jangan ambil lagi, hindari manna yang turun</small>', 'gold'); }
+  } else {
+    totalExtra++; score -= 10;
+    sWorm();
+    fx.push({ k: 'worm', x: f.x, y: f.y, vy: 40, life: 1.4, max: 1.4 });
+    fx.push({ k: 'txt', x: f.x, y: f.y - 30, vy: -50, life: 1, max: 1, text: '−10', c: '#d0543a' });
+    if (wormBannerT <= 0) { banner('BERULAT!<small>Mengambil lebih dari perintah (Kel 16:20)</small>', 'red'); wormBannerT = 2.2; }
+  }
+  renderJars();
+}
+
+function finish() {
+  const lb = load('manna:lb', []);
+  const entry = { team, score, extra: totalExtra, ts: Date.now() };
+  lb.push(entry); lb.sort((a, b) => b.score - a.score);
+  save('manna:lb', lb.slice(0, 100));
+  const rank = lb.findIndex(e => e.ts === entry.ts) + 1;
+  lastTs = entry.ts;
+  const perfect = totalExtra === 0 && sabMoves === 0;
+  let msg = perfect
+    ? 'Taat! Kamu <b>tidak mengambil lebih</b> dari yang diperintahkan, dan beristirahat di hari Sabat.'
+    : '';
+  if (totalExtra) msg += `Kamu mengambil lebih <b>${totalExtra} kali</b>, sama seperti Israel, walau sudah diperintahkan (Kel 16:19–20). `;
+  if (sabMoves) msg += `Di hari Sabat kamu masih "keluar mencari" <b>${sabMoves} kali</b>, dan tidak menemukan apa-apa (Kel 16:27).`;
+  $('#resultMain').innerHTML = `
+    <div class="kicker">${esc(team)}</div>
+    <div class="title" style="font-size:3.2vw">Seminggu di Padang Gurun</div>
+    <div class="big">${score}<small> poin · #${rank}</small></div>
+    <div class="stats">
+      <div class="stat"><div class="v">${totalOk}/${MAX_OK}</div><div class="k">manna secukupnya</div></div>
+      <div class="stat"><div class="v ${totalExtra ? 'bad' : 'good'}">${totalExtra}</div><div class="k">🐛 mengambil lebih</div></div>
+      <div class="stat"><div class="v ${sabMoves ? 'bad' : 'good'}">${sabMoves ? sabMoves + '×' : 'Tenang'}</div><div class="k">hari Sabat</div></div>
+    </div>
+    <div class="msg">${msg}</div>
+    <div class="verse"><div class="ref">KELUARAN 16:18</div><div class="tx">Orang yang mengumpulkan banyak, tidak kelebihan dan orang yang mengumpulkan sedikit, tidak kekurangan.</div></div>
+    <div class="go" style="margin-top:2.4vh">Tekan <kbd>SPASI</kbd> untuk pemain berikutnya</div>`;
+  renderLb('#lbResult');
+  setState('result');
+}
+function renderLb(sel) {
+  const lb = load('manna:lb', []).slice(0, 8);
+  $(sel).innerHTML = lb.length ? lb.map((e, i) =>
+    `<li class="${e.ts === lastTs ? 'me' : ''}"><span class="r">${i + 1}</span><span class="n">${esc(e.team)}</span><span class="t">${e.score}</span></li>`).join('')
+    : '<div class="empty">Belum ada pemain. Jadilah yang pertama!</div>';
+}
+
+/* ── update ── */
+function update(dt) {
+  t += dt; phaseT += dt; wormBannerT -= dt;
+  updateInput(dt);
+  if (!mouseMode && lostT > 0.7) motion += (1 - motion) * (1 - Math.exp(-4 * dt)); // left the frame = "went out"
+  if (state === 'idle') setSt('#stHands', `TANGAN: ${hands.length}`, hands.length === 2 || (mouseMode && hands.length) ? 'ok' : '');
+
+  if (state === 'count') {
+    const n = 3 - Math.floor(phaseT);
+    const txt = n > 0 ? String(n) : '';
+    if ($('#banner').dataset.n !== txt && txt) { $('#banner').dataset.n = txt; banner(`${txt}<small>Angkat kedua tanganmu, pastikan terlihat kamera</small>`, 'cream', true); blip(440, 'triangle', 0.1, 0.2); }
+    if (phaseT >= 3) { $('#banner').dataset.n = ''; beginDay(); }
+  } else if (state === 'intro') {
+    if (phaseT >= introLen()) { hideBanner(); state = 'day'; phaseT = 0; setState('day'); }
+  } else if (state === 'day') {
+    const d = DAYS[di];
+    $('#dayBarFill').style.width = clamp(phaseT / d.dur, 0, 1) * 100 + '%';
+    if (d.sabbath) {
+      const moving = motion > CFG.motion;
+      const lvl = clamp(motion / (CFG.motion * 2), 0, 1);
+      $('#calmFill').style.width = lvl * 100 + '%';
+      $('#calmLbl').textContent = moving ? 'BERGERAK!' : 'TENANG';
+      $('#calmLbl').style.color = moving ? 'var(--red)' : 'var(--green)';
+      if (moving && phaseT > 0.4) {
+        moveAcc += dt;
+        if (moveAcc >= 0.5) {
+          moveAcc = 0; sabMoves++; score -= 5; sBad();
+          banner('KELUAR MENCARI?<small>Tidak ada manna di hari Sabat (Kel 16:27)</small>', 'red');
+        }
+      }
+    } else {
+      spawnAcc += dt * CFG.rate * (d.n === 6 ? 1.3 : 1);
+      while (spawnAcc >= 1) { spawnAcc--; spawn(); }
+    }
+    if (phaseT >= d.dur) {
+      di++;
+      if (di >= DAYS.length) { flakes = []; finish(); }
+      else beginDay();
+    }
+  }
+
+  // flakes
+  const reach = CFG.reach * H;
+  flakes.forEach(f => {
+    f.y += f.vy * dt; f.x += Math.sin(t * 2 * f.sw + f.ph) * 18 * dt;
+    if (state === 'day' && !f.dead) {
+      for (const h of hands) { if (Math.hypot(h.x - f.x, h.y - f.y) < reach + f.r) { f.dead = true; catchFlake(f); break; } }
+    }
+  });
+  flakes = flakes.filter(f => !f.dead && f.y < H + 30);
+  fx.forEach(p => { p.life -= dt; p.x += (p.vx || 0) * dt; p.y += (p.vy || 0) * dt; if (p.k === 'spark') p.vy += 500 * dt; });
+  fx = fx.filter(p => p.life > 0);
+  $('#hudScore').textContent = score;
+}
+
+/* ── draw ── */
+function draw() {
+  // sky
+  let g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#060716'); g.addColorStop(0.6, '#241830'); g.addColorStop(1, '#5a3422');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  stars.forEach(s => { ctx.globalAlpha = 0.35 + 0.35 * Math.sin(t * 1.3 + s.p); ctx.fillStyle = '#f0e6cf'; ctx.fillRect(s.x, s.y, s.r, s.r); });
+  ctx.globalAlpha = 1;
+
+  // camera
+  if (camOK && !mouseMode && video.readyState >= 2) {
+    const m = vmap();
+    ctx.save();
+    ctx.translate(W, 0); ctx.scale(-1, 1);
+    ctx.filter = 'sepia(.55) saturate(.8) brightness(.62) contrast(1.1)';
+    ctx.globalAlpha = state === 'day' ? 0.5 : 0.72;
+    ctx.drawImage(video, m.ox, m.oy, m.dw, m.dh);
+    ctx.restore();
+    ctx.filter = 'none'; ctx.globalAlpha = 1;
+  }
+  // dunes
+  ctx.fillStyle = 'rgba(58,34,24,.85)';
+  ctx.beginPath(); ctx.moveTo(0, H);
+  for (let x = 0; x <= W; x += 16) ctx.lineTo(x, H * 0.93 - Math.sin(x * 0.004 + 1) * H * 0.03 - Math.sin(x * 0.011) * H * 0.012);
+  ctx.lineTo(W, H); ctx.fill();
+
+  // skeleton (debug)
+  if (showSkel && pose && !mouseMode) {
+    const m = vmap();
+    ctx.strokeStyle = 'rgba(143,196,106,.8)'; ctx.lineWidth = 3;
+    CONN.forEach(c => { const a = toCanvas(pose[c.start], m), b = toCanvas(pose[c.end], m); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); });
+  }
+
+  // flakes: small, white, like coriander seed (Kel 16:31)
+  flakes.forEach(f => {
+    const gr = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2.6);
+    gr.addColorStop(0, 'rgba(255,250,235,.95)'); gr.addColorStop(0.35, 'rgba(255,245,215,.55)'); gr.addColorStop(1, 'rgba(255,240,200,0)');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 2.6, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 0.8, 0, 7); ctx.fill();
+  });
+
+  // hands
+  const d = DAYS[di], full = state === 'day' && d && !d.sabbath && dayCount >= d.quota;
+  const reach = CFG.reach * H;
+  hands.forEach(h => {
+    ctx.save();
+    ctx.shadowColor = full ? 'rgba(208,84,58,.9)' : 'rgba(232,201,122,.9)'; ctx.shadowBlur = 24;
+    ctx.strokeStyle = full ? '#d0543a' : '#e8c97a'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(h.x, h.y, reach, 0, 7); ctx.stroke();
+    ctx.globalAlpha = 0.18; ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+    ctx.restore();
+  });
+
+  // fx
+  fx.forEach(p => {
+    const a = clamp(p.life / p.max, 0, 1);
+    ctx.globalAlpha = a;
+    if (p.k === 'spark') { ctx.fillStyle = '#e8c97a'; ctx.fillRect(p.x, p.y, 4, 4); }
+    else if (p.k === 'worm') { ctx.font = `${H * 0.06}px serif`; ctx.textAlign = 'center'; ctx.fillText('🐛', p.x + Math.sin(t * 12) * 6, p.y); }
+    else if (p.k === 'txt') { ctx.font = `700 ${H * 0.035}px Cinzel, Georgia, serif`; ctx.textAlign = 'center'; ctx.fillStyle = p.c; ctx.fillText(p.text, p.x, p.y); }
+    ctx.globalAlpha = 1;
+  });
+
+  // vignette
+  const vg = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.95);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)');
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+}
+
+/* ── loop ── */
+let last = performance.now();
+function loop(now) {
+  requestAnimationFrame(loop); // keep the loop alive even if one frame throws
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  try { detect(now); update(dt); draw(); } catch (e) { console.error(e); }
+}
+
+/* ── input ── */
+addEventListener('keydown', e => {
+  const typing = document.activeElement === $('#teamInput');
+  if (e.key === 'Enter' && state === 'idle') { e.preventDefault(); start(); return; }
+  if (e.key === 'Escape') { if (!$('#settings').hidden) { $('#settings').hidden = true; return; } if (state !== 'idle') { flakes = []; setState('idle'); } return; }
+  if (typing) return;
+  if (e.code === 'Space') { e.preventDefault(); if (state === 'result') { $('#teamInput').value = ''; setState('idle'); } else if (state === 'idle') start(); }
+  const k = e.key.toLowerCase();
+  if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
+  if (k === 's') $('#settings').hidden = !$('#settings').hidden;
+  if (k === 'd') showSkel = !showSkel;
+  if (k === 'm') { mouseMode = !mouseMode || !camOK; setSt('#stCam', mouseMode ? 'MODE MOUSE' : 'KAMERA: SIAP', mouseMode ? 'bad' : 'ok'); }
+});
+addEventListener('mousemove', e => { if (mouse.in) mouse.dist += Math.hypot(e.clientX - mouse.x, e.clientY - mouse.y); mouse.x = e.clientX; mouse.y = e.clientY; mouse.in = true; });
+document.addEventListener('mouseleave', () => { mouse.in = false; });
+$('#startBtn').addEventListener('click', start);
+
+function bindRange(id, key, fmt) {
+  const el = $(id), out = $(id.replace('#s', '#v'));
+  el.value = CFG[key]; out.textContent = fmt(CFG[key]);
+  el.addEventListener('input', () => { CFG[key] = +el.value; out.textContent = fmt(CFG[key]); save('manna:cfg', CFG); });
+}
+bindRange('#sReach', 'reach', v => v.toFixed(3));
+bindRange('#sMot', 'motion', v => v.toFixed(2));
+bindRange('#sRate', 'rate', v => `${v.toFixed(1)}/dtk`);
+bindRange('#sSpeed', 'speed', v => `${v.toFixed(1)}×`);
+$('#resetLb').addEventListener('click', () => { if (confirm('Hapus semua skor di papan juara?')) { save('manna:lb', []); renderLb('#lbIdle'); renderLb('#lbResult'); } });
+
+/* test hook: feed any MediaStream as the camera (e.g. canvas.captureStream()) and step the game manually */
+window.__manna = {
+  async useStream(s) { video.srcObject = s; await video.play(); camOK = true; mouseMode = false; setSt('#stCam', 'KAMERA: SIAP', 'ok'); },
+  step(sec, dt = 0.03) { for (let i = 0; i < sec / dt; i++) { detect(performance.now()); update(dt); } draw(); },
+  start, get state() { return state; }, get hands() { return hands; }, get pose() { return pose; },
+  get score() { return score; }, get motion() { return motion; }
+};
+
+resize();
+setState('idle');
+requestAnimationFrame(loop);
+wireCamTools();
+initCam();
+initVision();
+</script>
+</body>
+</html>

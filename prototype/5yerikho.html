@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tembok Yerikho — Lorong Waktu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#8a6f30;--cream:#f0e6cf;--parchment:#d8c9a4;--ink:#0d0a04;--panel:rgba(25,19,7,.88);--border:#463713;--red:#d0543a;--green:#8fc46a;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--cream);font-family:'Crimson Pro',Georgia,serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.cinzel{font-family:'Cinzel',Georgia,serif}
+[hidden]{display:none!important}
+
+/* top HUD */
+#hud{position:fixed;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;padding:1.6vh 2.4vw;pointer-events:none;z-index:5}
+#hud .brand{font-family:'Cinzel',serif;font-size:1.3vw;letter-spacing:.14em;color:var(--gold)}
+#hud .team{font-family:'Cinzel',serif;font-size:1.5vw;color:var(--gold-light);letter-spacing:.06em}
+#phase{position:fixed;top:6vh;left:0;right:0;text-align:center;font-family:'Cinzel',serif;font-size:2.6vw;color:var(--cream);text-shadow:0 0 24px rgba(0,0,0,.8);pointer-events:none;z-index:5}
+#phase small{display:block;font-family:'Crimson Pro',serif;font-style:italic;font-size:1.4vw;color:var(--parchment);opacity:.85;margin-top:.4vh}
+#laps{position:fixed;top:17vh;left:0;right:0;display:flex;justify-content:center;gap:1.1vw;pointer-events:none;z-index:5}
+#laps i{width:2.6vw;height:2.6vw;border-radius:50%;border:2px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-style:normal;font-family:'Cinzel',serif;font-size:1.1vw;color:var(--gold-dim);background:rgba(13,10,4,.6);transition:all .3s}
+#laps i.done{background:var(--gold);color:var(--ink);border-color:var(--gold-light);box-shadow:0 0 18px rgba(201,168,76,.7)}
+#laps i.now{border-color:var(--gold-light);color:var(--gold-light);transform:scale(1.15)}
+
+/* meter */
+#meter{position:fixed;right:2.4vw;top:26vh;height:52vh;width:3.2vw;border:1px solid var(--gold-dim);border-radius:1.6vw;background:rgba(13,10,4,.7);overflow:hidden;z-index:5;pointer-events:none}
+#meterFill{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(0deg,#5c8a3a,#e8c97a 60%,#d0543a)}
+.mline{position:absolute;left:-2px;right:-2px;height:2px}
+#mSil{background:var(--red)}#mShout{background:var(--gold-light)}
+#meterLbl{position:fixed;right:1.2vw;top:79.5vh;width:5.6vw;text-align:center;font-family:'Cinzel',serif;font-size:.8vw;letter-spacing:.1em;color:var(--gold-dim);z-index:5}
+
+/* banner */
+#banner{position:fixed;left:0;right:0;top:40vh;text-align:center;font-family:'Cinzel',serif;font-weight:900;font-size:6vw;letter-spacing:.04em;pointer-events:none;z-index:6;opacity:0}
+#banner small{display:block;font-family:'Crimson Pro',serif;font-weight:400;font-style:italic;font-size:1.8vw;letter-spacing:0;margin-top:1vh}
+#banner.show{animation:pop 2s ease-out forwards}
+#banner.gold{color:var(--gold-light);text-shadow:0 0 40px rgba(232,201,122,.8)}
+#banner.red{color:var(--red);text-shadow:0 0 30px rgba(208,84,58,.8)}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}15%{opacity:1;transform:scale(1.08)}30%{transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+#banner.hold{animation:popHold .5s ease-out forwards}
+@keyframes popHold{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+
+/* panels */
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;gap:3vw;padding:4vh 4vw;z-index:10;background:radial-gradient(ellipse at center,rgba(13,10,4,.55),rgba(13,10,4,.85))}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:1.4vw;padding:4vh 3vw;backdrop-filter:blur(6px)}
+.main{max-width:46vw;text-align:center}
+.kicker{font-family:'Cinzel',serif;font-size:1.05vw;letter-spacing:.18em;color:var(--gold-dim)}
+.title{font-family:'Cinzel',serif;font-weight:900;font-size:4.6vw;line-height:1.05;color:var(--gold);text-shadow:0 0 36px rgba(201,168,76,.45);margin:1.2vh 0}
+.sub{font-style:italic;font-size:1.6vw;color:var(--parchment)}
+.steps{list-style:none;text-align:left;margin:3vh auto 2.6vh;display:flex;flex-direction:column;gap:1.3vh}
+.steps li{display:flex;gap:1vw;align-items:baseline;font-size:1.55vw;line-height:1.3}
+.steps b{font-family:'Cinzel',serif;color:var(--ink);background:var(--gold);border-radius:50%;min-width:2vw;height:2vw;display:inline-flex;align-items:center;justify-content:center;font-size:1vw;flex:0 0 auto;transform:translateY(-.15vw)}
+input.team{width:100%;font-family:'Cinzel',serif;font-size:1.7vw;text-align:center;padding:1.4vh 1vw;border-radius:.8vw;background:#0d0a04;border:1px solid var(--gold-dim);color:var(--gold-light);outline:none}
+input.team::placeholder{color:#5a4a20}
+.go{margin-top:1.6vh;font-family:'Cinzel',serif;font-size:1.3vw;letter-spacing:.1em;color:var(--gold-light)}
+.go kbd{font-family:inherit;border:1px solid var(--gold-dim);border-radius:.4vw;padding:.1vh .6vw;margin:0 .2vw}
+.btn{pointer-events:auto;cursor:pointer;font-family:'Cinzel',serif;font-size:1.25vw;letter-spacing:.08em;background:var(--gold);color:var(--ink);border:none;border-radius:.8vw;padding:1.4vh 2.4vw;margin-top:1.6vh}
+.foot{position:fixed;bottom:1.6vh;left:0;right:0;text-align:center;font-size:.95vw;color:var(--gold-dim);letter-spacing:.04em;z-index:11}
+.lb{min-width:24vw}
+.lb h3{font-family:'Cinzel',serif;font-size:1.4vw;letter-spacing:.12em;color:var(--gold);margin-bottom:1.6vh;text-align:center}
+.lb ol{list-style:none}
+.lb li{display:flex;justify-content:space-between;gap:2vw;padding:.9vh 0;border-bottom:1px solid rgba(70,55,19,.5);font-size:1.45vw}
+.lb li .r{font-family:'Cinzel',serif;color:var(--gold-dim);width:2.4vw}
+.lb li .n{flex:1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb li .t{font-family:'Cinzel',serif;color:var(--gold-light)}
+.lb li.me{color:var(--gold-light)}
+.lb .empty{font-style:italic;color:var(--parchment);opacity:.6;text-align:center;font-size:1.3vw}
+.big{font-family:'Cinzel',serif;font-weight:900;font-size:7vw;color:var(--gold-light);text-shadow:0 0 40px rgba(232,201,122,.5);line-height:1}
+.big small{font-size:2.2vw;font-weight:600;color:var(--gold)}
+.verse{margin-top:3vh;border-left:3px solid var(--gold);background:rgba(13,10,4,.6);padding:1.4vh 1.2vw;text-align:left;border-radius:0 .6vw .6vw 0}
+.verse .ref{font-family:'Cinzel',serif;font-size:.95vw;letter-spacing:.08em;color:var(--gold)}
+.verse .tx{font-style:italic;font-size:1.45vw;color:var(--parchment);line-height:1.4;margin-top:.4vh}
+.note{font-size:1.3vw;color:var(--parchment);margin-top:1.4vh;line-height:1.4}
+.breakdown{font-size:1.35vw;color:var(--parchment);margin-top:1vh}
+
+/* settings */
+#settings{position:fixed;right:2vw;top:8vh;width:30vw;z-index:20;background:var(--panel);border:1px solid var(--gold-dim);border-radius:1vw;padding:2.4vh 1.6vw;font-size:1.1vw}
+#settings h4{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:.1em;margin-bottom:1.4vh}
+#settings label{display:block;margin:1.2vh 0 .4vh;color:var(--parchment)}
+#settings label span{float:right;color:var(--gold-light);font-family:'Cinzel',serif}
+#settings input[type=range]{width:100%;accent-color:#c9a84c}
+#settings .hint{font-size:.9vw;color:var(--gold-dim);font-style:italic;margin-top:1.2vh;line-height:1.4}
+#settings button{margin-top:1.6vh;font-family:'Cinzel',serif;font-size:.95vw;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:.5vw;padding:.8vh 1vw;cursor:pointer}
+#badge{position:fixed;left:2.4vw;bottom:1.6vh;font-family:'Cinzel',serif;font-size:.85vw;letter-spacing:.1em;padding:.5vh .8vw;border-radius:99px;border:1px solid var(--border);color:var(--gold-dim);z-index:12}
+#badge.ok{border-color:#5c8a3a;color:var(--green)}
+#badge.sim{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="hud" hidden><div class="brand">LORONG WAKTU · BABAK 5</div><div class="team" id="hudTeam"></div></div>
+<div id="phase" hidden></div>
+<div id="laps" hidden></div>
+<div id="meter" hidden><div id="meterFill"></div><div class="mline" id="mSil"></div><div class="mline" id="mShout"></div></div>
+<div id="meterLbl" hidden>SUARA</div>
+<div id="banner"></div>
+
+<!-- IDLE -->
+<div class="screen" id="idle">
+  <div class="card main">
+    <div class="kicker">LORONG WAKTU · BABAK 5</div>
+    <div class="title">Tembok Yerikho</div>
+    <div class="sub">Yosua 6 — diam dalam ketaatan, lalu bersorak</div>
+    <ul class="steps">
+      <li><b>1</b><span>Tujuh kali keliling: <strong>diam total</strong>. Satu suara saja, gagal.</span></li>
+      <li><b>2</b><span>Layar hanya menghitung putaran 1 dan 2. Sesudah itu <strong>hitung sendiri</strong>, dan kecepatan tiap putaran berbeda.</span></li>
+      <li><b>3</b><span>Tepat sesudah putaran ke-7 selesai, <strong>bersoraklah!</strong> Terlalu cepat atau terlambat, tembok tetap berdiri.</span></li>
+    </ul>
+    <input class="team" id="teamInput" maxlength="28" placeholder="Nama tim / gereja" autocomplete="off">
+    <div class="go">Tekan <kbd>ENTER</kbd> untuk mulai</div>
+    <button class="btn" id="startBtn">Mulai</button>
+  </div>
+  <div class="card lb"><h3>PAPAN JUARA</h3><ol id="lbIdle"></ol></div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result" hidden>
+  <div class="card main" id="resultMain"></div>
+  <div class="card lb"><h3>PAPAN JUARA</h3><ol id="lbResult"></ol></div>
+</div>
+
+<div id="settings" hidden>
+  <h4>PENGATURAN</h4>
+  <label>Batas hening (di atas suara ruangan) <span id="vSil"></span></label>
+  <input type="range" id="sSil" min="4" max="30" step="1">
+  <label>Ambang sorak (di atas suara ruangan) <span id="vShout"></span></label>
+  <input type="range" id="sShout" min="6" max="40" step="1">
+  <label>Rata-rata durasi 1 putaran <span id="vLap"></span></label>
+  <input type="range" id="sLap" min="1.5" max="5" step="0.1">
+  <label>Variasi kecepatan antar putaran <span id="vVar"></span></label>
+  <input type="range" id="sVar" min="0" max="0.6" step="0.05">
+  <div class="hint">Suara ruangan diukur otomatis 3 detik sebelum tiap ronde. Satu suara di atas batas hening selama tujuh putaran = gagal, jadi kalau aula ramai naikkan batas hening. Sorak dihitung kalau suara melewati ambang sorak.</div>
+  <button id="resetLb">Hapus papan juara</button>
+</div>
+
+<div id="badge">MIC: —</div>
+<div class="foot" id="foot">F layar penuh · S pengaturan · ESC batal · tahan SHIFT = simulasi teriak · tahan N = simulasi bisik</div>
+
+<script>
+/* ════════════════════════════════════════════
+   TEMBOK YERIKHO — prototipe
+   Mic → level dB → 7 putaran diam (hanya putaran 1–2 ditampilkan, kecepatan acak)
+   → sorak TEPAT sesudah putaran ke-7: tembok runtuh. Suara sebelum itu / tidak bersorak = gagal.
+   ════════════════════════════════════════════ */
+const $ = s => document.querySelector(s);
+const cv = $('#c'), ctx = cv.getContext('2d');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = (a = 0, b = 1) => a + Math.random() * (b - a);
+
+function load(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+const DEF = { silenceMargin: 10, shoutMargin: 14, lapDur: 2.8, lapVar: 0.4 };
+const CFG = Object.assign({}, DEF, load('yerikho:cfg', {}));
+const LAPS = 7, SHOWN = 2; // only laps 1–2 are counted on screen
+
+/* ── canvas ── */
+let W, H, DPR;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  buildScene();
+}
+addEventListener('resize', resize);
+
+/* ── audio / mic ── */
+let actx = null, analyser = null, abuf = null, micOK = false, micTried = false;
+async function initAudio() {
+  if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+  if (actx.state === 'suspended') await actx.resume();
+  if (micTried) return;
+  micTried = true;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+    });
+    const src = actx.createMediaStreamSource(stream);
+    analyser = actx.createAnalyser();
+    analyser.fftSize = 2048;
+    src.connect(analyser);
+    abuf = new Float32Array(analyser.fftSize);
+    micOK = true;
+  } catch (e) { micOK = false; }
+  updateBadge();
+}
+function updateBadge() {
+  const b = $('#badge');
+  if (!micTried) { b.textContent = 'MIC: —'; b.className = ''; return; }
+  b.textContent = micOK ? 'MIC AKTIF' : 'TANPA MIC · MODE SIMULASI (tahan SHIFT)';
+  b.className = micOK ? 'ok' : 'sim';
+}
+
+let shiftDown = false, nDown = false;
+let baseline = -60, lvl = -90;
+function rawDb() {
+  if (shiftDown) return baseline + 30 + rnd(0, 10);
+  if (nDown) return baseline + (CFG.silenceMargin + CFG.shoutMargin) / 2;
+  if (!micOK) return baseline + rnd(-2, 2);
+  analyser.getFloatTimeDomainData(abuf);
+  let s = 0;
+  for (let i = 0; i < abuf.length; i++) s += abuf[i] * abuf[i];
+  return 20 * Math.log10(Math.sqrt(s / abuf.length) + 1e-9);
+}
+const silenceLimit = () => baseline + CFG.silenceMargin;
+const shoutFloor = () => Math.min(baseline + CFG.shoutMargin, -8);
+
+/* ── synthesized sounds (never played while listening for silence) ── */
+function env(g, t, a, peak, d) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
+function shofar() {
+  if (!actx) return;
+  const t = actx.currentTime;
+  [[0, 0.5], [0.55, 0.35]].forEach(([dl, len], k) => {
+    const o = actx.createOscillator(), f = actx.createBiquadFilter(), g = actx.createGain();
+    const lfo = actx.createOscillator(), lg = actx.createGain();
+    o.type = 'sawtooth';
+    const f0 = k ? 311 : 233;
+    o.frequency.setValueAtTime(f0 * 0.8, t + dl);
+    o.frequency.exponentialRampToValueAtTime(f0, t + dl + 0.12);
+    lfo.frequency.value = 5.5; lg.gain.value = 5; lfo.connect(lg); lg.connect(o.frequency);
+    f.type = 'lowpass'; f.frequency.value = 1600; f.Q.value = 2;
+    o.connect(f); f.connect(g); g.connect(actx.destination);
+    env(g, t + dl, 0.06, 0.22, len);
+    o.start(t + dl); lfo.start(t + dl); o.stop(t + dl + len + 0.1); lfo.stop(t + dl + len + 0.1);
+  });
+}
+function rumble() {
+  if (!actx) return;
+  const t = actx.currentTime, len = 2.6, sr = actx.sampleRate;
+  const b = actx.createBuffer(1, sr * len, sr), d = b.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
+  const s = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
+  s.buffer = b; f.type = 'lowpass'; f.frequency.value = 220;
+  s.connect(f); f.connect(g); g.connect(actx.destination);
+  env(g, t, 0.05, 0.9, len - 0.1);
+  s.start(t);
+}
+function buzz() {
+  if (!actx) return;
+  const t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+  o.type = 'square'; o.frequency.value = 98;
+  o.connect(g); g.connect(actx.destination);
+  env(g, t, 0.01, 0.12, 0.22);
+  o.start(t); o.stop(t + 0.3);
+}
+function fanfare() {
+  if (!actx) return;
+  const t = actx.currentTime;
+  [392, 494, 587, 784].forEach((fq, i) => {
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'triangle'; o.frequency.value = fq;
+    o.connect(g); g.connect(actx.destination);
+    env(g, t + i * 0.12, 0.02, 0.18, 0.6);
+    o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.8);
+  });
+}
+
+/* ── scene: wall made of blocks ── */
+let blocks = [], geo = {}, stars = [], houses = [], dust = [];
+function buildScene() {
+  const cols = 26, x0 = W * 0.17, x1 = W * 0.83, bw = (x1 - x0) / cols;
+  const baseY = H * 0.64, bh = bw * 0.62, baseRows = Math.max(6, Math.round((H * 0.25) / bh));
+  const gateCols = [12, 13], gateRows = Math.round(baseRows * 0.5);
+  const towerCols = [0, 1, 12, 13, 24, 25], rahabCols = [19, 20, 21];
+  const winCol = 20, winRow = baseRows - 3;
+  geo = { cols, x0, x1, bw, bh, baseY, baseRows, gateCols, gateRows, winCol, winRow, topY: baseY - baseRows * bh };
+  blocks = [];
+  for (let c = 0; c < cols; c++) {
+    let rows = baseRows + (towerCols.includes(c) ? 3 : 0) + (c % 2 === 0 ? 1 : 0);
+    for (let r = 0; r < rows; r++) {
+      if (gateCols.includes(c) && r < gateRows) continue;
+      if (c === winCol && (r === winRow || r === winRow - 1)) continue;
+      const l = rnd(46, 60), h = rnd(30, 40);
+      blocks.push({
+        c, r, x: x0 + c * bw, y: baseY - (r + 1) * bh, w: bw, h: bh,
+        col: `hsl(${h},${rnd(30, 42)}%,${l}%)`, dark: `hsl(${h},30%,${l - 16}%)`,
+        rahab: rahabCols.includes(c), fallen: false, vx: 0, vy: 0, rot: 0, vr: 0, rest: false, floor: 0
+      });
+    }
+  }
+  stars = Array.from({ length: 90 }, () => ({ x: rnd(0, W), y: rnd(0, H * 0.45), r: rnd(0.4, 1.6), p: rnd(0, 6) }));
+  houses = Array.from({ length: 11 }, (_, i) => ({ x: x0 + bw * (1 + i * 2.2 + rnd(0, 1)), w: bw * rnd(1.4, 2.4), h: bh * rnd(1, 3.2) }));
+}
+
+/* ── game state ── */
+let state = 'idle', t = 0;
+let team = '', lap = 0, lapT = 0, lapDurs = [], lapWarp = [], loudT = 0, reactT = 0, frozenProg = 0;
+let calibT = 0, calibS = [], fallT = 0, failT = 0, failReason = '', failLap = 0, shake = 0, lastTs = 0, cdShown = '';
+
+function show(id, on) { $(id).hidden = !on; }
+function setState(s) {
+  state = s;
+  const playing = ['calib', 'march', 'failshow', 'fall'].includes(s);
+  show('#idle', s === 'idle'); show('#result', s === 'result');
+  show('#hud', playing); show('#phase', playing);
+  show('#laps', s === 'march' || s === 'calib');
+  show('#meter', s === 'march' || s === 'calib'); show('#meterLbl', s === 'march' || s === 'calib');
+  show('#foot', s === 'idle' || s === 'result');
+  if (s === 'idle') { renderLb('#lbIdle'); setTimeout(() => $('#teamInput').focus(), 50); hideBanner(); }
+}
+function banner(html, cls, hold) {
+  const b = $('#banner');
+  b.className = ''; void b.offsetWidth;
+  b.innerHTML = html; b.className = `${cls} ${hold ? 'hold' : 'show'}`;
+}
+function hideBanner() { $('#banner').className = ''; }
+function setPhase(html) { $('#phase').innerHTML = html; }
+function renderLaps() {
+  // laps 1–2 are tracked on screen; 3–7 stay "?" so the team has to count themselves
+  $('#laps').innerHTML = Array.from({ length: LAPS }, (_, i) => {
+    if (i >= SHOWN) return '<i>?</i>';
+    return `<i class="${i < lap ? 'done' : i === lap && state === 'march' ? 'now' : ''}">${i + 1}</i>`;
+  }).join('');
+}
+// every lap gets its own duration and its own speed-up / slow-down, so nobody can count by rhythm
+function planLaps() {
+  lapDurs = []; lapWarp = [];
+  for (let i = 0; i <= LAPS; i++) {
+    let d;
+    do { d = CFG.lapDur * rnd(1 - CFG.lapVar, 1 + CFG.lapVar); }
+    while (i && CFG.lapVar > 0.1 && Math.abs(d - lapDurs[i - 1]) < CFG.lapDur * 0.15);
+    lapDurs.push(Math.max(1, d));
+    lapWarp.push(rnd(-0.7, 0.7));
+  }
+}
+const lapFrac = (i, u) => u - lapWarp[i] * Math.sin(2 * Math.PI * u) / (2 * Math.PI); // monotonic for |warp| < 1
+const marchProg = () => lap + lapFrac(Math.min(lap, LAPS), clamp(lapT / lapDurs[Math.min(lap, LAPS)], 0, 1));
+
+async function startRound() {
+  if (state !== 'idle') return;
+  await initAudio();
+  team = $('#teamInput').value.trim() || 'Tim tanpa nama';
+  $('#hudTeam').textContent = team;
+  $('#teamInput').blur();
+  lap = 0; lapT = 0; loudT = 0; reactT = 0; fallT = 0; failT = 0; failReason = ''; failLap = 0;
+  calibT = 0; calibS = []; cdShown = '';
+  planLaps(); buildScene(); dust = [];
+  setState('calib');
+  setPhase('SEMUA DIAM <small>Mengukur suara ruangan…</small>');
+  renderLaps();
+}
+
+function fail(reason) {
+  failReason = reason; failLap = lap + 1; frozenProg = marchProg();
+  setState('failshow'); buzz(); shake = 6;
+  const txt = { early: `Kalian bersorak di putaran ke-${failLap}`, noise: `Ada suara di putaran ke-${failLap}`, late: 'Tujuh putaran lewat, tidak ada yang bersorak' }[reason];
+  banner(`GAGAL<small>${txt}</small>`, 'red', true);
+  setPhase('');
+}
+function success() {
+  frozenProg = marchProg();
+  collapse();
+  shofar();
+}
+function collapse() {
+  setState('fall');
+  hideBanner();
+  setPhase('');
+  rumble(); setTimeout(fanfare, 900);
+  const cx = W / 2;
+  blocks.forEach(b => {
+    if (b.rahab) return;
+    b.fallen = true;
+    b.vx = (b.x - cx) * rnd(0.3, 1.1) + rnd(-1, 1) * geo.bw * 3;
+    b.vy = -rnd(0, 1) * geo.bh * 6;
+    b.vr = rnd(-5, 5);
+    b.floor = geo.baseY + rnd(-0.2, 1) * H * 0.12;
+  });
+  for (let i = 0; i < 70; i++) dust.push(mkDust(rnd(geo.x0, geo.x1), rnd(geo.topY, geo.baseY), 1.6));
+}
+
+function finish(ok) {
+  let rank = 0;
+  const fmt = v => v.toFixed(1).replace('.', ',');
+  if (ok) {
+    const lb = load('yerikho:lb', []);
+    const entry = { team, time: +reactT.toFixed(2), ts: Date.now() };
+    lb.push(entry); lb.sort((a, b) => a.time - b.time);
+    save('yerikho:lb', lb.slice(0, 100));
+    rank = lb.findIndex(e => e.ts === entry.ts) + 1;
+    lastTs = entry.ts;
+  } else lastTs = 0;
+  const failView = {
+    early: ['Terlalu Cepat!', `putaran ke-${failLap}`, `Kalian bersorak saat rombongan baru di putaran ke-${failLap} dari 7.`],
+    noise: ['Ada Suara!', `putaran ke-${failLap}`, `Suara terdengar di putaran ke-${failLap}. Selama tujuh putaran, sepatah kata pun tidak boleh keluar.`],
+    late: ['Terlambat!', 'putaran ke-8', 'Putaran ketujuh sudah selesai, tetapi tidak ada yang bersorak.']
+  }[failReason] || [];
+  $('#resultMain').innerHTML = ok ? `
+      <div class="kicker">${escapeHtml(team)}</div>
+      <div class="title" style="font-size:3.6vw">Tembok Runtuh!</div>
+      <div class="big">${fmt(reactT)}<small> detik</small></div>
+      <div class="breakdown">bersorak ${fmt(reactT)} detik sesudah putaran ke-7 selesai</div>
+      <div class="note">Peringkat <strong style="color:var(--gold-light)">#${rank}</strong></div>
+      <div class="verse"><div class="ref">IBRANI 11:30</div><div class="tx">Karena iman maka runtuhlah tembok-tembok Yerikho, sesudah kota itu dikelilingi tujuh hari lamanya.</div></div>
+      <div class="note" style="font-size:1.1vw;opacity:.8">Rumah Rahab dengan tali kirmizi tetap berdiri (Yos 2:18; 6:22–25).</div>
+      <div class="go" style="margin-top:2.4vh">Tekan <kbd>SPASI</kbd> untuk tim berikutnya</div>` : `
+      <div class="kicker">${escapeHtml(team)}</div>
+      <div class="title" style="font-size:3.4vw">${failView[0]}</div>
+      <div class="big" style="color:var(--red);font-size:4.6vw">${failView[1]}</div>
+      <div class="note">${failView[2]} Tembok tetap berdiri.</div>
+      <div class="verse"><div class="ref">${failReason === 'late' ? 'YOSUA 6:16' : 'YOSUA 6:10'}</div><div class="tx">${failReason === 'late'
+        ? 'Lalu pada ketujuh kalinya, ketika para imam meniup sangkakala, berkatalah Yosua kepada bangsa itu: "Bersoraklah, sebab TUHAN telah menyerahkan kota ini kepadamu!"'
+        : '"Janganlah bersorak dan janganlah perdengarkan suaramu, sepatah katapun janganlah keluar dari mulutmu sampai pada hari aku mengatakan kepadamu: Bersoraklah!"'}</div></div>
+      <div class="go" style="margin-top:2.4vh">Tekan <kbd>SPASI</kbd> untuk kembali</div>`;
+  renderLb('#lbResult');
+  setState('result');
+}
+
+function renderLb(sel) {
+  const lb = load('yerikho:lb', []).slice(0, 8);
+  $(sel).innerHTML = lb.length ? lb.map((e, i) =>
+    `<li class="${e.ts === lastTs ? 'me' : ''}"><span class="r">${i + 1}</span><span class="n">${escapeHtml(e.team)}</span><span class="t">${e.time.toFixed(1).replace('.', ',')} dtk</span></li>`).join('')
+    : '<div class="empty">Belum ada tim yang berhasil. Jadilah yang pertama!</div>';
+}
+function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+/* ── update ── */
+function update(dt) {
+  t += dt;
+  const d = rawDb();
+  const k = d > lvl ? 25 : 6;
+  lvl += (d - lvl) * (1 - Math.exp(-k * dt));
+  shake = Math.max(0, shake - dt * 10);
+
+  if (state === 'calib') {
+    calibT += dt; calibS.push(d);
+    const n = String(3 - Math.floor(calibT));
+    if (calibT < 3 && n !== cdShown) { cdShown = n; banner(`${n}<small>Semua diam dulu</small>`, 'cream', true); }
+    if (calibT > 3) {
+      if (micOK) {
+        calibS.sort((a, b) => a - b);
+        baseline = clamp(calibS[Math.floor(calibS.length * 0.8)], -80, -22);
+      }
+      setState('march');
+      banner('DIAM!<small>Rombongan mulai mengelilingi kota</small>', 'gold');
+    }
+  } else if (state === 'march') {
+    lapT += dt;
+    const afterSeven = lap >= LAPS; // the 7th lap is done, the procession keeps walking
+    const limit = afterSeven ? shoutFloor() : silenceLimit();
+    if (lvl > limit) loudT += dt; else loudT = Math.max(0, loudT - dt * 2);
+    if (afterSeven) {
+      reactT += dt;
+      if (loudT > 0.15) { success(); return; }
+    } else if (loudT > 0.25) { fail(lvl > shoutFloor() ? 'early' : 'noise'); return; }
+    if (lapT >= lapDurs[Math.min(lap, LAPS)]) {
+      lapT = 0; lap++;
+      if (lap === SHOWN) banner('HITUNG SENDIRI<small>Mulai sekarang layar tidak menghitung putaran</small>', 'gold');
+      if (lap > LAPS) { fail('late'); return; }
+    }
+    setPhase(lap < SHOWN
+      ? `Putaran ${lap + 1} <small>Diam total</small>`
+      : 'Putaran ke-berapa? <small>Diam total · hitung sendiri</small>');
+    renderLaps();
+  } else if (state === 'failshow') {
+    failT += dt;
+    if (failT > 2.2) finish(false);
+  } else if (state === 'fall') {
+    fallT += dt; shake = Math.max(shake, 14 - fallT * 10);
+    if (fallT > 3.2) finish(true);
+  }
+
+  // meter: baseline-5 .. baseline+45 (both lines always shown, so the meter never hints that lap 7 is over)
+  const m = v => clamp((v - (baseline - 5)) / 50, 0, 1) * 100;
+  $('#meterFill').style.height = m(lvl) + '%';
+  $('#mSil').style.bottom = m(silenceLimit()) + '%';
+  $('#mShout').style.bottom = m(shoutFloor()) + '%';
+
+  // physics
+  const g = H * 2.4;
+  blocks.forEach(b => {
+    if (!b.fallen || b.rest) return;
+    b.vy += g * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.rot += b.vr * dt;
+    if (b.y + b.h > b.floor) {
+      b.y = b.floor - b.h; b.vy *= -0.18; b.vx *= 0.55; b.vr *= 0.5;
+      if (Math.abs(b.vy) < 30) { b.rest = true; }
+    }
+  });
+  dust.forEach(p => { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.g) p.vy += H * 2 * dt; p.r += p.gr * dt; });
+  dust = dust.filter(p => p.life > 0 && p.y < H + 40);
+}
+function mkDust(x, y, s) { return { x, y, vx: rnd(-40, 40) * s, vy: rnd(-40, -8) * s, r: rnd(4, 12) * s, gr: rnd(12, 30) * s, life: rnd(1, 2.2) * s, max: 2.2 * s, c: 'dust' }; }
+function mkPebble() { return { x: rnd(geo.x0, geo.x1), y: geo.topY + rnd(0, geo.bh * 2), vx: rnd(-60, 60), vy: rnd(-40, 0), r: rnd(2, 4), gr: 0, life: 1.5, max: 1.5, g: true, c: 'peb' }; }
+
+/* ── draw ── */
+function draw() {
+  ctx.save();
+  if (shake > 0) ctx.translate(rnd(-shake, shake), rnd(-shake, shake));
+  const hz = H * 0.6;
+  // sky
+  let gr = ctx.createLinearGradient(0, 0, 0, hz);
+  gr.addColorStop(0, '#07081a'); gr.addColorStop(0.55, '#2a1a35'); gr.addColorStop(1, '#b8683a');
+  ctx.fillStyle = gr; ctx.fillRect(-20, -20, W + 40, hz + 20);
+  stars.forEach(s => { ctx.globalAlpha = 0.4 + 0.4 * Math.sin(t * 1.5 + s.p); ctx.fillStyle = '#f0e6cf'; ctx.fillRect(s.x, s.y, s.r, s.r); });
+  ctx.globalAlpha = 1;
+  // moon glow
+  const mg = ctx.createRadialGradient(W * 0.82, H * 0.14, 0, W * 0.82, H * 0.14, H * 0.12);
+  mg.addColorStop(0, 'rgba(240,230,207,.9)'); mg.addColorStop(0.25, 'rgba(240,230,207,.5)'); mg.addColorStop(1, 'rgba(240,230,207,0)');
+  ctx.fillStyle = mg; ctx.beginPath(); ctx.arc(W * 0.82, H * 0.14, H * 0.12, 0, 7); ctx.fill();
+  // hills
+  ctx.fillStyle = '#3a2220';
+  ctx.beginPath(); ctx.moveTo(-20, hz);
+  for (let x = -20; x <= W + 20; x += 20) ctx.lineTo(x, hz - H * 0.05 - Math.sin(x * 0.006) * H * 0.025 - Math.sin(x * 0.017) * H * 0.01);
+  ctx.lineTo(W + 20, hz); ctx.fill();
+  // ground
+  gr = ctx.createLinearGradient(0, hz, 0, H);
+  gr.addColorStop(0, '#9a6a38'); gr.addColorStop(1, '#2e1f10');
+  ctx.fillStyle = gr; ctx.fillRect(-20, hz, W + 40, H - hz + 20);
+
+  // track + procession (back half)
+  const cx = W / 2, cy = geo.baseY + H * 0.012, rx = W * 0.39, ry = H * 0.045;
+  const prog = state === 'march' ? marchProg() : state === 'calib' ? 0 : frozenProg;
+  drawTrack(cx, cy, rx, ry, true);
+  drawProcession(cx, cy, rx, ry, prog, true);
+
+  // houses peeking over wall
+  ctx.fillStyle = '#5a3c26';
+  houses.forEach(h => {
+    const top = geo.topY - h.h + geo.bh * 1.5;
+    ctx.fillRect(h.x, top, h.w, geo.baseY - top);
+    ctx.fillStyle = 'rgba(232,166,74,.5)'; ctx.fillRect(h.x + h.w * 0.35, top + geo.bh * 0.5, h.w * 0.3, geo.bh * 0.6);
+    ctx.fillStyle = '#5a3c26';
+  });
+  // gate opening (only while the wall stands)
+  if (!blocks.some(b => b.fallen)) {
+    const gx = geo.x0 + geo.gateCols[0] * geo.bw, gw = geo.bw * 2, gh = geo.gateRows * geo.bh;
+    ctx.fillStyle = '#1a0f08';
+    ctx.fillRect(gx, geo.baseY - gh, gw, gh);
+  }
+
+  // blocks: standing first, fallen after
+  blocks.forEach(b => { if (!b.fallen) drawBlock(b, 0); });
+  // Rahab's window + scarlet cord
+  const wx = geo.x0 + geo.winCol * geo.bw, wy = geo.baseY - (geo.winRow + 1) * geo.bh;
+  ctx.fillStyle = '#e8a64a'; ctx.globalAlpha = 0.85;
+  ctx.fillRect(wx + geo.bw * 0.15, wy + geo.bh * 0.1, geo.bw * 0.7, geo.bh * 1.8);
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = '#c0182a'; ctx.lineWidth = Math.max(2, geo.bw * 0.1);
+  ctx.beginPath(); ctx.moveTo(wx + geo.bw * 0.5, wy + geo.bh * 1.9);
+  for (let i = 1; i <= 8; i++) ctx.lineTo(wx + geo.bw * 0.5 + Math.sin(t * 2 + i) * geo.bw * 0.06, wy + geo.bh * 1.9 + i * geo.bh * 0.45);
+  ctx.stroke();
+
+  blocks.forEach(b => { if (b.fallen) drawBlock(b, 0); });
+
+  drawTrack(cx, cy, rx, ry, false);
+  drawLapPost(cx, cy + ry);
+  drawProcession(cx, cy, rx, ry, prog, false);
+
+  // dust
+  dust.forEach(p => {
+    const a = clamp(p.life / p.max, 0, 1);
+    if (p.c === 'peb') { ctx.fillStyle = `rgba(120,90,55,${a})`; ctx.fillRect(p.x, p.y, p.r, p.r); }
+    else {
+      const dg = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+      dg.addColorStop(0, `rgba(190,160,115,${a * 0.3})`); dg.addColorStop(1, 'rgba(190,160,115,0)');
+      ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+    }
+  });
+  ctx.restore();
+
+  // vignette
+  const vg = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.95);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.6)');
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+}
+function drawBlock(b, wob) {
+  ctx.save();
+  const ox = wob ? rnd(-wob, wob) : 0;
+  ctx.translate(b.x + b.w / 2 + ox, b.y + b.h / 2);
+  if (b.rot) ctx.rotate(b.rot);
+  ctx.fillStyle = b.col; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+  ctx.fillStyle = b.dark; ctx.fillRect(-b.w / 2, b.h / 2 - b.h * 0.18, b.w, b.h * 0.18);
+  ctx.strokeStyle = 'rgba(40,25,12,.55)'; ctx.lineWidth = 1; ctx.strokeRect(-b.w / 2, -b.h / 2, b.w, b.h);
+  ctx.restore();
+}
+function drawTrack(cx, cy, rx, ry, back) {
+  ctx.save(); ctx.setLineDash([8, 10]); ctx.strokeStyle = 'rgba(232,201,122,.35)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, back ? Math.PI : 0, back ? Math.PI * 2 : Math.PI); ctx.stroke();
+  ctx.restore();
+}
+// torch post at the front of the track: one lap = the ark passing this post
+function drawLapPost(x, y) {
+  const h = H * 0.11, fl = 1 + 0.15 * Math.sin(t * 12);
+  ctx.fillStyle = '#4a3220'; ctx.fillRect(x - 3, y - h, 6, h + H * 0.02);
+  const g = ctx.createRadialGradient(x, y - h, 0, x, y - h, H * 0.035 * fl);
+  g.addColorStop(0, 'rgba(255,240,190,1)'); g.addColorStop(0.4, 'rgba(255,160,60,.8)'); g.addColorStop(1, 'rgba(255,120,40,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y - h, H * 0.035 * fl, 0, 7); ctx.fill();
+}
+function drawProcession(cx, cy, rx, ry, prog, back) {
+  if (state === 'idle' || state === 'result') prog = t * 0.08;
+  const base = Math.PI / 2 + prog * Math.PI * 2;
+  const s = geo.bw * 0.75;
+  // order: 7 priests (white) ahead, ark, people behind
+  for (let k = -9; k <= 7; k++) {
+    const a = base - k * 0.06;
+    const sn = Math.sin(a);
+    if ((sn < 0) !== back) continue;
+    const x = cx + Math.cos(a) * rx, y = cy + sn * ry;
+    const depth = 0.7 + 0.3 * (sn + 1) / 2;
+    const bob = Math.sin(t * 8 + k) * s * 0.08;
+    if (k === 0) { // ark of the covenant
+      ctx.fillStyle = '#e8c97a'; ctx.shadowColor = 'rgba(232,201,122,.9)'; ctx.shadowBlur = 16;
+      ctx.fillRect(x - s * 1.1 * depth, y - s * 1.9 * depth + bob, s * 2.2 * depth, s * 0.9 * depth);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#8a6f30'; ctx.fillRect(x - s * 1.6 * depth, y - s * 1.1 * depth + bob, s * 3.2 * depth, s * 0.14 * depth);
+      continue;
+    }
+    const priest = k > 0;
+    ctx.fillStyle = priest ? '#efe6d2' : '#6b4a2e';
+    ctx.fillRect(x - s * 0.28 * depth, y - s * 1.6 * depth + bob, s * 0.56 * depth, s * 1.6 * depth);
+    ctx.fillStyle = '#c89a6a'; ctx.beginPath(); ctx.arc(x, y - s * 1.85 * depth + bob, s * 0.26 * depth, 0, 7); ctx.fill();
+    if (priest) { ctx.strokeStyle = '#d9b45a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x + s * 0.2, y - s * 1.8 * depth + bob); ctx.quadraticCurveTo(x + s * 0.9, y - s * 2.3 * depth + bob, x + s * 1.1, y - s * 2.6 * depth + bob); ctx.stroke(); }
+  }
+}
+
+/* ── loop ── */
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  update(dt); draw();
+  requestAnimationFrame(loop);
+}
+
+/* ── input ── */
+addEventListener('keydown', e => {
+  if (e.key === 'Shift') shiftDown = true;
+  if ((e.key === 'n' || e.key === 'N') && document.activeElement !== $('#teamInput')) nDown = true;
+  const typing = document.activeElement === $('#teamInput');
+  if (e.key === 'Enter' && state === 'idle') { e.preventDefault(); startRound(); return; }
+  if (e.key === 'Escape') { if (!$('#settings').hidden) { $('#settings').hidden = true; return; } if (state !== 'idle') { setState('idle'); } return; }
+  if (typing) return;
+  if (e.code === 'Space') { e.preventDefault(); if (state === 'result') { $('#teamInput').value = ''; setState('idle'); } else if (state === 'idle') startRound(); }
+  if (e.key === 'f' || e.key === 'F') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
+  if (e.key === 's' || e.key === 'S') { $('#settings').hidden = !$('#settings').hidden; }
+});
+addEventListener('keyup', e => { if (e.key === 'Shift') shiftDown = false; if (e.key === 'n' || e.key === 'N') nDown = false; });
+addEventListener('blur', () => { shiftDown = false; nDown = false; });
+$('#startBtn').addEventListener('click', startRound);
+
+/* settings wiring */
+function bindRange(id, key, fmt) {
+  const el = $(id), out = $(id.replace('#s', '#v'));
+  el.value = CFG[key]; out.textContent = fmt(CFG[key]);
+  el.addEventListener('input', () => { CFG[key] = +el.value; out.textContent = fmt(CFG[key]); save('yerikho:cfg', CFG); });
+}
+bindRange('#sSil', 'silenceMargin', v => `+${v} dB`);
+bindRange('#sShout', 'shoutMargin', v => `+${v} dB`);
+bindRange('#sLap', 'lapDur', v => `${v.toFixed(1)} dtk`);
+bindRange('#sVar', 'lapVar', v => `±${Math.round(v * 100)}%`);
+$('#resetLb').addEventListener('click', () => { if (confirm('Hapus semua skor di papan juara?')) { save('yerikho:lb', []); renderLb('#lbIdle'); renderLb('#lbResult'); } });
+
+resize();
+setState('idle');
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

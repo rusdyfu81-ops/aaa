@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Air Mara — Lorong Waktu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#a88a44;--cream:#f0e6cf;--parchment:#d8c9a4;--ink:#0d0a04;--panel:rgba(25,19,7,.9);--border:#5a4718;--red:#e0664a;--green:#8fc46a;--water:#7fd3e0;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--ink);color:var(--cream);font-family:'Crimson Pro',Georgia,serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+[hidden]{display:none!important}
+
+#hud{position:fixed;left:0;right:0;top:0;display:flex;justify-content:space-between;padding:1.8vh 2.4vw;pointer-events:none;z-index:5}
+#hud .brand{font-family:'Cinzel',serif;font-size:1.5vw;letter-spacing:.14em;color:var(--gold-light);text-shadow:0 0 8px rgba(0,0,0,.9)}
+#prompt{position:fixed;top:7vh;left:0;right:0;text-align:center;font-family:'Cinzel',serif;font-weight:900;font-size:2.6vw;color:var(--cream);text-shadow:0 0 18px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,1);pointer-events:none;z-index:5}
+#prompt small{display:block;font-family:'Crimson Pro',serif;font-weight:400;font-style:italic;font-size:1.7vw;color:var(--gold-light);margin-top:.4vh}
+#caption{position:fixed;left:50%;top:13vh;transform:translateX(-50%);width:76vw;text-align:center;z-index:6;pointer-events:none;font-size:2.2vw;font-style:italic;color:var(--cream);text-shadow:0 0 16px rgba(0,0,0,1),0 0 4px rgba(0,0,0,1);opacity:0;transition:opacity .4s}
+#caption.on{opacity:1}
+#caption .who{display:block;font-style:normal;font-family:'Cinzel',serif;font-size:1.4vw;letter-spacing:.14em;color:var(--gold-light)}
+#banner{position:fixed;left:0;right:0;top:24vh;text-align:center;font-family:'Cinzel',serif;font-weight:900;font-size:5.2vw;letter-spacing:.03em;pointer-events:none;z-index:6;opacity:0}
+#banner small{display:block;font-family:'Crimson Pro',serif;font-weight:400;font-style:italic;font-size:2vw;letter-spacing:0;margin-top:1vh}
+#banner.show{animation:pop 2.2s ease-out forwards}
+#banner.hold{animation:popHold .5s ease-out forwards}
+#banner.gold{color:var(--gold-light);text-shadow:0 0 40px rgba(232,201,122,.8),0 0 8px rgba(0,0,0,.95)}
+#banner.cream{color:var(--cream);text-shadow:0 0 30px rgba(0,0,0,.95)}
+#banner.red{color:var(--red);text-shadow:0 0 30px rgba(224,102,74,.7),0 0 8px rgba(0,0,0,.95)}
+#banner.water{color:var(--water);text-shadow:0 0 40px rgba(127,211,224,.8),0 0 8px rgba(0,0,0,.95)}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}12%{opacity:1;transform:scale(1.06)}22%{transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+@keyframes popHold{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:4vh 4vw;z-index:10;background:radial-gradient(ellipse at center,rgba(13,10,4,.35),rgba(13,10,4,.82))}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:1.4vw;padding:4vh 3.2vw;backdrop-filter:blur(6px);max-width:56vw;text-align:center}
+.kicker{font-family:'Cinzel',serif;font-size:1.4vw;letter-spacing:.16em;color:var(--gold-dim)}
+.title{font-family:'Cinzel',serif;font-weight:900;font-size:4.6vw;line-height:1.05;color:var(--gold);text-shadow:0 0 36px rgba(201,168,76,.45);margin:1.2vh 0}
+.sub{font-style:italic;font-size:1.8vw;color:var(--parchment)}
+.steps{list-style:none;text-align:left;margin:3vh auto 2.4vh;display:flex;flex-direction:column;gap:1.3vh}
+.steps li{display:flex;gap:1vw;align-items:baseline;font-size:1.75vw;line-height:1.3}
+.steps b{font-family:'Cinzel',serif;color:var(--ink);background:var(--gold);border-radius:50%;min-width:2.3vw;height:2.3vw;display:inline-flex;align-items:center;justify-content:center;font-size:1.1vw;flex:0 0 auto;transform:translateY(-.15vw)}
+.go{margin-top:2vh;font-family:'Cinzel',serif;font-size:1.6vw;letter-spacing:.1em;color:var(--gold-light)}
+.go kbd{font-family:inherit;border:1px solid var(--gold-dim);border-radius:.4vw;padding:.1vh .6vw;margin:0 .2vw}
+.btn{cursor:pointer;font-family:'Cinzel',serif;font-size:1.5vw;letter-spacing:.08em;background:var(--gold);color:var(--ink);border:none;border-radius:.8vw;padding:1.6vh 3vw;margin-top:2vh}
+.hero{font-family:'Cinzel',serif;font-weight:900;font-size:3.8vw;line-height:1.1;margin:1vh 0}
+.msg{font-size:1.9vw;color:var(--cream);margin-top:1.6vh;line-height:1.4}
+.verse{margin-top:2.8vh;border-left:3px solid var(--water);background:rgba(13,10,4,.6);padding:1.6vh 1.4vw;text-align:left;border-radius:0 .6vw .6vw 0}
+.verse .ref{font-family:'Cinzel',serif;font-size:1.2vw;letter-spacing:.08em;color:var(--water)}
+.verse .tx{font-style:italic;font-size:1.75vw;color:var(--cream);line-height:1.4;margin-top:.5vh}
+.stat{margin-top:2.4vh;font-size:1.5vw;color:var(--parchment)}
+.stat b{color:var(--gold-light)}
+.foot{position:fixed;bottom:1.4vh;left:0;right:0;text-align:center;font-size:1.1vw;color:var(--gold-dim);z-index:11}
+#panel{position:fixed;right:2vw;top:8vh;width:30vw;z-index:20;background:var(--panel);border:1px solid var(--gold-dim);border-radius:1vw;padding:2.4vh 1.6vw;font-size:1.3vw}
+#panel h4{font-family:'Cinzel',serif;color:var(--gold);letter-spacing:.1em;margin-bottom:1.4vh}
+#panel li{list-style:none;display:flex;justify-content:space-between;padding:.4vh 0;border-bottom:1px solid rgba(90,71,24,.5)}
+#panel button{margin-top:1.6vh;font-family:'Cinzel',serif;font-size:1.1vw;background:transparent;color:var(--red);border:1px solid var(--red);border-radius:.5vw;padding:.8vh 1vw;cursor:pointer}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud" hidden><div class="brand">LORONG WAKTU · BABAK 2</div></div>
+<div id="prompt" hidden></div>
+<div id="caption"></div>
+<div id="banner"></div>
+
+<div class="screen" id="idle">
+  <div class="card">
+    <div class="kicker">LORONG WAKTU · BABAK 2</div>
+    <div class="title">Air Mara</div>
+    <div class="sub">Keluaran 15 — tiga hari tanpa air, lalu airnya pahit</div>
+    <ul class="steps">
+      <li><b>1</b><span>Pilih <strong>satu</strong> benda dari meja.</span></li>
+      <li><b>2</b><span>Seret lalu <strong>lemparkan</strong> ke dalam air, atau cukup sentuh bendanya.</span></li>
+      <li><b>3</b><span>Hanya satu kesempatan: benda apa yang membuat air pahit <strong>menjadi manis</strong>?</span></li>
+    </ul>
+    <button class="btn" id="startBtn">Mulai</button>
+    <div class="go">atau tekan <kbd>SPASI</kbd></div>
+  </div>
+</div>
+
+<div class="screen" id="result" hidden><div class="card" id="resultMain"></div></div>
+
+<div id="panel" hidden>
+  <h4>PILIHAN TIM HARI INI</h4>
+  <ul id="panelList"></ul>
+  <button id="resetStats">Hapus statistik</button>
+</div>
+<div class="foot" id="foot">SPASI mulai / lewati cerita · 1–0 lempar benda di posisi itu · F layar penuh · S statistik · ESC batal</div>
+
+<script>
+/* ════════════════════════════════════════════
+   AIR MARA — prototipe (Keluaran 15:20–25)
+   Pujian (15:21) → tiga hari tanpa air (15:22) → air pahit & bersungut (15:23–24)
+   → pemain memilih SATU benda dan melemparnya ke air → hanya sepotong kayu yang membuatnya manis (15:25)
+   ════════════════════════════════════════════ */
+const $ = s => document.querySelector(s);
+const cv = $('#c'), ctx = cv.getContext('2d');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = (a = 0, b = 1) => a + Math.random() * (b - a);
+const lerp = (a, b, k) => a + (b - a) * k;
+function load(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+const ITEMS = [
+  { id: 'gula', name: 'Gula', msg: 'Gulanya larut… tetapi airnya tetap pahit.', tint: [240, 235, 220], sinks: true },
+  { id: 'madu', name: 'Madu', msg: 'Madunya tenggelam. Airnya tetap pahit.', tint: [220, 150, 40], sinks: true },
+  { id: 'sirup', name: 'Sirup', msg: 'Warnanya sempat berubah… lalu pahit lagi.', tint: [200, 40, 70], sinks: true },
+  { id: 'garam', name: 'Garam', msg: 'Malah bertambah asin!', tint: [230, 230, 230], sinks: true },
+  { id: 'batu', name: 'Batu', msg: 'Byur! Batunya tenggelam. Airnya tetap pahit.', sinks: true, big: true },
+  { id: 'emas', name: 'Koin Emas', msg: 'Emas tidak dapat mengubah air.', tint: [240, 200, 80], sinks: true },
+  { id: 'roti', name: 'Roti', msg: 'Rotinya hanya jadi lembek.' },
+  { id: 'daun', name: 'Daun', msg: 'Daunnya mengapung saja.' },
+  { id: 'tongkat', name: 'Tongkat', msg: 'Tongkat Musa pernah membelah laut, tetapi bukan ini yang TUHAN tunjukkan di Mara.' },
+  { id: 'kayu', name: 'Sepotong Kayu', right: true }
+];
+const byId = id => ITEMS.find(i => i.id === id);
+
+/* ── canvas & scene geometry ── */
+let W, H, DPR, P = {}, slots = [], crowd = [], stars = [];
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  P = { x: W * 0.5, y: H * 0.6, rx: W * 0.27, ry: H * 0.105 };
+  const n = ITEMS.length, x0 = W * 0.05, sw = (W * 0.9) / n;
+  slots = Array.from({ length: n }, (_, i) => ({ x: x0 + sw * (i + 0.5), y: H * 0.845, w: sw }));
+  crowd = Array.from({ length: 15 }, (_, i) => ({
+    x: P.x - P.rx * 1.05 + (i / 14) * P.rx * 2.1 + rnd(-8, 8), h: H * rnd(0.085, 0.11),
+    c: `hsl(${rnd(20, 40)},${rnd(25, 40)}%,${rnd(18, 30)}%)`, jar: Math.random() < 0.35, ph: rnd(0, 6)
+  }));
+  stars = Array.from({ length: 50 }, () => ({ x: rnd(0, W), y: rnd(0, H * 0.25), r: rnd(0.5, 1.5), p: rnd(0, 6) }));
+}
+addEventListener('resize', resize);
+const inPool = (x, y) => ((x - P.x) / P.rx) ** 2 + ((y - P.y) / P.ry) ** 2 <= 1;
+const itemSize = () => Math.min(slots[0].w * 0.34, H * 0.055);
+
+/* ── state ── */
+let state = 'idle', t = 0, phaseT = 0;
+let order = [], hover = -1, grab = null, fly = null, floaters = [], sinkers = [], ripples = [], drops = [], sparkles = [];
+let chosen = null, sweet = 0, clearR = 0, clearAt = null, tint = null, mood = 'tired', bubbles = [], beam = 0, missT = 0;
+
+function show(id, on) { $(id).hidden = !on; }
+function setState(s) {
+  state = s; phaseT = 0;
+  show('#idle', s === 'idle'); show('#result', s === 'result');
+  show('#hud', s !== 'idle' && s !== 'result'); show('#foot', s === 'idle' || s === 'result');
+  show('#prompt', s === 'choose');
+  if (s === 'idle' || s === 'result') { caption(''); hideBanner(); }
+}
+function banner(html, cls, hold) { const b = $('#banner'); b.className = ''; void b.offsetWidth; b.innerHTML = html; b.className = `${cls} ${hold ? 'hold' : 'show'}`; }
+function hideBanner() { $('#banner').className = ''; }
+function caption(html, who) { const c = $('#caption'); if (!html) { c.className = ''; return; } c.innerHTML = `${who ? `<span class="who">${who}</span>` : ''}${html}`; c.className = 'on'; }
+function say(texts, dur = 2.4) { bubbles = texts.map(([i, tx]) => ({ i, tx, life: dur, max: dur })); }
+
+function start() {
+  if (state !== 'idle') return;
+  audio();
+  order = ITEMS.map(i => i.id).sort(() => Math.random() - 0.5); // the wood is never in the same spot twice
+  chosen = null; sweet = 0; clearR = 0; clearAt = null; tint = null; fly = null; grab = null;
+  floaters = []; sinkers = []; ripples = []; drops = []; sparkles = []; bubbles = []; beam = 0;
+  setState('intro'); mood = 'praise'; startDrums();
+  banner('MENYANYILAH BAGI TUHAN!<small>Laut Teberau terbelah, Mesir tenggelam (Kel 15:21)</small>', 'gold', true);
+}
+function beginChoose() {
+  stopDrums(); hideBanner(); caption(''); setState('choose'); mood = 'grumble';
+  $('#prompt').innerHTML = 'PILIH SATU BENDA · LEMPARKAN KE AIR<small>Hanya satu kesempatan. Apa yang membuat air pahit menjadi manis?</small>';
+  say([[3, 'Pahit!'], [8, 'Apakah yang akan kami minum?'], [12, 'Musa!']], 99);
+}
+
+/* ── throwing ── */
+function slotOf(id) { return slots[order.indexOf(id)]; }
+function launch(id, sx, sy, tx, ty, T, auto) {
+  fly = { id, sx, sy, tx, ty, T, u: 0, peak: H * clamp(Math.hypot(tx - sx, ty - sy) / H * 0.45, 0.08, 0.28), auto };
+  if (!auto) setState('fly'); else state = 'fly2';
+  whoosh();
+}
+function throwToPool(id, auto) {
+  const s = slotOf(id);
+  launch(id, s.x, s.y, P.x + rnd(-0.25, 0.25) * P.rx, P.y + rnd(-0.2, 0.2) * P.ry, 0.9, auto);
+}
+function land() {
+  const f = fly; fly = null;
+  if (!inPool(f.tx, f.ty)) { // missed the water: nothing counts, it goes back to the table
+    missT = 1; banner('MELESET!<small>Coba lemparkan lagi ke dalam air</small>', 'cream');
+    thud(); setState('choose'); return;
+  }
+  splash(f.tx, f.ty, byId(f.id));
+  if (!f.auto) {
+    chosen = f.id;
+    const st = load('mara:stats', {}); st[f.id] = (st[f.id] || 0) + 1; save('mara:stats', st);
+  }
+  if (byId(f.id).right) { beginSweet(f.tx, f.ty); return; }
+  setState('react'); mood = 'grumble'; buzz();
+  caption(byId(f.id).msg);
+  say([[2, 'Masih pahit!'], [7, 'Apakah yang akan kami minum?'], [11, 'Huh!']], 3);
+}
+function splash(x, y, it) {
+  ripples.push({ x, y, r: 0 }, { x, y, r: -H * 0.03 }, { x, y, r: -H * 0.07 });
+  for (let i = 0; i < (it.big ? 40 : 22); i++) drops.push({ x, y, vx: rnd(-1, 1) * W * 0.12, vy: -rnd(0.3, 0.9) * H * (it.big ? 1.2 : 0.8), life: 0.9 });
+  if (it.tint) tint = { c: it.tint, a: 0.55 };
+  if (it.sinks) sinkers.push({ id: it.id, x, y, a: 1 });
+  else if (!it.right) floaters.push({ id: it.id, x, y, ph: rnd(0, 6) });
+  splashSound(it.big);
+}
+function beginSweet(x, y) {
+  setState('sweet'); clearAt = { x, y }; clearR = 0; mood = 'joy'; chime();
+  caption('…Musa melemparkan kayu itu ke dalam air; lalu air itu menjadi manis.', 'KELUARAN 15:25');
+  say([[1, 'Manis!'], [5, 'Puji TUHAN!'], [9, 'Airnya manis!'], [13, 'Haleluya!']], 3.5);
+}
+
+/* pointer: drag + flick, or a simple tap = automatic throw */
+let ptr = null;
+function itemAt(x, y) {
+  let best = -1, bd = 1e9;
+  slots.forEach((s, i) => { const d = Math.hypot(x - s.x, y - s.y); if (d < s.w * 0.48 && d < bd) { bd = d; best = i; } });
+  return best;
+}
+cv.addEventListener('pointermove', e => {
+  if (state !== 'choose') { hover = -1; return; }
+  hover = itemAt(e.clientX, e.clientY);
+  if (grab) { grab.x = e.clientX; grab.y = e.clientY; grab.hist.push([e.clientX, e.clientY, performance.now()]); if (grab.hist.length > 12) grab.hist.shift(); }
+  cv.style.cursor = grab ? 'grabbing' : hover >= 0 ? 'grab' : 'default';
+});
+cv.addEventListener('pointerdown', e => {
+  if (state !== 'choose') return;
+  const i = itemAt(e.clientX, e.clientY); if (i < 0) return;
+  cv.setPointerCapture(e.pointerId);
+  grab = { id: order[i], x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, hist: [[e.clientX, e.clientY, performance.now()]] };
+});
+cv.addEventListener('pointerup', e => {
+  if (!grab) return;
+  const g = grab; grab = null;
+  const moved = Math.hypot(g.x - g.x0, g.y - g.y0);
+  if (moved < 12) { throwToPool(g.id); return; } // tap
+  const now = performance.now(), h = g.hist.filter(p => now - p[2] < 110);
+  const a = h[0] || g.hist[0], b = [g.x, g.y, now], dt = Math.max(0.016, (b[2] - a[2]) / 1000);
+  const vx = (b[0] - a[0]) / dt, vy = (b[1] - a[1]) / dt;
+  if (vy < -H * 0.5) { // flicked upward: throw toward the water
+    const tx = g.x + vx * 0.32, ty = clamp(g.y + vy * 0.32, H * 0.46, g.y - H * 0.05);
+    launch(g.id, g.x, g.y, tx, ty, clamp(0.45 + Math.hypot(tx - g.x, ty - g.y) / H * 0.5, 0.5, 1));
+  } else if (inPool(g.x, g.y)) launch(g.id, g.x, g.y, g.x, g.y + 2, 0.25);
+  // otherwise it simply goes back to the table
+});
+
+/* ── sounds ── */
+let actx = null, drumTimer = null;
+function audio() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); return actx; }
+function env(g, t0, a, peak, d) { g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + a); g.gain.exponentialRampToValueAtTime(0.0001, t0 + a + d); }
+function blip(f, type = 'sine', peak = 0.15, d = 0.18, delay = 0) {
+  if (!actx) return;
+  const t0 = actx.currentTime + delay, o = actx.createOscillator(), g = actx.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t0); o.connect(g); g.connect(actx.destination); env(g, t0, 0.01, peak, d);
+  o.start(t0); o.stop(t0 + d + 0.05);
+}
+function noise(dur, type, f, peak, delay = 0) {
+  if (!actx) return;
+  const sr = actx.sampleRate, b = actx.createBuffer(1, Math.ceil(sr * dur), sr), d = b.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const s = actx.createBufferSource(), fl = actx.createBiquadFilter(), g = actx.createGain();
+  s.buffer = b; fl.type = type; fl.frequency.value = f; s.connect(fl); fl.connect(g); g.connect(actx.destination);
+  const t0 = actx.currentTime + delay; env(g, t0, 0.01, peak, dur - 0.02); s.start(t0);
+}
+const whoosh = () => noise(0.3, 'bandpass', 900, 0.15);
+const splashSound = big => { noise(big ? 0.7 : 0.45, 'lowpass', big ? 700 : 1400, big ? 0.7 : 0.45); noise(0.3, 'highpass', 3000, 0.12, 0.05); };
+const thud = () => blip(110, 'sine', 0.3, 0.2);
+const buzz = () => { blip(150, 'sawtooth', 0.07, 0.35); blip(120, 'sawtooth', 0.06, 0.4, 0.12); };
+const chime = () => [523, 659, 784, 1047, 1319].forEach((f, i) => blip(f, 'triangle', 0.14, 0.7, i * 0.11));
+function startDrums() { stopDrums(); let k = 0; drumTimer = setInterval(() => { if (k % 4 === 0) blip(95, 'sine', 0.25, 0.16); noise(0.07, 'bandpass', k % 2 ? 5000 : 2600, k % 4 === 2 ? 0.14 : 0.07); k++; }, 170); }
+function stopDrums() { if (drumTimer) clearInterval(drumTimer); drumTimer = null; }
+
+/* ── update ── */
+function update(dt) {
+  t += dt; phaseT += dt; missT = Math.max(0, missT - dt);
+  if (state === 'intro') {
+    if (phaseT > 3 && phaseT - dt <= 3) {
+      stopDrums(); mood = 'tired';
+      banner('TIGA HARI KEMUDIAN…<small>berjalan di padang gurun Syur, tidak mendapat air (Kel 15:22)</small>', 'cream', true);
+    }
+    if (phaseT > 6 && phaseT - dt <= 6) {
+      mood = 'grumble';
+      banner('MARA<small>tetapi mereka tidak dapat meminum airnya, karena pahit rasanya (Kel 15:23)</small>', 'red', true);
+      say([[4, 'Pahit!'], [10, 'Apakah yang akan kami minum?']], 3);
+    }
+    if (phaseT > 9.5) beginChoose();
+  } else if (state === 'react') {
+    if (phaseT > 3.2) {
+      setState('reveal'); mood = 'tired'; beam = 0;
+      caption('Musa berseru-seru kepada TUHAN, dan TUHAN menunjukkan kepadanya sepotong kayu', 'KELUARAN 15:25');
+    }
+  } else if (state === 'reveal') {
+    beam = Math.min(1, phaseT / 1.2);
+    if (phaseT > 3.6) { beam = 0; throwToPool('kayu', true); }
+  } else if (state === 'sweet') {
+    clearR = Math.min(P.rx * 2.2, clearR + dt * P.rx * 1.1);
+    sweet = Math.min(1, phaseT / 2);
+    if (Math.random() < dt * 30) sparkles.push({ x: P.x + rnd(-1, 1) * P.rx * 0.9, y: P.y + rnd(-1, 1) * P.ry * 0.8, life: 0.8 });
+    if (phaseT > 5) finish();
+  }
+  if (fly) { fly.u += dt / fly.T; if (fly.u >= 1) land(); }
+  ripples.forEach(r => r.r += dt * H * 0.22); ripples = ripples.filter(r => r.r < P.rx * 0.9);
+  drops.forEach(d => { d.vy += H * 2.4 * dt; d.x += d.vx * dt; d.y += d.vy * dt; d.life -= dt; }); drops = drops.filter(d => d.life > 0);
+  sinkers.forEach(s => { s.a -= dt * 0.9; s.y += dt * H * 0.02; }); sinkers = sinkers.filter(s => s.a > 0);
+  sparkles.forEach(s => s.life -= dt); sparkles = sparkles.filter(s => s.life > 0);
+  bubbles.forEach(b => b.life -= dt); bubbles = bubbles.filter(b => b.life > 0);
+  if (tint) { tint.a -= dt * 0.25; if (tint.a <= 0) tint = null; }
+}
+
+function finish() {
+  const it = byId(chosen || 'kayu'), ok = it.right;
+  const st = load('mara:stats', {}), total = Object.values(st).reduce((a, b) => a + b, 0);
+  const top = Object.entries(st).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id, n]) => `${byId(id).name} (${n})`).join(', ');
+  $('#resultMain').innerHTML = `
+    <div class="kicker">PILIHAN KALIAN: ${it.name.toUpperCase()}</div>
+    <div class="hero" style="color:${ok ? 'var(--water)' : 'var(--gold-light)'}">${ok ? 'Airnya Menjadi Manis!' : `Bukan ${it.name},<br>tetapi Sepotong Kayu`}</div>
+    <div class="msg">${ok ? 'Kalian memilih apa yang TUHAN tunjukkan kepada Musa.' : `${it.msg} Jalan keluar dari TUHAN bukan yang paling masuk akal bagi manusia.`}</div>
+    <div class="verse"><div class="ref">KELUARAN 15:25</div><div class="tx">Musa berseru-seru kepada TUHAN, dan TUHAN menunjukkan kepadanya sepotong kayu; Musa melemparkan kayu itu ke dalam air; lalu air itu menjadi manis.</div></div>
+    <div class="stat">Hari ini <b>${st.kayu || 0} dari ${total}</b> tim memilih kayu${top ? ` · terbanyak: ${top}` : ''}</div>
+    <div class="go">Tekan <kbd>SPASI</kbd> untuk tim berikutnya</div>`;
+  setState('result');
+}
+
+/* ── draw ── */
+function draw() {
+  // sky & desert
+  let g = ctx.createLinearGradient(0, 0, 0, H * 0.45);
+  g.addColorStop(0, '#1b1430'); g.addColorStop(0.55, '#7a3f3a'); g.addColorStop(1, '#e09a52');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * 0.45);
+  stars.forEach(s => { ctx.globalAlpha = 0.25 + 0.25 * Math.sin(t + s.p); ctx.fillStyle = '#f0e6cf'; ctx.fillRect(s.x, s.y, s.r, s.r); });
+  ctx.globalAlpha = 1;
+  const sg = ctx.createRadialGradient(W * 0.2, H * 0.36, 0, W * 0.2, H * 0.36, H * 0.2);
+  sg.addColorStop(0, 'rgba(255,220,150,.95)'); sg.addColorStop(0.2, 'rgba(255,190,110,.5)'); sg.addColorStop(1, 'rgba(255,160,90,0)');
+  ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(W * 0.2, H * 0.36, H * 0.2, 0, 7); ctx.fill();
+  ctx.fillStyle = '#6a3a28';
+  ctx.beginPath(); ctx.moveTo(0, H * 0.45);
+  for (let x = 0; x <= W; x += 16) ctx.lineTo(x, H * 0.41 - Math.sin(x * 0.005 + 2) * H * 0.02 - Math.sin(x * 0.013) * H * 0.008);
+  ctx.lineTo(W, H * 0.45); ctx.fill();
+  g = ctx.createLinearGradient(0, H * 0.43, 0, H);
+  g.addColorStop(0, '#c08a52'); g.addColorStop(1, '#5a3a1e');
+  ctx.fillStyle = g; ctx.fillRect(0, H * 0.43, W, H * 0.57);
+
+  drawCrowd();
+  drawPool();
+  floaters.forEach(f => drawItem(f.id, f.x, f.y + Math.sin(t * 2 + f.ph) * 2, itemSize() * 0.6, Math.sin(t + f.ph) * 0.2, 0.9));
+  drops.forEach(d => { ctx.fillStyle = sweet > 0.5 ? 'rgba(170,230,240,.9)' : 'rgba(150,140,90,.9)'; ctx.fillRect(d.x, d.y, 3, 3); });
+
+  // table with the items
+  const ty = H * 0.8;
+  ctx.fillStyle = '#5a3b20'; ctx.fillRect(W * 0.03, ty + H * 0.07, W * 0.94, H * 0.035);
+  ctx.fillStyle = '#7a5230'; ctx.fillRect(W * 0.03, ty + H * 0.06, W * 0.94, H * 0.014);
+  const s = itemSize();
+  slots.forEach((sl, i) => {
+    const id = order[i]; if (!id) return;
+    const gone = (grab && grab.id === id) || (fly && fly.id === id);
+    const used = id === chosen || floaters.some(f => f.id === id) || (clearAt && id === 'kayu');
+    if (state === 'choose' && hover === i && !grab) {
+      ctx.save(); ctx.shadowColor = 'rgba(232,201,122,.9)'; ctx.shadowBlur = 30; ctx.fillStyle = 'rgba(232,201,122,.18)';
+      ctx.beginPath(); ctx.arc(sl.x, sl.y, sl.w * 0.45, 0, 7); ctx.fill(); ctx.restore();
+    }
+    if (beam > 0 && id === 'kayu') drawBeam(sl.x, sl.y);
+    if (!gone && !used) drawItem(id, sl.x, sl.y, s, 0, 1);
+    ctx.font = `600 ${Math.max(12, H * 0.024)}px Cinzel, Georgia, serif`; ctx.textAlign = 'center';
+    ctx.fillStyle = used || gone ? 'rgba(240,230,207,.35)' : '#f0e6cf';
+    ctx.shadowColor = 'rgba(0,0,0,.9)'; ctx.shadowBlur = 6;
+    ctx.fillText(byId(id).name, sl.x, H * 0.955);
+    ctx.shadowBlur = 0;
+    if (state === 'choose') { ctx.font = `700 ${Math.max(10, H * 0.018)}px Cinzel, Georgia, serif`; ctx.fillStyle = 'rgba(232,201,122,.7)'; ctx.fillText(String((i + 1) % 10), sl.x, H * 0.985); }
+  });
+
+  if (grab) drawItem(grab.id, grab.x, grab.y, s * 1.1, 0, 1);
+  if (fly) {
+    const u = clamp(fly.u, 0, 1), gx = lerp(fly.sx, fly.tx, u), gy = lerp(fly.sy, fly.ty, u);
+    const depth = clamp((gy - P.y) / (slots[0].y - P.y), 0, 1);
+    ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(gx, gy, s * 0.6, s * 0.2, 0, 0, 7); ctx.fill();
+    drawItem(fly.id, gx, gy - fly.peak * 4 * u * (1 - u), s * lerp(0.7, 1, depth), u * 6, 1);
+  }
+  sparkles.forEach(p => { ctx.fillStyle = `rgba(255,255,255,${p.life})`; ctx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3); });
+  drawBubbles();
+  const vg = ctx.createRadialGradient(W / 2, H / 2, H * 0.4, W / 2, H / 2, H * 0.95);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.45)');
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+}
+function drawPool() {
+  const { x, y, rx, ry } = P;
+  // rim stones
+  for (let k = 0; k < 40; k++) {
+    const a = k / 40 * Math.PI * 2;
+    ctx.fillStyle = k % 3 ? '#8a7560' : '#6e5c4a';
+    ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * rx * 1.04, y + Math.sin(a) * ry * 1.08, rx * 0.06, ry * 0.18, 0, 0, 7); ctx.fill();
+  }
+  ctx.save(); ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+  // bitter water: murky olive-brown with slow swirls
+  let g = ctx.createLinearGradient(0, y - ry, 0, y + ry);
+  g.addColorStop(0, '#6d6636'); g.addColorStop(1, '#3d3a1e');
+  ctx.fillStyle = g; ctx.fillRect(x - rx, y - ry, rx * 2, ry * 2);
+  for (let k = 0; k < 7; k++) {
+    ctx.fillStyle = k % 2 ? 'rgba(40,45,20,.35)' : 'rgba(110,100,55,.3)';
+    ctx.beginPath(); ctx.ellipse(x + Math.sin(t * 0.3 + k * 2) * rx * 0.6, y + Math.cos(t * 0.25 + k) * ry * 0.5, rx * 0.22, ry * 0.3, 0, 0, 7); ctx.fill();
+  }
+  if (tint) { ctx.fillStyle = `rgba(${tint.c.join(',')},${tint.a})`; ctx.fillRect(x - rx, y - ry, rx * 2, ry * 2); }
+  // sweet water spreads out from where the wood landed
+  if (clearAt && clearR > 0) {
+    ctx.save(); ctx.translate(clearAt.x, clearAt.y); ctx.scale(1, ry / rx);
+    const cg = ctx.createRadialGradient(0, 0, 0, 0, 0, clearR);
+    cg.addColorStop(0, '#bff3f5'); cg.addColorStop(0.5, '#62c6d6'); cg.addColorStop(0.97, '#2f95ad'); cg.addColorStop(1, 'rgba(47,149,173,0)');
+    ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(0, 0, clearR, 0, 7); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = `rgba(255,255,255,${0.25 * sweet})`; ctx.lineWidth = 2;
+    for (let k = 0; k < 5; k++) { const yy = y - ry * 0.5 + k * ry * 0.22; ctx.beginPath(); ctx.moveTo(x - rx * 0.5 + Math.sin(t + k) * 20, yy); ctx.lineTo(x - rx * 0.2 + Math.sin(t + k) * 20, yy); ctx.stroke(); }
+  }
+  sinkers.forEach(s => { ctx.globalAlpha = s.a * 0.8; drawItem(s.id, s.x, s.y, itemSize() * 0.55, 0.3, 1); ctx.globalAlpha = 1; });
+  ripples.forEach(r => { if (r.r <= 0) return; ctx.strokeStyle = `rgba(255,255,255,${0.5 * (1 - r.r / (P.rx * 0.9))})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(r.x, r.y, r.r, r.r * ry / rx, 0, 0, 7); ctx.stroke(); });
+  ctx.restore();
+}
+function drawBeam(x, y) {
+  const g = ctx.createLinearGradient(x, 0, x, y);
+  g.addColorStop(0, 'rgba(255,245,200,0)'); g.addColorStop(1, `rgba(255,245,200,${0.45 * beam})`);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - W * 0.01, 0); ctx.lineTo(x + W * 0.01, 0); ctx.lineTo(x + W * 0.045, y + H * 0.04); ctx.lineTo(x - W * 0.045, y + H * 0.04); ctx.fill();
+  ctx.save(); ctx.shadowColor = 'rgba(255,240,180,1)'; ctx.shadowBlur = 40 * beam; ctx.fillStyle = `rgba(255,240,180,${0.25 * beam})`;
+  ctx.beginPath(); ctx.arc(x, y, slots[0].w * 0.45, 0, 7); ctx.fill(); ctx.restore();
+}
+function drawCrowd() {
+  crowd.forEach((p, i) => {
+    const bx = p.x, by = P.y - P.ry * 0.95, h = p.h;
+    const bounce = mood === 'praise' || mood === 'joy' ? Math.abs(Math.sin(t * 6 + p.ph)) * h * 0.08 : 0;
+    const slump = mood === 'tired' ? h * 0.08 : 0;
+    const top = by - h + bounce + slump;
+    ctx.fillStyle = p.c;
+    ctx.beginPath(); ctx.moveTo(bx - h * 0.18, by); ctx.lineTo(bx - h * 0.12, top + h * 0.28); ctx.lineTo(bx + h * 0.12, top + h * 0.28); ctx.lineTo(bx + h * 0.18, by); ctx.fill();
+    ctx.beginPath(); ctx.arc(bx + (mood === 'tired' ? h * 0.04 : 0), top + h * 0.16, h * 0.11, 0, 7); ctx.fill();
+    ctx.strokeStyle = p.c; ctx.lineWidth = Math.max(2, h * 0.06); ctx.lineCap = 'round';
+    const sy = top + h * 0.34;
+    ctx.beginPath();
+    if (mood === 'praise' || mood === 'joy') { // arms raised
+      const w = Math.sin(t * 6 + p.ph) * h * 0.05;
+      ctx.moveTo(bx - h * 0.1, sy); ctx.lineTo(bx - h * 0.22 + w, sy - h * 0.32);
+      ctx.moveTo(bx + h * 0.1, sy); ctx.lineTo(bx + h * 0.22 - w, sy - h * 0.32);
+    } else if (mood === 'grumble' && i % 3 === 0) { // shaking a fist
+      ctx.moveTo(bx - h * 0.1, sy); ctx.lineTo(bx - h * 0.2, sy + h * 0.25);
+      ctx.moveTo(bx + h * 0.1, sy); ctx.lineTo(bx + h * 0.26, sy - h * 0.18 + Math.sin(t * 14 + p.ph) * h * 0.04);
+    } else { // arms hanging
+      ctx.moveTo(bx - h * 0.1, sy); ctx.lineTo(bx - h * 0.16, sy + h * 0.3);
+      ctx.moveTo(bx + h * 0.1, sy); ctx.lineTo(bx + h * 0.16, sy + h * 0.3);
+    }
+    ctx.stroke();
+    if (p.jar && mood !== 'praise' && mood !== 'joy') { ctx.fillStyle = '#9a6a3a'; ctx.beginPath(); ctx.ellipse(bx + h * 0.2, sy + h * 0.3, h * 0.07, h * 0.09, 0, 0, 7); ctx.fill(); }
+  });
+}
+function drawBubbles() {
+  bubbles.forEach(b => {
+    const p = crowd[b.i]; if (!p) return;
+    const a = clamp(b.life / 0.4, 0, 1) * clamp((b.max - b.life) / 0.3, 0, 1);
+    const x = p.x, y = P.y - P.ry * 0.95 - p.h - H * 0.05;
+    ctx.font = `600 italic ${Math.max(14, H * 0.03)}px 'Crimson Pro', Georgia, serif`; ctx.textAlign = 'center';
+    const w = ctx.measureText(b.tx).width + H * 0.03, hh = H * 0.05;
+    ctx.globalAlpha = a;
+    ctx.fillStyle = mood === 'joy' ? 'rgba(220,248,250,.95)' : 'rgba(250,240,220,.95)';
+    ctx.beginPath(); ctx.roundRect(x - w / 2, y - hh, w, hh, hh * 0.35); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x - hh * 0.2, y); ctx.lineTo(x, y + hh * 0.35); ctx.lineTo(x + hh * 0.2, y); ctx.fill();
+    ctx.fillStyle = mood === 'joy' ? '#1f6f82' : '#6a2a1a'; ctx.fillText(b.tx, x, y - hh * 0.3);
+    ctx.globalAlpha = 1;
+  });
+}
+
+/* ── the ten objects, drawn as simple vectors ── */
+function drawItem(id, x, y, s, rot, a) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.globalAlpha *= a;
+  const R = (c, px, py, w, h, r = 0) => { ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect(px, py, w, h, r); ctx.fill(); };
+  const E = (c, px, py, rx, ry) => { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(px, py, rx, ry, 0, 0, 7); ctx.fill(); };
+  switch (id) {
+    case 'gula': // sack of sugar
+      ctx.fillStyle = '#e6d9b8'; ctx.beginPath(); ctx.moveTo(-s * 0.7, s * 0.9); ctx.quadraticCurveTo(-s * 0.85, -s * 0.2, -s * 0.45, -s * 0.55); ctx.lineTo(s * 0.45, -s * 0.55); ctx.quadraticCurveTo(s * 0.85, -s * 0.2, s * 0.7, s * 0.9); ctx.closePath(); ctx.fill();
+      E('#fffdf6', 0, -s * 0.55, s * 0.45, s * 0.14); R('#a8875a', -s * 0.5, -s * 0.42, s, s * 0.08);
+      for (let k = 0; k < 6; k++) R('#ffffff', -s * 0.3 + k * s * 0.11, -s * 0.66 - (k % 2) * s * 0.05, s * 0.05, s * 0.05);
+      break;
+    case 'madu': // honey jar
+      R('#d9921e', -s * 0.6, -s * 0.5, s * 1.2, s * 1.35, s * 0.3); R('#f2b848', -s * 0.4, -s * 0.3, s * 0.18, s * 0.9, s * 0.09);
+      R('#6b4424', -s * 0.65, -s * 0.8, s * 1.3, s * 0.32, s * 0.08); R('#e0c080', -s * 0.35, s * 0.05, s * 0.7, s * 0.35, s * 0.05);
+      break;
+    case 'sirup': // bottle of syrup
+      R('#b8243e', -s * 0.4, -s * 0.3, s * 0.8, s * 1.2, s * 0.18); R('#b8243e', -s * 0.16, -s * 0.8, s * 0.32, s * 0.55);
+      R('#e9e0cc', -s * 0.2, -s * 0.98, s * 0.4, s * 0.22, s * 0.05); R('#f4e3c3', -s * 0.32, s * 0.05, s * 0.64, s * 0.4, s * 0.05);
+      R('rgba(255,255,255,.35)', -s * 0.3, -s * 0.2, s * 0.1, s * 0.9, s * 0.05);
+      break;
+    case 'garam': // bowl of salt
+      E('#f4f4f2', 0, -s * 0.1, s * 0.6, s * 0.45); ctx.fillStyle = '#7d8a96'; ctx.beginPath(); ctx.ellipse(0, 0, s * 0.85, s * 0.7, 0, 0, Math.PI); ctx.fill();
+      R('#5f6b76', -s * 0.85, -s * 0.06, s * 1.7, s * 0.12, s * 0.06);
+      break;
+    case 'batu': // stone
+      ctx.fillStyle = '#7d7a74'; ctx.beginPath(); ctx.moveTo(-s * 0.8, s * 0.5); ctx.lineTo(-s * 0.7, -s * 0.2); ctx.lineTo(-s * 0.2, -s * 0.6); ctx.lineTo(s * 0.5, -s * 0.45); ctx.lineTo(s * 0.85, s * 0.1); ctx.lineTo(s * 0.6, s * 0.6); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#9b978f'; ctx.beginPath(); ctx.moveTo(-s * 0.55, -s * 0.15); ctx.lineTo(-s * 0.2, -s * 0.45); ctx.lineTo(s * 0.2, -s * 0.35); ctx.lineTo(-s * 0.1, -s * 0.05); ctx.fill();
+      break;
+    case 'emas': // stack of gold coins
+      for (let k = 0; k < 4; k++) { E('#8a6a1e', 0, s * 0.55 - k * s * 0.28, s * 0.7, s * 0.22); E('#e8c14a', 0, s * 0.48 - k * s * 0.28, s * 0.7, s * 0.22); }
+      E('#f7dc7a', 0, s * 0.48 - 3 * s * 0.28, s * 0.45, s * 0.12);
+      break;
+    case 'roti': // loaf of bread
+      E('#b87436', 0, s * 0.1, s * 0.9, s * 0.55); E('#d49a5a', 0, 0, s * 0.8, s * 0.45);
+      ctx.strokeStyle = '#8a5424'; ctx.lineWidth = Math.max(1.5, s * 0.06);
+      for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(k * s * 0.35 - s * 0.1, -s * 0.2); ctx.lineTo(k * s * 0.35 + s * 0.1, s * 0.15); ctx.stroke(); }
+      break;
+    case 'daun': // leaf
+      ctx.fillStyle = '#6fa04a'; ctx.beginPath(); ctx.moveTo(-s * 0.9, s * 0.5); ctx.quadraticCurveTo(-s * 0.4, -s * 0.9, s * 0.9, -s * 0.6); ctx.quadraticCurveTo(s * 0.3, s * 0.7, -s * 0.9, s * 0.5); ctx.fill();
+      ctx.strokeStyle = '#3f6a2a'; ctx.lineWidth = Math.max(1.5, s * 0.06); ctx.beginPath(); ctx.moveTo(-s * 0.9, s * 0.5); ctx.quadraticCurveTo(0, -s * 0.1, s * 0.85, -s * 0.58); ctx.stroke();
+      break;
+    case 'tongkat': // shepherd's staff with a crook
+      ctx.strokeStyle = '#6e4626'; ctx.lineWidth = Math.max(3, s * 0.16); ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-s * 0.3, s * 1.0); ctx.lineTo(s * 0.15, -s * 0.7); ctx.arc(s * 0.4, -s * 0.72, s * 0.25, Math.PI, Math.PI * 2.1); ctx.stroke();
+      break;
+    case 'kayu': // an ordinary, unremarkable piece of wood
+      ctx.rotate(-0.35);
+      R('#8a6a42', -s * 0.95, -s * 0.2, s * 1.9, s * 0.4, s * 0.12);
+      E('#c9a878', -s * 0.95, 0, s * 0.1, s * 0.2); E('#c9a878', s * 0.95, 0, s * 0.1, s * 0.2);
+      ctx.strokeStyle = '#5e4526'; ctx.lineWidth = Math.max(1, s * 0.04);
+      for (let k = -2; k <= 2; k++) { ctx.beginPath(); ctx.moveTo(k * s * 0.35 - s * 0.15, -s * 0.12); ctx.lineTo(k * s * 0.35 + s * 0.2, -s * 0.02); ctx.stroke(); }
+      E('#5e4526', s * 0.3, s * 0.05, s * 0.07, s * 0.05);
+      ctx.strokeStyle = '#8a6a42'; ctx.lineWidth = Math.max(2, s * 0.08); ctx.beginPath(); ctx.moveTo(-s * 0.3, -s * 0.18); ctx.lineTo(-s * 0.45, -s * 0.5); ctx.stroke();
+      break;
+  }
+  ctx.restore();
+}
+
+/* ── loop & keys ── */
+let last = performance.now();
+function loop(now) { const dt = Math.min(0.05, (now - last) / 1000); last = now; update(dt); draw(); requestAnimationFrame(loop); }
+addEventListener('keydown', e => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (state === 'idle') start();
+    else if (state === 'intro') beginChoose();
+    else if (state === 'result') setState('idle');
+  }
+  if (e.key === 'Escape') { if (!$('#panel').hidden) { $('#panel').hidden = true; return; } stopDrums(); setState('idle'); }
+  if (/^[0-9]$/.test(e.key) && state === 'choose') { const i = (+e.key + 9) % 10; if (order[i]) throwToPool(order[i]); }
+  const k = e.key.toLowerCase();
+  if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
+  if (k === 's') { renderPanel(); $('#panel').hidden = !$('#panel').hidden; }
+});
+function renderPanel() {
+  const st = load('mara:stats', {});
+  $('#panelList').innerHTML = ITEMS.map(i => `<li><span>${i.name}</span><b>${st[i.id] || 0}</b></li>`).join('');
+}
+$('#resetStats').addEventListener('click', () => { if (confirm('Hapus statistik pilihan tim?')) { save('mara:stats', {}); renderPanel(); } });
+$('#startBtn').addEventListener('click', start);
+
+/* test hook */
+window.__mara = {
+  step(sec, dt = 0.03) { for (let i = 0; i < sec / dt; i++) update(dt); draw(); },
+  start, beginChoose, throwItem: id => throwToPool(id), get state() { return state; }, get order() { return order; }, get chosen() { return chosen; }
+};
+
+resize();
+setState('idle');
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
