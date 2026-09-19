@@ -302,6 +302,15 @@
   .bahasa button[aria-pressed="true"]{background:var(--tinta);color:var(--kertas)}
   .dots{margin-left:auto}
   @media (max-width:360px){ .dots{display:none} .bahasa{margin-left:auto} }
+
+  /* ---------- kunci PIN ---------- */
+  input[type=text].pin{
+    font-family:"Courier Prime",monospace;font-weight:700;font-size:30px;
+    letter-spacing:.5em;text-align:center;padding:12px 0 12px .5em;margin-bottom:12px;
+    font-variant-numeric:tabular-nums;
+  }
+  .item.terkunci .judul{color:var(--tinta-2)}
+  .item.terkunci .no{border-style:dashed}
 </style>
 
 <div class="wrap">
@@ -321,9 +330,12 @@
 "use strict";
 
 var BAHASA_TETAP = "id"; /* "id" atau "en" = file satu bahasa, tombol ID|EN disembunyikan */
+/* PIN tiap babak — guru menyebutkannya berurutan. Ganti di sini kalau perlu. */
+var PIN = {b1:"4821", b2:"7350", b3:"1946", b4:"6083", b5:"2517", b6:"9164", guru:"5190"};
 var KUNCI = "lunas-cg9-v1";
-var S = {nama:"", skor:0, beres:{}, akuan:{tinggal:"", iman:""}, lelang:null, lang:"id"};
+var S = {nama:"", skor:0, beres:{}, buka:{}, akuan:{tinggal:"", iman:""}, lelang:null, lang:"id"};
 try{ var m = localStorage.getItem(KUNCI); if(m) S = Object.assign(S, JSON.parse(m)); }catch(e){}
+if(!S.buka) S.buka = {};
 if(BAHASA_TETAP){ S.lang = BAHASA_TETAP; document.querySelector(".bahasa").hidden = true; }
 function simpan(){ try{ localStorage.setItem(KUNCI, JSON.stringify(S)); }catch(e){} }
 function poin(n){ S.skor += n; simpan(); gambarBar(); }
@@ -337,6 +349,22 @@ var ISI = {};
 ISI.id = {
   locale:"id-ID",
   merek:"Lunas",
+  kunci:{
+    eyebrow:"Terkunci",
+    judul:function(j){ return j + " masih terkunci"; },
+    petunjuk:"Dengarkan gurumu. Masukkan PIN 4 angka yang disebutkan untuk membuka babak ini.",
+    label:"PIN babak", tombol:"Buka babak",
+    guruJudul:"Panel Guru terkunci",
+    guruPetunjuk:"Khusus guru. Masukkan PIN guru untuk melihat alur, kunci jawaban, dan daftar PIN.",
+    labelGuru:"PIN guru", tombolGuru:"Buka panel guru",
+    salah:"<b>PIN salah.</b> Dengarkan lagi PIN dari gurumu.",
+    kosong:"Masukkan 4 angka.",
+    kartuJudul:"Kartu Pengakuan belum terbuka",
+    kartuPetunjuk:"Selesaikan Babak 6 dulu. Kartu ini terbuka otomatis setelah itu.",
+    daftarJudul:"PIN babak &mdash; sebutkan berurutan",
+    daftarKet:"Tiap babak terkunci sampai kamu menyebutkan PIN-nya. Sebutkan PIN berikutnya hanya ketika kelas siap pindah babak.",
+    daftarCatatan:function(p){ return "PIN Panel Guru: <b>" + p + "</b>. PIN yang sudah dimasukkan tersimpan di HP anak, jadi babak itu tetap terbuka walau halaman ditutup. Kartu Pengakuan terbuka otomatis setelah Babak 6 selesai."; }
+  },
   triliun:" triliun",
   babak:[
     {id:"b1", judul:"Puzzle yang Mustahil", ket:"Susun ayat yang tidak mungkin kamu selesaikan sendiri."},
@@ -542,7 +570,7 @@ ISI.id = {
     + '<h2>Cara memandu sesi ini</h2>'
     + '<p class="kecil">Dirancang untuk 6 anak kelas 7, tiap anak satu HP, 50&ndash;60 menit. Kamu yang mengumumkan babak; anak menekan sendiri di HP-nya. Kunci suasana: <b>jangan ada blok bicara lebih dari 8 menit</b>.</p>'
     + '<div class="guru-blok"><h3>Sebelum mulai</h3><ul>'
-    + '<li>Kirim link ini ke 6 anak. Minta mereka buka dan <b>berhenti di beranda</b>.</li>'
+    + '<li>Kirim link ini ke 6 anak. Semua babak terkunci &mdash; anak menunggu di beranda sampai kamu menyebutkan PIN Babak 1.</li>'
     + '<li>Kalau ada tombol <b>ID | EN</b> di kanan atas, itu mengganti bahasa. Pilih sebelum mulai &mdash; mengganti bahasa di tengah babak akan mengulang babak itu (skor tidak hilang).</li>'
     + '<li>Skor tersimpan di HP masing-masing. Di akhir tiap babak, minta anak menyebut skornya; tulis di papan.</li>'
     + '<li>Aturan: HP hanya dipakai kalau kamu bilang &ldquo;buka babak&rdquo;. Di luar itu, layar tengkurap di meja.</li>'
@@ -581,6 +609,22 @@ ISI.id = {
 ISI.en = {
   locale:"en-US",
   merek:"Paid",
+  kunci:{
+    eyebrow:"Locked",
+    judul:function(j){ return j + " is still locked"; },
+    petunjuk:"Listen to your teacher. Enter the 4-digit PIN they say to open this round.",
+    label:"Round PIN", tombol:"Open round",
+    guruJudul:"Teacher Panel is locked",
+    guruPetunjuk:"Teachers only. Enter the teacher PIN to see the timeline, answer key, and PIN list.",
+    labelGuru:"Teacher PIN", tombolGuru:"Open teacher panel",
+    salah:"<b>Wrong PIN.</b> Listen again for the PIN from your teacher.",
+    kosong:"Enter 4 digits.",
+    kartuJudul:"Confession Card isn't open yet",
+    kartuPetunjuk:"Finish Round 6 first. This card opens automatically after that.",
+    daftarJudul:"Round PINs &mdash; announce them in order",
+    daftarKet:"Each round stays locked until you say its PIN. Only say the next PIN when the class is ready to move on.",
+    daftarCatatan:function(p){ return "Teacher Panel PIN: <b>" + p + "</b>. Once a PIN is entered it is saved on the kid's phone, so that round stays open even if the page is closed. The Confession Card opens automatically after Round 6."; }
+  },
   triliun:" trillion",
   babak:[
     {id:"b1", judul:"The Impossible Puzzle", ket:"Complete a verse you can't finish on your own."},
@@ -786,7 +830,7 @@ ISI.en = {
     + '<h2>How to lead this session</h2>'
     + '<p class="kecil">Designed for 6 Grade 7 kids, one phone each, 50&ndash;60 minutes. You announce each round; the kids tap on their own phones. The key to the room: <b>no talking block longer than 8 minutes</b>.</p>'
     + '<div class="guru-blok"><h3>Before you start</h3><ul>'
-    + '<li>Send this link to the 6 kids. Ask them to open it and <b>stop at the home screen</b>.</li>'
+    + '<li>Send this link to the 6 kids. Every round is locked &mdash; kids wait at the home screen until you say the Round 1 PIN.</li>'
     + '<li>If there is an <b>ID | EN</b> button at the top right, it switches language. Choose before you start &mdash; switching mid-round restarts that round (scores are kept).</li>'
     + '<li>Scores are saved on each phone. At the end of each round, ask the kids to say their score; write it on the board.</li>'
     + '<li>Rule: phones are only used when you say &ldquo;open the round&rdquo;. Otherwise, screens face down on the table.</li>'
@@ -855,7 +899,9 @@ function ke(layar){
   if(hentikan){ hentikan(); hentikan = null; }
   layarKini = layar;
   window.scrollTo(0,0);
-  LAYAR[layar]();
+  if(PIN[layar] && !S.buka[layar]) LAYAR.kunci(layar);
+  else if(layar === "kartu" && !S.beres.b6) LAYAR.kunci("kartu");
+  else LAYAR[layar]();
   gambarBar();
 }
 
@@ -899,8 +945,9 @@ LAYAR.beranda = function(){
   var d = D(), T = d.beranda, daftar = "";
   for(var i=0;i<d.babak.length;i++){
     var b = d.babak[i];
-    daftar += '<button class="item ' + (S.beres[b.id] ? "beres" : "") + '" data-ke="' + b.id + '">'
-      + '<span class="no">' + (S.beres[b.id] ? "&#10003;" : (i+1)) + '</span>'
+    var kunci = !S.buka[b.id] && !S.beres[b.id];
+    daftar += '<button class="item ' + (S.beres[b.id] ? "beres" : (kunci ? "terkunci" : "")) + '" data-ke="' + b.id + '">'
+      + '<span class="no">' + (S.beres[b.id] ? "&#10003;" : (kunci ? GEMBOK : (i+1))) + '</span>'
       + '<span><span class="judul">' + b.judul + '</span>'
       + '<span class="ket">' + b.ket + '</span></span></button>';
   }
@@ -921,7 +968,7 @@ LAYAR.beranda = function(){
   pasangNav();
   document.getElementById("reset").addEventListener("click", function(){
     if(confirm(T.tanyaReset)){
-      S = {nama:"", skor:0, beres:{}, akuan:{tinggal:"", iman:""}, lelang:null, lang:S.lang};
+      S = {nama:"", skor:0, beres:{}, buka:{}, akuan:{tinggal:"", iman:""}, lelang:null, lang:S.lang};
       simpan(); ke("beranda");
     }
   });
@@ -1435,9 +1482,58 @@ LAYAR.kartu = function(){
    PANEL GURU
    ========================================================= */
 LAYAR.guru = function(){
-  app.innerHTML = '<div class="kartu">' + D().guru + '</div>'
-    + '<button class="tbl garis" data-ke="beranda">' + D().u.kembali + '</button>';
+  var d = D(), K = d.kunci, rows = "";
+  for(var i=0;i<d.babak.length;i++){
+    rows += '<tr><td>' + PIN[d.babak[i].id] + '</td><td>' + d.u.babakKe(i+1) + ' &middot; ' + d.babak[i].judul + '</td></tr>';
+  }
+  var blok = '<div class="guru-blok"><h3>' + K.daftarJudul + '</h3>'
+    + '<p class="kecil">' + K.daftarKet + '</p>'
+    + '<div class="gulir"><table>' + rows + '</table></div>'
+    + '<p class="kecil" style="margin:10px 0 0">' + K.daftarCatatan(PIN.guru) + '</p></div>';
+  app.innerHTML = '<div class="kartu">' + d.guru.replace('<div class="guru-blok">', blok + '<div class="guru-blok">') + '</div>'
+    + '<button class="tbl garis" data-ke="beranda">' + d.u.kembali + '</button>';
   pasangNav();
+};
+
+/* =========================================================
+   LAYAR KUNCI — PIN babak, PIN guru, dan Kartu Pengakuan
+   ========================================================= */
+var GEMBOK = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="5.5" width="8" height="5.5" rx="1" fill="currentColor"/><path d="M4 5.5V4a2 2 0 0 1 4 0v1.5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>';
+
+LAYAR.kunci = function(id){
+  var d = D(), K = d.kunci;
+  if(id === "kartu"){
+    app.innerHTML = '<div class="kartu"><p class="eyebrow">' + K.eyebrow + '</p>'
+      + '<h2>' + K.kartuJudul + '</h2>'
+      + '<p class="kecil" style="margin:0">' + K.kartuPetunjuk + '</p></div>'
+      + '<button class="tbl garis" data-ke="beranda">' + d.u.kembali + '</button>';
+    pasangNav();
+    return;
+  }
+  var guru = (id === "guru");
+  app.innerHTML =
+    '<div class="kartu">'
+    + '<p class="eyebrow">' + (guru ? K.eyebrow : d.u.babakKe(+id.slice(1)) + ' &middot; ' + K.eyebrow) + '</p>'
+    + '<h2>' + (guru ? K.guruJudul : K.judul(judulBabak(id))) + '</h2>'
+    + '<p class="kecil">' + (guru ? K.guruPetunjuk : K.petunjuk) + '</p>'
+    + '<form class="perf" id="form-pin" autocomplete="off">'
+    + '<label for="pin">' + (guru ? K.labelGuru : K.label) + '</label>'
+    + '<input type="text" id="pin" class="pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="&bull;&bull;&bull;&bull;">'
+    + '<div id="pin-pesan" aria-live="polite"></div>'
+    + '<button class="tbl merah" type="submit">' + (guru ? K.tombolGuru : K.tombol) + '</button>'
+    + '</form></div>'
+    + '<button class="tbl garis" data-ke="beranda">' + d.u.kembali + '</button>';
+  pasangNav();
+  var inp = document.getElementById("pin");
+  inp.addEventListener("input", function(){ this.value = this.value.replace(/\D/g, "").slice(0,4); });
+  document.getElementById("form-pin").addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = inp.value, m = document.getElementById("pin-pesan");
+    if(v.length < 4){ m.innerHTML = '<div class="umpan no">' + K.kosong + '</div>'; return; }
+    if(v !== PIN[id]){ m.innerHTML = '<div class="umpan no">' + K.salah + '</div>'; inp.value = ""; inp.focus(); return; }
+    S.buka[id] = true; simpan();
+    ke(id);
+  });
 };
 
 /* ---------- jalan ---------- */
