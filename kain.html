@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kartu Pengajar — Kain (1-4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9;
+    --card:#FFFDF8;
+    --ink:#1B1A17;
+    --soft:#6E6A61;
+    --line:#DED7C8;
+    --kiri:#8A6A3E;
+    --tengah:#2F5D62;
+    --kanan:#9B4722;
+    --lamp:#B5832B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Instrument Sans",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    overflow:hidden;
+  }
+
+  .wrap{height:100%;display:flex;flex-direction:column;max-width:720px;margin:0 auto}
+
+  /* ---- top bar ---- */
+  .bar{
+    flex:none;display:flex;align-items:center;gap:.5rem;
+    padding:.7rem .9rem;border-bottom:1px solid var(--line);
+  }
+  .seg{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .seg button{
+    font:inherit;font-size:.82rem;font-weight:500;
+    background:transparent;color:var(--soft);border:none;
+    padding:.45em .85em;cursor:pointer;
+  }
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+  .count{margin-left:auto;font-size:.82rem;color:var(--soft);font-variant-numeric:tabular-nums}
+  .clockbtn{
+    font:inherit;font-size:.82rem;font-weight:600;font-variant-numeric:tabular-nums;
+    background:transparent;border:1px solid var(--line);border-radius:3px;
+    padding:.45em .7em;cursor:pointer;color:var(--soft);
+  }
+  .clockbtn.run{color:var(--ink);border-color:var(--ink)}
+  .clockbtn.over{color:#9B4722;border-color:#9B4722}
+
+  /* ---- card ---- */
+  .stage{flex:1;overflow-y:auto;padding:.9rem;-webkit-overflow-scrolling:touch}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:5px solid var(--tengah);
+    border-radius:4px;
+    padding:1.1rem 1.1rem 1.3rem;
+    min-height:100%;
+  }
+  .card[data-zone="kiri"]{border-left-color:var(--kiri)}
+  .card[data-zone="kanan"]{border-left-color:var(--kanan)}
+  .card[data-zone="none"]{border-left-color:var(--line)}
+
+  .eyebrow{
+    display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;
+    font-size:.78rem;color:var(--soft);font-weight:500;
+    margin-bottom:.35rem;
+  }
+  .eyebrow .mt{
+    border:1px solid var(--lamp);color:var(--lamp);
+    border-radius:2px;padding:.1em .45em;font-size:.68rem;letter-spacing:.03em;
+  }
+  h2{
+    font-family:Fraunces,Georgia,serif;font-weight:600;
+    font-size:clamp(1.4rem,5.5vw,1.9rem);line-height:1.15;
+    margin-bottom:1rem;letter-spacing:-.01em;
+  }
+
+  .block{margin-top:1.1rem}
+  .label{
+    font-size:.7rem;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--soft);margin-bottom:.45rem;
+  }
+  .say li{
+    font-family:Fraunces,Georgia,serif;font-size:1.02rem;line-height:1.5;
+    margin:0 0 .55rem 1rem;
+  }
+  .say li::marker{color:var(--soft)}
+  .key{
+    font-family:Fraunces,Georgia,serif;font-size:1.08rem;line-height:1.45;
+    padding:.6rem .85rem;background:#F1EADB;border-radius:3px;
+    border-left:3px solid var(--lamp);margin-top:.6rem;
+  }
+
+  .board{
+    border:1px dashed var(--line);border-radius:3px;
+    padding:.75rem .85rem;background:#FBF8F1;
+  }
+  .zone{
+    display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;padding:.15em .5em;border-radius:2px;
+    color:#fff;margin-bottom:.5rem;
+  }
+  .zone.kiri{background:var(--kiri)}
+  .zone.tengah{background:var(--tengah)}
+  .zone.kanan{background:var(--kanan)}
+  .write{
+    font-family:"Instrument Sans",sans-serif;font-weight:600;
+    font-size:1rem;line-height:1.55;
+  }
+  .write span{display:block;margin-bottom:.2rem}
+  .write .draw{font-weight:400;font-style:italic;color:var(--soft);font-size:.92rem}
+
+  .tempo{
+    font-size:.9rem;line-height:1.5;color:var(--soft);
+    border-top:1px solid var(--line);padding-top:.7rem;margin-top:1.1rem;
+  }
+  .tempo b{color:var(--ink);font-weight:600}
+
+  /* ---- map card ---- */
+  .map{display:grid;grid-template-columns:1fr 2fr 1fr;gap:.4rem;margin:.8rem 0 1rem}
+  .map div{
+    border:1px solid var(--line);border-radius:3px;padding:.6rem .5rem;
+    font-size:.74rem;line-height:1.35;text-align:center;background:#FBF8F1;
+  }
+  .map b{display:block;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem}
+  .map .z1 b{color:var(--kiri)} .map .z2 b{color:var(--tengah)} .map .z3 b{color:var(--kanan)}
+
+  /* ---- nav ---- */
+  .nav{
+    flex:none;display:flex;gap:.5rem;padding:.7rem .9rem;
+    border-top:1px solid var(--line);background:var(--paper);
+  }
+  .nav button{
+    flex:1;font:inherit;font-size:.95rem;font-weight:600;
+    background:var(--card);border:1px solid var(--line);border-radius:3px;
+    padding:.85em;cursor:pointer;color:var(--ink);
+  }
+  .nav button:active{background:#EFE9DC}
+  .nav button.main{background:var(--ink);color:var(--paper);border-color:var(--ink);flex:2}
+
+  :focus-visible{outline:2px solid var(--lamp);outline-offset:2px}
+  @media (prefers-reduced-motion:no-preference){
+    .card{animation:in .22s ease both}
+    @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="m20" aria-pressed="true">20 menit</button>
+      <button id="mAll" aria-pressed="false">Lengkap</button>
+    </div>
+    <button class="clockbtn" id="clock">00:00</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="nav">
+    <button id="prev">Kembali</button>
+    <button class="main" id="next">Lanjut</button>
+  </div>
+</div>
+
+<script>
+const CARDS = [
+{
+  map:true, mt:true, zone:'none', label:'Sebelum mulai', title:'Peta papan tulis', dur:0,
+  tempo:'Bagi papan jadi tiga zona dengan dua garis tipis <b>sebelum</b> peserta masuk. Hanya garisnya — jangan tulis apa pun dulu. Dua spidol: hitam untuk alur, merah hanya untuk pintu yang ditutup Kain.'
+},
+{
+  mt:true, zone:'kiri', label:'Pembuka', title:'Apa itu silsilah yang terpisah dari Allah?', dur:2,
+  say:[
+    'Silsilah Kain dicatat di Kejadian 4:17-24. Baca seluruhnya, ada satu hal yang mencolok karena tidak ada.',
+    'Tidak ada nama Allah. Tidak ada riwayat pekerjaan Allah.',
+    'Yang ada: memperanakkan keturunan, membangun kota, peternakan, musik, pertukangan besi. Peradaban lengkap — tanpa Allah.'
+  ],
+  key: 'Kalau begitu, kenapa silsilah seperti ini bisa terjadi? Dan yang mengejutkan: silsilah ini tidak dimulai dari orang yang membenci Allah.',
+  board:['Silsilah yang terpisah dari Allah','Kej 4:17-24','— tanpa nama Allah —'],
+  tempo:'Tulis tiga baris ini di zona kiri. <b>Tidak dihapus sampai selesai.</b> Setelah menulis, mundur dua langkah, diam tiga hitungan, baru lanjut.'
+},
+{
+  mt:true, zone:'kiri', label:'Pembuka', title:'Latar belakang Kain dan arti namanya', dur:2,
+  say:[
+    'Kain anak laki-laki pertama yang lahir setelah janji tentang Keturunan perempuan (Kej 3:15).',
+    'Hawa berkata: aku telah mendapat seorang anak dengan pertolongan TUHAN (Kej 4:1). Itu bukan ungkapan gembira biasa — itu pengakuan iman.',
+    'Dan Adam-Hawa melatih anak-anaknya di dalam iman. Kain dan Habel sama-sama mempersembahkan korban. Kain pernah beriman.'
+  ],
+  key:'Orang tua sama. Ajaran sama. Mengapa keduanya menjadi berbeda? Mengapa yang satu bisa menjadi pembunuh?',
+  board:['','Orang tua sama','Ajaran sama','Kenapa berbeda?'],
+  tempo:'Tulis pertanyaan ini di zona kiri, di bawah judul. <b>Inilah jangkar pelajaran.</b> Jangan dijawab sekarang. Biarkan menggantung — Anda baru kembali ke sini di kartu 7.'
+},
+{
+  mt:true, zone:'tengah', label:'Poin 1 · 1)', title:'Kain telah kehilangan iman', dur:3,
+  say:[
+    'Habel membawa anak sulung kambing dombanya, lemak-lemaknya — yang pertama dan yang terbaik.',
+    'Kain membawa sebagian dari hasil tanah.',
+    'Allah menghendaki penghormatan dengan hasil yang pertama (Ams 3:9). Yang dinilai bukan jumlah, tapi hati yang memberi. Korban orang fasik adalah kekejian (Ams 15:8). Habel diterima karena iman (Ibr 11:4).'
+  ],
+  key:'Persembahan hanya menegaskan apa yang sudah ada di dalam hati. Dan di hati Kain, Allah tidak lagi yang utama.',
+  board:['KAIN            |            HABEL','sebagian hasil   |   sulung + lemak','                 |   yang pertama'],
+  tempo:'Tulis dua kolom berdampingan di tengah atas. Biarkan perbedaannya terbaca sendiri — <b>jangan dijelaskan dua kali.</b>'
+},
+{
+  mt:true, zone:'tengah', label:'Poin 1 · 2)', title:'Tiga pintu yang ditutup sendiri', dur:5,
+  say:[
+    'Pintu 1 — Allah menolak persembahannya. Reaksi Kain: marah, mukanya muram (Kej 4:5). Tidak sadar, tidak bertobat.',
+    'Pintu 2 — Allah menegur dengan firman. Dosa mengintip di depan pintu, tapi engkau harus berkuasa atasnya (Kej 4:7). Ditolak. Kain mengajak adiknya ke padang.',
+    'Pintu 3 — Allah bertanya: di mana Habel adikmu? (Kej 4:9) Bentuknya sama dengan pertanyaan kepada Adam, di manakah engkau? (Kej 3:9). Allah bukan tidak tahu — Allah memberi ruang untuk mengaku. Kain berdusta, bahkan membalikkan pertanyaannya.'
+  ],
+  key:'Tiga kali Allah membuka pintu. Tiga-tiganya ditutup sendiri oleh Kain.',
+  board:['[ ]   [ ]   [ ]','(gambar tiga pintu KOSONG dulu)','1. persembahan ditolak','2. teguran firman','3. "di mana Habel?"','silang merah tiap pintu setelah diceritakan'],
+  tempo:'<b>Ini inti seluruh pelajaran.</b> Gambar tiga pintu kosong lebih dulu — ruang kosong itu janji, orang akan menunggu. Isi dan silang satu per satu sambil bercerita, pakai spidol merah.'
+},
+{
+  mt:true, zone:'none', label:'Jeda', title:'Pertanyaan untuk peserta', dur:1,
+  key:'Pernahkah kita merasa ditolak Allah — doa yang tidak dijawab, usaha yang gagal — dan apa reaksi kita waktu itu?',
+  tempo:'Tanya, lalu <b>hitung lima dalam hati.</b> Jangan dijawab sendiri. Menjauhlah dari papan supaya mereka melihat Anda, bukan tulisan. Satu-dua jawaban saja cukup.'
+},
+{
+  mt:true, zone:'kiri', label:'Poin 1 · 3)', title:'Kain adalah milik sisi yang salah', dur:2,
+  say:[
+    'Alkitab menyimpulkan yang paling mendasar: Kain berasal dari si jahat (1 Yoh 3:12). Barangsiapa berbuat dosa, berasal dari Iblis (1 Yoh 3:8).',
+    'Tegaskan: ini bukan takdir biologis. Kain tidak dilahirkan sebagai milik si jahat.',
+    'Ini hasil pilihan yang berulang — ia lebih terbuka kepada bisikan daripada kepada firman. Setiap pintu yang ia tutup membuatnya makin jadi milik pihak yang lain.'
+  ],
+  key:'Benih yang sama, ajaran yang sama — tetapi yang satu memilih mendengarkan firman, dan yang satu lagi memilih mendengarkan bisikan.',
+  board:['(beri tanda centang pada pertanyaan di zona kiri)'],
+  tempo:'<b>Berjalanlah ke zona kiri</b> dan tunjuk pertanyaan yang tadi digantung. Jangan diulang dengan kata-kata — tunjuk saja, lalu ucapkan jawabannya. Momen ini bekerja lewat gerak tubuh.'
+},
+{
+  mt:true, zone:'tengah', label:'Poin 1 · 4)', title:'Kutuk, dan apa yang Kain lakukan di tanah Nod', dur:3,
+  say:[
+    'Kutuk menyentuh pekerjaan dan tempat tinggalnya: tanah tidak memberi hasil sepenuhnya, dan ia jadi pelarian dan pengembara (Kej 4:11-12).',
+    'Perhatikan jawabannya: hukumannya terlalu berat untuk ditanggung (Kej 4:13). Yang ia keluhkan hukumannya, bukan dosanya. Sampai titik itu pun tidak ada pengakuan.',
+    'Nod berarti pengembaraan. Dan di tanah pengembaraan itu Kain mendirikan kota (Kej 4:17). Orang yang dinyatakan jadi pengembara justru membangun tembok untuk dirinya sendiri.'
+  ],
+  key:'Lalu Kain pergi dari hadapan TUHAN dan ia menetap di tanah Nod, di sebelah timur Eden. (Kejadian 4:16)',
+  board:['[x] [x] [x]  ──────▶  NOD','                      (kota)'],
+  tempo:'Tarik panah dari tiga pintu tertutup menuju kata NOD. <b>Kepergian Kain jadi terlihat.</b> Ucapkan ayat 16 dengan suara lebih pelan, bukan lebih keras. Lalu diam tiga hitungan.'
+},
+{
+  mt:true, zone:'kanan', label:'Poin 2 · 1)', title:'Benih yang baik dan benih iblis', dur:3,
+  say:[
+    'Arti "model dari si jahat" sederhana: Kain adalah contoh pertama bagaimana si jahat bekerja di dalam orang yang ada di dalam keluarga iman — bukan di luar.',
+    'Perumpamaan lalang: benih baik ditabur, lalu ketika semua orang tidur musuh menabur lalang (Mat 13:24-25). Benih baik adalah anak-anak Kerajaan, lalang adalah anak-anak si jahat (Mat 13:38).',
+    'Dalam satu ladang yang sama tumbuh dua jenis benih. Kain dan Habel: orang tua sama, ajaran sama, sama-sama mempersembahkan korban — arah hidup berlawanan.'
+  ],
+  key:'Tidak seorang pun aman hanya karena berada di dalam jemaat, lahir di keluarga Kristen, atau rajin mempersembahkan korban.',
+  board:['CERMIN'],
+  tempo:'Mulai pakai zona kanan. Tulis satu kata saja: CERMIN. <b>Zona ini sengaja miskin</b> supaya kata-kata yang muncul di sini terasa berat.'
+},
+{
+  mt:true, zone:'kanan', label:'Poin 2 · 2)', title:'Proses Yudas Iskariot', dur:4,
+  say:[
+    'Dipilih sendiri oleh Tuhan Yesus dari antara dua belas (Yoh 6:70-71). Hidup bersama Dia. Dipercaya memegang kas.',
+    'Mulai mengambil sedikit demi sedikit (Yoh 12:6). Kehilangan iman dimulai dari hal yang tampak kecil.',
+    'Iblis membisikkan rencana di hatinya (Yoh 13:2) — tidak ditolak. Baru setelah menerima roti, Iblis masuk ke dalam dia (Yoh 13:27). Dibisikkan dulu, baru dikuasai.',
+    'Dan sepanjang itu Tuhan Yesus terus membuka pintu: peringatan di meja, membasuh kakinya, menyerahkan roti — sama seperti Allah berkali-kali bertanya kepada Kain.',
+    'Akhirnya dijual tiga puluh keping perak (Mat 26:14-16). Lalu menyesal, mengembalikan uangnya (Mat 27:3-5) — tetapi menyesal tidak sama dengan bertobat.'
+  ],
+  key:'Kain berada di dalam keluarga iman yang pertama. Yudas berada di dalam lingkaran dua belas murid. Kedekatan tidak menyelamatkan siapa pun.',
+  board:['CERMIN','  Yudas','  kas → bisikan → dikuasai'],
+  tempo:'Tulis "Yudas" di bawah CERMIN, lalu tiga kata urutannya. <b>Tunjuk kembali ke tiga pintu di tengah</b> saat menyebut bahwa Tuhan Yesus juga terus membuka pintu — hubungkan dua zona dengan tangan Anda.'
+},
+{
+  mt:false, zone:'tengah', label:'Poin 3 · 1)', title:'Wujud nyata benih kegelapan', dur:4,
+  say:[
+    'Sampai di sini kita melihat Kain dari luar: ia milik pihak siapa. Sekarang masuk ke dalam dirinya.',
+    'Benih kegelapan bukan hal abstrak. Surat Yudas menyebutnya "jalan yang ditempuh Kain" (Yud 1:11), lalu menguraikannya.',
+    'Awan tanpa air — orang percaya yang tidak berisi firman. Pohon tak berbuah, akarnya mati. Ombak ganas yang membuihkan keaibannya sendiri. Penggerutu, penjilat, pemecah belah, hidup tanpa Roh.',
+    'Mereka tetap berkelompok, tapi di dalamnya saling menggigit. Bandingkan jemaat mula-mula yang sehati sejiwa (Kis 4:32).'
+  ],
+  key:'Inilah wujud nyata benih kegelapan: bukan tanduk dan api, melainkan hidup beragama yang kosong dari firman dan Roh.',
+  board:['awan tanpa air','pohon tanpa akar','ombak berbuih','penggerutu · penjilat','tanpa Roh'],
+  tempo:'Tulis lima gambar ini di tengah bawah — <b>hanya gambarnya, bukan penjelasannya.</b> Gambar yang konkret ini yang menahan perhatian di bagian paling abstrak dari pelajaran.'
+},
+{
+  mt:false, zone:'tengah', label:'Poin 3 · 2)', title:'Mengapa manusia menjadi hamba dosa', dur:4,
+  say:[
+    'Setiap orang yang berbuat dosa adalah hamba dosa (Yoh 8:34). Mekanismenya: kepada siapa kita menyerahkan diri untuk menaatinya, kita jadi hamba orang itu (Rm 6:16).',
+    'Jadi perhambaan tidak datang sekaligus. Ia dimulai dari penyerahan yang kecil dan berulang.',
+    'Allah sudah memperingatkan Kain sebelum pembunuhan: dosa mengintip di depan pintu (Kej 4:7). Dua hal di kalimat itu — dosa masih di luar pintu, dan Allah menyatakan Kain mampu menguasainya.',
+    'Kain membiarkan pintu itu terbuka. Benih lalang ditabur justru ketika orang tidur (Mat 13:25) — saat kewaspadaan lengah.',
+    'Paulus: bukan lagi aku yang memperbuatnya, melainkan dosa yang diam di dalam aku (Rm 7:20).'
+  ],
+  key:'Karena itu kita tidak boleh mempercayai diri kita seratus persen. Justru keraguan terhadap diri sendiri itu yang membuat kita terbangun dan meninjau diri. Jagalah hatimu (Ams 4:23).',
+  board:['dosa di LUAR pintu','→ dibiarkan terbuka','→ masuk ke dalam'],
+  tempo:'Gambar satu pintu lagi, kecil, dengan dosa menunggu di luarnya. <b>Jangan panjang di bagian ini</b> — ini bagian paling abstrak, cepat lewati menuju penerapan.'
+},
+{
+  mt:false, zone:'kanan', label:'Poin 3 · 3)', title:'Caranya agar tidak menjadi seperti Kain', dur:3,
+  say:[
+    'Yohanes singkat saja: janganlah kita seperti Kain (1 Yoh 3:12). Paulus menjabarkan caranya.',
+    'Jangan menuntut pembalasan, beri tempat kepada murka Allah — pembalasan adalah hak-Nya (Rm 12:19). Beri makan musuh yang lapar (Rm 12:20). Kalahkan kejahatan dengan kebaikan (Rm 12:21).'
+  ],
+  key:'Orang berbuat jahat kepada kita — itu musuh dari luar. Timbul keinginan membalas dengan tangan sendiri — itu musuh dari dalam. Kain tidak kalah oleh Habel; Kain kalah oleh dosa yang mengintip di pintunya.',
+  board:['musuh LUAR','musuh DALAM  ←'],
+  tempo:'Tulis dua baris, beri panah pada yang kedua. <b>Ini kalimat yang paling mungkin dibawa pulang orang</b> — ucapkan pelan dan beri jeda setelahnya.'
+},
+{
+  mt:false, zone:'kanan', label:'Penerapan · 1)', title:'Kepada umat yang berjalan ke Kanaan', dur:3,
+  say:[
+    'Musa menulis kisah Kain ini di tengah perjalanan padang gurun, dari Mesir menuju Kanaan.',
+    'Bagaimana hati Musa saat menuliskannya? Lebih lagi — bagaimana hati Allah? Apakah Allah sedang berpuas hati atas hukuman-Nya kepada Kain?',
+    'Kisah Kain dan Habel adalah kisah dua jenis akhir dari orang yang sama-sama diberi firman.',
+    'Firman itu jadi cermin bagi umat Israel: adakah sifat si pendusta dan penipu itu di dalam hati mereka, sementara mereka berjalan menuju Kanaan?'
+  ],
+  key:'Apakah mereka telah kehilangan iman? Apakah mereka telah menjadi Kain-Kain di zaman itu?',
+  board:['CERMIN','  Yudas','  Israel'],
+  tempo:'Tanyakan "bagaimana hati Allah" dan <b>benar-benar diamlah</b> setelahnya. Pertanyaan ini mengubah seluruh nada pelajaran dari penghakiman menjadi kasih.'
+},
+{
+  mt:false, zone:'kanan', label:'Penerapan · 2)', title:'Kepada kita yang sedang menuju Sorga', dur:2,
+  say:[
+    'Pertanyaan yang sama berlaku hari ini.',
+    'Darah Yesus menyelamatkan kita; dengan darah itu Ia menebus kita. Darah itu sekarang mengalir di dalam kita, menjadi bagian dari hidup kita.'
+  ],
+  key:'Bagaimana dengan akhir kita?',
+  board:['CERMIN','  Yudas','  Israel','  KITA'],
+  tempo:'Tulis KITA dengan huruf besar, di bawah dua nama yang lain. <b>Setelah menulis, letakkan spidol.</b> Jangan menulis apa pun lagi sampai kartu terakhir.'
+},
+{
+  mt:true, zone:'tengah', label:'Penutup', title:'Pintu keempat', dur:2,
+  say:[
+    'Kain lahir di dalam pengakuan iman, diajar beribadah sejak kecil, diberi kesempatan bertobat berkali-kali.',
+    'Ia tidak gagal karena kurang kesempatan. Ia gagal karena setiap pintu yang Allah buka, ia tutup sendiri.',
+    'Mari kita berjaga-jaga. Kita harus kalah pada firman dan menjadi hamba Allah — bukan kalah pada dosa.',
+    'Sebab kita adalah buatan Allah, diciptakan dalam Kristus Yesus untuk melakukan pekerjaan baik (Ef 2:10); Ia menguduskan bagi diri-Nya umat kepunyaan-Nya yang rajin berbuat baik (Tit 2:14).'
+  ],
+  key:'Pintu mana yang sedang Allah buka untuk kita hari ini?',
+  board:['[x] [x] [x]     [  ]','                 ↑','       (pintu keempat — terbuka, kosong)'],
+  tempo:'Gambar pintu keempat di sebelah tiga pintu yang tertutup. <b>Biarkan kosong — jangan ditulisi apa pun.</b> Ajukan pertanyaannya, lalu letakkan spidol dan diam. Itu kalimat terakhir Anda, dalam bentuk gambar.'
+}
+];
+
+const stage = document.getElementById('stage');
+const countEl = document.getElementById('count');
+const clock = document.getElementById('clock');
+let mode20 = true, i = 0;
+
+function list(){ return CARDS.filter(c => mode20 ? c.mt : true); }
+
+function render(){
+  const cs = list(), c = cs[i];
+  if(!c) return;
+  let h = `<div class="card" data-zone="${c.zone}">`;
+  h += `<div class="eyebrow"><span>${c.label}</span>`;
+  if(c.dur) h += `<span>${c.dur} menit</span>`;
+  if(mode20 === false && c.mt) h += `<span class="mt">juga di versi 20 mnt</span>`;
+  h += `</div><h2>${c.title}</h2>`;
+
+  if(c.map){
+    h += `<div class="map">
+      <div class="z1"><b>Kiri 25%</b>Jangkar — judul &amp; pertanyaan pemantik. Tidak pernah dihapus.</div>
+      <div class="z2"><b>Tengah 50%</b>Alur Kain — dua persembahan, tiga pintu, panah ke Nod.</div>
+      <div class="z3"><b>Kanan 25%</b>Cermin — kosong sampai Poin 2. Lalu Yudas, Israel, Kita.</div>
+    </div>`;
+  }
+  if(c.say){
+    h += `<div class="block"><div class="label">Katakan</div><ul class="say">`;
+    c.say.forEach(s => h += `<li>${s}</li>`);
+    h += `</ul></div>`;
+  }
+  if(c.key) h += `<div class="key">${c.key}</div>`;
+  if(c.board){
+    h += `<div class="block"><div class="label">Tulis di papan</div><div class="board">
+      <span class="zone ${c.zone}">zona ${c.zone}</span><div class="write">`;
+    c.board.forEach(b => {
+      const draw = b.startsWith('(') || b.includes('gambar') || b.includes('silang') || b.includes('centang');
+      h += `<span class="${draw?'draw':''}">${b || '&nbsp;'}</span>`;
+    });
+    h += `</div></div></div>`;
+  }
+  if(c.tempo) h += `<div class="tempo"><div class="label">Tempo &amp; gerak</div>${c.tempo}</div>`;
+  h += `</div>`;
+  stage.innerHTML = h;
+  stage.scrollTop = 0;
+  countEl.textContent = (i+1) + ' / ' + cs.length;
+}
+
+function go(n){ const cs = list(); if(n<0||n>=cs.length) return; i = n; render(); }
+document.getElementById('next').onclick = () => go(i+1);
+document.getElementById('prev').onclick = () => go(i-1);
+
+document.getElementById('m20').onclick = () => setMode(true);
+document.getElementById('mAll').onclick = () => setMode(false);
+function setMode(v){
+  mode20 = v; i = 0;
+  document.getElementById('m20').setAttribute('aria-pressed', v);
+  document.getElementById('mAll').setAttribute('aria-pressed', !v);
+  render();
+}
+
+let t0=null, paused=0, running=false;
+function el(){ return t0===null ? paused : paused + (Date.now()-t0)/1000; }
+function fmt(s){ s=Math.floor(s); const m=Math.floor(s/60);
+  return (m<10?'0':'')+m+':'+((s%60)<10?'0':'')+(s%60); }
+function tick(){
+  clock.textContent = fmt(el());
+  clock.classList.toggle('run', running);
+  const cap = mode20 ? 20*60 : 40*60;
+  clock.classList.toggle('over', running && el() > cap);
+}
+setInterval(tick, 500);
+clock.onclick = () => {
+  if(running){ paused = el(); t0 = null; running = false; }
+  else { t0 = Date.now(); running = true; }
+  tick();
+};
+
+let x0=null,y0=null;
+document.addEventListener('touchstart', e => { x0=e.changedTouches[0].clientX; y0=e.changedTouches[0].clientY; }, {passive:true});
+document.addEventListener('touchend', e => {
+  if(x0===null) return;
+  const dx=e.changedTouches[0].clientX-x0, dy=e.changedTouches[0].clientY-y0;
+  if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5) dx<0 ? go(i+1) : go(i-1);
+  x0=null;
+}, {passive:true});
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); go(i+1); }
+  if(e.key==='ArrowLeft') { e.preventDefault(); go(i-1); }
+});
+
+render();
+</script>
+</body>
+</html>
